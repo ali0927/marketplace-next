@@ -1,7 +1,8 @@
 //react
 import Head from "next/head";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import NextLink from "next/link";
+import { useRouter } from "next/router";
 //material ui
 import {
   AppBar,
@@ -15,6 +16,9 @@ import {
   Switch,
   Box,
   Badge,
+  Button,
+  MenuItem,
+  Menu,
 } from "@material-ui/core";
 //cookies
 import Cookies from "js-cookie";
@@ -63,12 +67,12 @@ const ConnectedMetamask = styled.div`
 `;
 
 export default function Layout({ title, description, children }) {
+  const router = useRouter();
   const { state, dispatch } = useContext(Store);
   const { hasMetamask, currentAccount, connectWallet } =
     useContext(MarketplaceContext);
   const classes = useStyles();
-
-  const { darkMode, cart } = state;
+  const { darkMode, cart, userInfo } = state;
   const theme = createTheme({
     typography: {
       h1: {
@@ -92,11 +96,32 @@ export default function Layout({ title, description, children }) {
       },
     },
   });
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const loginClickHandler = (e) => {
+    setAnchorEl(e.currentTarget);
+  };
+
+  const loginMenuCloseHandler = () => {
+    setAnchorEl(null);
+  };
+
+  const logoutClickHandler = () => {
+    setAnchorEl(null);
+    dispatch({ type: "USER_LOGOUT" });
+    Cookies.remove("userInfo");
+    Cookies.remove("cartItems");
+    router.push("/");
+  };
 
   const darkModeChangeHandler = () => {
     dispatch({ type: darkMode ? "DARK_MODE_OFF" : "DARK_MODE_ON" });
     const newDarkMode = !darkMode;
     Cookies.set("darkMode", newDarkMode ? "ON" : "OFF");
+  };
+
+  const loginHandler = () => {
+    router.push("/login");
   };
 
   return (
@@ -123,6 +148,43 @@ export default function Layout({ title, description, children }) {
             <div
               style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}
             >
+              {userInfo ? (
+                <>
+                  <Button
+                    aria-controls="simple-menu"
+                    aria-haspopup="true"
+                    onClick={loginClickHandler}
+                    className={classes.navbarButton}
+                  >
+                    {userInfo.name}
+                  </Button>
+                  <Menu
+                    id="simple-menu"
+                    anchorEl={anchorEl}
+                    keepMounted
+                    open={Boolean(anchorEl)}
+                    onClose={loginMenuCloseHandler}
+                    getContentAnchorEl={null}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+                    transformOrigin={{ vertical: "top", horizontal: "left" }}
+                  >
+                    <MenuItem onClick={loginMenuCloseHandler}>Profile</MenuItem>
+                    <MenuItem onClick={loginMenuCloseHandler}>
+                      My account
+                    </MenuItem>
+                    <MenuItem onClick={logoutClickHandler}>Logout</MenuItem>
+                  </Menu>
+                </>
+              ) : (
+                <Button
+                  onClick={loginHandler}
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                >
+                  Admin
+                </Button>
+              )}
               <Switch
                 checked={darkMode}
                 onChange={darkModeChangeHandler}

@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { createGlobalStyle } from "styled-components";
-import { Colors } from "../utils/Theme";
 import "../styles/globals.css";
 import { StoreProvider } from "../utils/Store";
 import { MarketplaceProvider } from "../utils/MarketplaceContext";
+import { SnackbarProvider } from "notistack";
 
 const GlobalStyle = createGlobalStyle`
   html,
@@ -69,12 +69,14 @@ function MyApp({ Component, pageProps }) {
     }
   }, []);
   return (
-    <MarketplaceProvider>
-      <StoreProvider>
-        <GlobalStyle />
-        <Component {...pageProps} />
-      </StoreProvider>
-    </MarketplaceProvider>
+    <SnackbarProvider anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+      <MarketplaceProvider>
+        <StoreProvider>
+          <GlobalStyle />
+          <Component {...pageProps} />
+        </StoreProvider>
+      </MarketplaceProvider>
+    </SnackbarProvider>
   );
 }
 
