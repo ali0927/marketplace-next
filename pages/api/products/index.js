@@ -3,7 +3,7 @@ import Product from "../../../models/Product";
 import db from "../../../utils/db";
 
 const handler = nc();
-
+//users to get all products
 handler.get(async (req, res) => {
   await db.connect();
   const products = await Product.find({});
