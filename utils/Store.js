@@ -45,6 +45,9 @@ function reducer(state, action) {
       return { ...state, userInfo: action.payload };
     case "USER_LOGOUT":
       return { ...state, userInfo: null, cart: { cartItems: [] } };
+
+    case "SAVE_USER_DETAILS":
+      return { ...state, cart: { ...state.cart, userDetails: action.payload } };
     default:
       return state;
   }

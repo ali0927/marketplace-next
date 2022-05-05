@@ -11,6 +11,9 @@ import {
   TextField,
   Button,
 } from "@material-ui/core";
+//environment
+import { environmentTest } from "../lib/environments/environment";
+import { environment } from "../lib/environments/environment.prod";
 //components
 import Layout from "../components/Layout";
 import { Store } from "../utils/Store";
@@ -40,16 +43,57 @@ export default function Checkout() {
   }, []);
 
   const classes = useStyles();
-  const submitHandler = ({ discordId, ethAddress, physicalAddress, email }) => {
+
+  const getSignature = async (discordId, physicalAddress, email) => {
+    const msgParams = {
+      domain: {
+        name: "Uninterested Unicorns",
+        version: "1",
+        chainId: environmentTest.chainId.toString(),
+      },
+      message: {
+        discordId: discordId,
+        physicalAddress: physicalAddress,
+        email: email,
+      },
+      primaryType: "Checkout",
+      types: {
+        EIP712Domain: [
+          { name: "name", type: "string" },
+          { name: "version", type: "string" },
+          { name: "chainId", type: "uint256" },
+        ],
+        Checkout: [
+          { name: "discordId", type: "string" },
+          { name: "physicalAddress", type: "string" },
+          { name: "email", type: "string" },
+        ],
+      },
+    };
+    try {
+      const from = currentAccount;
+      const sign = await ethereum.request({
+        method: "eth_signTypedData_v4",
+        params: [from, JSON.stringify(msgParams)],
+      });
+      return sign;
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const submitHandler = async ({ discordId, physicalAddress, email }) => {
+    let signature = await getSignature(discordId, physicalAddress, email);
     dispatch({
       type: "SAVE_USER_DETAILS",
-      payload: { discordId, ethAddress, physicalAddress, email },
+      payload: { discordId, currentAccount, physicalAddress, email, signature },
     });
     Cookies.set("userDetails", {
       discordId,
-      ethAddress,
+      currentAccount,
       physicalAddress,
       email,
+      signature,
     });
     router.push("/payment");
   };
