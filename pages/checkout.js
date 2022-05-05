@@ -37,16 +37,14 @@ export default function Checkout() {
   const { closeSnackbar, enqueueSnackbar } = useSnackbar();
   const { state, dispatch } = useContext(Store);
   const {
-    // userInfo,
     cart: { cartItems, userDetails },
   } = state;
-  useEffect(() => {
-    setValue("discordId", userDetails.discordId);
-    setValue("physicalAddress", userDetails.physicalAddress);
-    setValue("email", userDetails.email);
-  }, []);
 
   const classes = useStyles();
+
+  if (cartItems.length === 0) {
+    router.push("/cart");
+  }
 
   const getSignature = async (discordId, physicalAddress, email) => {
     const sign = "testSignature";
@@ -101,7 +99,7 @@ export default function Checkout() {
       email,
       signature,
     });
-    router.push("/payment");
+    await placeOrderHandler();
   };
 
   const totalPrice = cartItems.reduce((a, c) => a + c.price * c.quantity, 0);
@@ -116,12 +114,11 @@ export default function Checkout() {
           orderItems: cartItems,
           userDetails,
           totalPrice,
-        },
-        {
-          // headers: {
-          //   authorization: `Bearer ${userInfo}`
-          // }
         }
+        // {
+        // headers: {
+        //   authorization: `Bearer ${userInfo}`
+        // }
       );
       dispatch({ type: "CART_CLEAR" });
       Cookies.remove("cartItems");
@@ -132,6 +129,13 @@ export default function Checkout() {
       enqueueSnackbar(getError(err), { variant: "error" });
     }
   };
+
+  useEffect(() => {
+    setValue("discordId", userDetails.discordId);
+    setValue("physicalAddress", userDetails.physicalAddress);
+    setValue("email", userDetails.email);
+  }, []);
+
   return (
     <Layout title="Shipping Address">
       <form onSubmit={handleSubmit(submitHandler)} className={classes.form}>

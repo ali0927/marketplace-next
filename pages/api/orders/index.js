@@ -1,14 +1,19 @@
 import nc from "next-connect";
-import Product from "../../../models/Product";
+import Order from "../../../models/Order";
 import db from "../../../utils/db";
+import { onError } from "../../../utils/error";
 
-const handler = nc();
+const handler = nc({
+  onError,
+});
 
-handler.get(async (req, res) => {
+handler.post(async (req, res) => {
   await db.connect();
-  const product = await Product.findById(req.query.id);
-  await db.disconnect();
-  res.send(product);
+  const newOrder = new Order({
+    ...req.body,
+  });
+  const order = await newOrder.save();
+  res.statusCode(201).send(order);
 });
 
 export default handler;

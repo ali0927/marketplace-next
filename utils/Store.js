@@ -13,9 +13,6 @@ const initialState = {
       ? JSON.stringify(Cookies.get("userDetails"))
       : {},
   },
-  userInfo: Cookies.get("userInfo")
-    ? JSON.parse(Cookies.get("userInfo"))
-    : null,
 };
 
 function reducer(state, action) {
@@ -46,10 +43,6 @@ function reducer(state, action) {
     }
     case "CART_CLEAR":
       return { ...state, cart: { ...state.cart, cartItems: [] } };
-    case "USER_LOGIN":
-      return { ...state, userInfo: action.payload };
-    case "USER_LOGOUT":
-      return { ...state, userInfo: null, cart: { cartItems: [] } };
     case "SAVE_USER_DETAILS":
       return {
         ...state,
