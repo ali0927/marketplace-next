@@ -3,6 +3,9 @@ import axios from "axios";
 import dynamic from "next/dynamic";
 import NextLink from "next/link";
 import React, { useEffect, useReducer } from "react";
+import { useRouter } from "next/router";
+import { useSnackbar } from "notistack";
+
 //material ui
 import {
   CircularProgress,
@@ -33,19 +36,35 @@ function reducer(state, action) {
       return { ...state, loading: false, products: action.payload, error: "" };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
+    case "CREATE_REQUEST":
+      return { ...state, loadingCreate: true, error: "" };
+    case "CREATE_SUCCESS":
+      return {
+        ...state,
+        loadingCreate: false,
+        products: action.payload,
+        error: "",
+      };
+    case "CREATE_FAIL":
+      return { ...state, loadingCreate: false, error: action.payload };
     default:
       state;
   }
 }
 
 function AdminDashboard() {
+  const router = useRouter();
   const classes = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
 
-  const [{ loading, error, products }, dispatch] = useReducer(reducer, {
-    loading: true,
-    products: [],
-    error: "",
-  });
+  const [{ loading, error, products, loadingCreate }, dispatch] = useReducer(
+    reducer,
+    {
+      loading: true,
+      products: [],
+      error: "",
+    }
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,6 +78,28 @@ function AdminDashboard() {
     };
     fetchData();
   }, []);
+
+  const createHandler = async () => {
+    if (!window.confirm("Are you sure?")) {
+      return;
+    }
+    try {
+      dispatch({ type: "CREATE_REQUEST" });
+      const { data } = await axios.post(
+        `/api/admin/create`,
+        {},
+        {
+          // headers: { authorization: `Bearer ${userInfo.token}` },
+        }
+      );
+      dispatch({ type: "CREATE_SUCCESS" });
+      enqueueSnackbar("Product created successfully", { variant: "success" });
+      router.push(`/admin/product/${data.product._id}`);
+    } catch (err) {
+      dispatch({ type: "CREATE_FAIL" });
+      enqueueSnackbar(getError(err), { variant: "error" });
+    }
+  };
   return (
     <Layout title="Products">
       <Grid container spacing={1}>
@@ -77,9 +118,23 @@ function AdminDashboard() {
           <Card className={classes.section}>
             <List>
               <ListItem>
-                <Typography component="h1" variant="h1">
-                  Products
-                </Typography>
+                <Grid container alignItems="center">
+                  <Grid item xs={6}>
+                    <Typography component="h1" variant="h1">
+                      Products
+                    </Typography>
+                  </Grid>
+                  <Grid align="right" item xs={6}>
+                    <Button
+                      onClick={createHandler}
+                      color="primary"
+                      variant="contained"
+                    >
+                      Create
+                    </Button>
+                    {loadingCreate && <CircularProgress />}
+                  </Grid>
+                </Grid>
               </ListItem>
 
               <ListItem>

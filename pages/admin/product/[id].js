@@ -33,11 +33,17 @@ function reducer(state, action) {
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
     case "UPDATE_REQUEST":
-      return { ...state, loading: true, error: "" };
+      return { ...state, loadingUpdate: true, error: "" };
     case "UPDATE_SUCCESS":
-      return { ...state, loading: false, error: "" };
+      return { ...state, loadingUpdate: false, error: "" };
     case "UPDATE_FAIL":
-      return { ...state, loading: false, error: action.payload };
+      return { ...state, loadingUpdate: false, error: action.payload };
+    case "UPLOAD_REQUEST":
+      return { ...state, loadingUpload: true, error: "" };
+    case "UPLOAD_SUCCESS":
+      return { ...state, loadingUpload: false, error: "" };
+    case "UPLOAD_FAIL":
+      return { ...state, loadingUpload: false, error: action.payload };
     default:
       return state;
   }
@@ -46,10 +52,11 @@ function reducer(state, action) {
 function ProductEdit({ params }) {
   const router = useRouter();
   const productId = params.id;
-  const [{ loading, error, loadingUpdate }, dispatch] = useReducer(reducer, {
-    loading: true,
-    error: "",
-  });
+  const [{ loading, error, loadingUpdate, loadingUpload }, dispatch] =
+    useReducer(reducer, {
+      loading: true,
+      error: "",
+    });
   const {
     handleSubmit,
     control,
@@ -80,6 +87,24 @@ function ProductEdit({ params }) {
     };
     fetchData();
   }, []);
+
+  const uploadHandler = async (e) => {
+    const file = e.target.files[0];
+    const bodyFormData = new FormData();
+    bodyFormData.append("file", file);
+    try {
+      dispatch({ type: "UPLOAD_REQUEST" });
+      const { data } = await axios.post("/api/admin/upload", bodyFormData, {
+        headers: { "Content-Type": "multipart/form-data" }, //upload file through ajax request
+      });
+      dispatch({ type: "UPLOAD_SUCCESS" });
+      setValue("image", data.secure_url); //cloudinary server
+      enqueueSnackbar("File uploaded successfully", { variant: "success" });
+    } catch (err) {
+      dispatch({ type: "UPLOAD_FAIL", payload: getError(err) });
+      enqueueSnackbar(getError(err), { variant: "error" });
+    }
+  };
   const submitHandler = async ({
     name,
     slug,
@@ -274,6 +299,13 @@ function ProductEdit({ params }) {
                           ></TextField>
                         )}
                       ></Controller>
+                    </ListItem>
+                    <ListItem>
+                      <Button variant="contained" component="label">
+                        Upload File
+                        <input type="file" onChange={uploadHandler} hidden />
+                      </Button>
+                      {loadingUpload && <CircularProgress />}
                     </ListItem>
                     <ListItem>
                       <Controller
