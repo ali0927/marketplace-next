@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 const data = {
+  admin: ["0x9d95bcaa5b609fa97a7ec860bec115aa94f85ba9"], //put in small letters
   users: [
     {
       name: "John",

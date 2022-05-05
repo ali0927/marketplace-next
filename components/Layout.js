@@ -26,6 +26,7 @@ import Cookies from "js-cookie";
 import useStyles from "../utils/styles";
 import { Store } from "../utils/Store";
 import { MarketplaceContext } from "../utils/MarketplaceContext";
+import data from "../utils/data";
 //styling
 import styled from "styled-components";
 import { Colors } from "../utils/Theme";
@@ -148,7 +149,19 @@ export default function Layout({ title, description, children }) {
             <div
               style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}
             >
-              {userInfo ? (
+              {data.admin.includes(currentAccount) ? (
+                <Button
+                  onClick={loginHandler}
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                >
+                  Admin
+                </Button>
+              ) : (
+                ""
+              )}
+              {/* {userInfo ? (
                 <>
                   <Button
                     aria-controls="simple-menu"
@@ -184,7 +197,7 @@ export default function Layout({ title, description, children }) {
                 >
                   Admin
                 </Button>
-              )}
+              )} */}
               <Switch
                 checked={darkMode}
                 onChange={darkModeChangeHandler}
