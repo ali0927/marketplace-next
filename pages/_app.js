@@ -1,9 +1,9 @@
-import { useEffect } from "react";
 import { createGlobalStyle } from "styled-components";
-import "../styles/globals.css";
 import { StoreProvider } from "../utils/Store";
 import { MarketplaceProvider } from "../utils/MarketplaceContext";
 import { SnackbarProvider } from "notistack";
+import { CacheProvider } from "@emotion/react";
+import createEmotionCache from "../utils/createEmotionCache";
 
 const GlobalStyle = createGlobalStyle`
   html,
@@ -61,22 +61,24 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-function MyApp({ Component, pageProps }) {
-  useEffect(() => {
-    const jssStyles = document.querySelector("#jss-server-side");
-    if (jssStyles) {
-      jssStyles.parentElement.removeChild(jssStyles);
-    }
-  }, []);
+const clientSideEmotionCache = createEmotionCache();
+
+function MyApp(props) {
+  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+
   return (
-    <SnackbarProvider anchorOrigin={{ vertical: "top", horizontal: "center" }}>
-      <MarketplaceProvider>
-        <StoreProvider>
-          <GlobalStyle />
-          <Component {...pageProps} />
-        </StoreProvider>
-      </MarketplaceProvider>
-    </SnackbarProvider>
+    <CacheProvider value={emotionCache}>
+      <SnackbarProvider
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <MarketplaceProvider>
+          <StoreProvider>
+            <GlobalStyle />
+            <Component {...pageProps} />
+          </StoreProvider>
+        </MarketplaceProvider>
+      </SnackbarProvider>
+    </CacheProvider>
   );
 }
 

@@ -1,18 +1,7 @@
 //react/next
 import { useContext, useState, useEffect } from "react";
-import NextLink from "next/link";
 import axios from "axios";
 import { useRouter } from "next/router";
-//material ui
-import {
-  Card,
-  CardActionArea,
-  CardActions,
-  CardContent,
-  CardMedia,
-  Grid,
-  Typography,
-} from "@material-ui/core";
 //components
 import Layout from "../components/Layout";
 import CheckContractApproval from "../components/CheckContractApproval";
@@ -22,12 +11,13 @@ import Product from "../models/Product";
 import { Store } from "../utils/Store";
 //image
 import Image from "next/image";
-// import Loading from "../public/images/loading/loading.gif";
 import UcdLogo from "../public/images/ucd/candy.png";
 import ShoLogo from "../public/images/sho/token.png";
 //style
 import styled from "styled-components";
 import { Colors, Devices } from "../utils/Theme";
+import { Grid } from "@mui/material";
+import ProductItem from "../components/ProductItem";
 
 const Button = styled.button`
   display: flex;
@@ -46,23 +36,6 @@ const Button = styled.button`
   );
   border-radius: ${(p) => (p.round ? "50px" : "5px")};
 `;
-// const LoadingContainer = styled.div`
-//   text-align: center;
-//   width: 150px;
-//   margin: 200px auto;
-//   font-family: $bold-font;
-//   display: flex;
-//   flex-direction: column;
-//   font-size: 24px;
-//   letter-spacing: 1px;
-//   text-transform: uppercase;
-
-//   > img {
-//     width: 125px;
-//     margin: 0 auto 20px;
-//     display: block;
-//   }
-// `;
 
 const WrongNetwork = styled.div`
   text-align: center;
@@ -242,32 +215,10 @@ export default function Home(props) {
             <Grid container spacing={3}>
               {products.map((product) => (
                 <Grid item md={4} key={product.name}>
-                  <Card>
-                    <NextLink href={`/product/${product.slug}`} passHref>
-                      <CardActionArea>
-                        <CardMedia
-                          component="img"
-                          image={product.image}
-                          title={product.name}
-                        ></CardMedia>
-                        <CardContent>
-                          <Typography>{product.name}</Typography>
-                        </CardContent>
-                      </CardActionArea>
-                    </NextLink>
-                    <CardActions>
-                      <Typography>
-                        {product.price} {product.currency}
-                      </Typography>
-                      <Button
-                        size="small"
-                        color="secondary"
-                        onClick={() => addToCartHandler(product)}
-                      >
-                        Add to cart
-                      </Button>
-                    </CardActions>
-                  </Card>
+                  <ProductItem
+                    product={product}
+                    addToCartHandler={addToCartHandler}
+                  />
                 </Grid>
               ))}
             </Grid>

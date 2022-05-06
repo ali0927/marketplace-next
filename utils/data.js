@@ -1,5 +1,11 @@
 const data = {
-  admin: ["0x9d95bcaa5b609fa97a7ec860bec115aa94f85ba9"], //put in small letters
+  //small letters
+  admin: [
+    "0x9d95bcaa5b609fa97a7ec860bec115aa94f85ba9",
+    "0xe26d51bd25617bad4f1f7ffa2c11349d2c645776", //lenny
+    "0xb5a862514b5d8fcf4445d7ba7e786692cd06c8ce", //lenny2
+    "0x0902cb364e49101f4ab5d4ffde5035973e728d3f", //takeshi
+  ], //put in small letters
   products: [
     {
       name: "UU Shirt",

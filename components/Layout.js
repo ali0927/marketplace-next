@@ -1,35 +1,44 @@
-//react
+//react/next/packages
 import Head from "next/head";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
+import { useSnackbar } from "notistack";
+import Cookies from "js-cookie";
+import axios from "axios";
 //material ui
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import { createTheme } from "@mui/material/styles";
 import {
   AppBar,
   Toolbar,
   Typography,
   Container,
   Link,
-  createTheme,
-  ThemeProvider,
-  CssBaseline,
   Switch,
-  Box,
   Badge,
   Button,
-  // MenuItem,
-  // Menu,
-} from "@material-ui/core";
-//cookies
-import Cookies from "js-cookie";
-//components
-import useStyles from "../utils/styles";
-import { Store } from "../utils/Store";
-import { MarketplaceContext } from "../utils/MarketplaceContext";
-import data from "../utils/data";
+  Box,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  Divider,
+  ListItemText,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import CancelIcon from "@mui/icons-material/Cancel";
+import classes from "../utils/classes";
+
 //styling
 import styled from "styled-components";
 import { Colors } from "../utils/Theme";
+//components
+import { Store } from "../utils/Store";
+import { MarketplaceContext } from "../utils/MarketplaceContext";
+import data from "../utils/data";
+import { getError } from "../utils/error";
+
 const ConnectMetamask = styled.div`
   outline: 0;
   color: #fff;
@@ -72,9 +81,16 @@ export default function Layout({ title, description, children }) {
   const { state, dispatch } = useContext(Store);
   const { hasMetamask, currentAccount, connectWallet } =
     useContext(MarketplaceContext);
-  const classes = useStyles();
   const { darkMode, cart } = state;
   const theme = createTheme({
+    components: {
+      MuiLink: {
+        defaultProps: {
+          underline: "hover",
+        },
+      },
+    },
+
     typography: {
       h1: {
         fontSize: "1.6rem",
@@ -88,45 +104,52 @@ export default function Layout({ title, description, children }) {
       },
     },
     palette: {
-      type: darkMode ? "dark" : "light",
+      mode: darkMode ? "dark" : "light",
       primary: {
-        main: "rgb(4, 148, 220)",
+        main: "#f0c000",
       },
       secondary: {
         main: "#208080",
       },
     },
   });
-  // const [anchorEl, setAnchorEl] = useState(null);
-
-  // const loginClickHandler = (e) => {
-  //   setAnchorEl(e.currentTarget);
-  // };
-
-  // const loginMenuCloseHandler = () => {
-  //   setAnchorEl(null);
-  // };
-
-  // const logoutClickHandler = () => {
-  //   setAnchorEl(null);
-  //   dispatch({ type: "USER_LOGOUT" });
-  //   Cookies.remove("userInfo");
-  //   Cookies.remove("cartItems");
-  //   router.push("/");
-  // };
-
+  //light/dark toggle
   const darkModeChangeHandler = () => {
     dispatch({ type: darkMode ? "DARK_MODE_OFF" : "DARK_MODE_ON" });
     const newDarkMode = !darkMode;
     Cookies.set("darkMode", newDarkMode ? "ON" : "OFF");
   };
+  //togle sidebar
+  const [sidebarVisible, setSidebarVisible] = useState(false);
+  const sidebarOpenHandler = () => {
+    setSidebarVisible(true);
+  };
+  const sidebarCloseHandler = () => {
+    setSidebarVisible(false);
+  };
+
+  //filter by brands
+  const [brands, setBrands] = useState([]);
+  const { enqueueSnackbar } = useSnackbar();
+  const fetchBrands = async () => {
+    try {
+      const { data } = await axios.get(`/api/products/brands`);
+      setBrands(data);
+    } catch (err) {
+      enqueueSnackbar(getError(err), { variant: "error" });
+    }
+  };
+
+  useEffect(() => {
+    fetchBrands();
+  }, []);
 
   const adminHandler = () => {
     router.push("/admin/products");
   };
 
   return (
-    <div>
+    <>
       <Head>
         <title>
           {title ? `${title} - Next10 Marketplace` : "Next10 Marketplace"}
@@ -135,17 +158,58 @@ export default function Layout({ title, description, children }) {
       </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <AppBar position="static" className={classes.navbar}>
-          <Toolbar className={classes.toolbar}>
+        <AppBar position="static" sx={classes.appbar}>
+          <Toolbar sx={classes.toolbar}>
             <Box display="flex" alignItems="center">
+              <IconButton
+                edge="start"
+                aria-label="open drawer"
+                onClick={sidebarOpenHandler}
+                sx={classes.menuButton}
+              >
+                <MenuIcon sx={classes.navbarButton} />
+              </IconButton>
               <NextLink href="/" passHref>
                 <Link>
-                  <Typography className={classes.brand}>
-                    Next10 Marketplace
-                  </Typography>
+                  <Typography sx={classes.brand}>nex10</Typography>
                 </Link>
               </NextLink>
             </Box>
+            <Drawer
+              anchor="left"
+              open={sidebarVisible}
+              onClose={sidebarCloseHandler}
+            >
+              <List>
+                <ListItem>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="space-between"
+                  >
+                    <Typography>Shopping by category</Typography>
+                    <IconButton
+                      aria-label="close"
+                      onClick={sidebarCloseHandler}
+                    >
+                      <CancelIcon />
+                    </IconButton>
+                  </Box>
+                </ListItem>
+                <Divider light />
+                {brands.map((brand) => (
+                  <NextLink key={brand} href={`/search?brand=${brand}`}>
+                    <ListItem
+                      button
+                      component="a"
+                      onClick={sidebarCloseHandler}
+                    >
+                      <ListItemText primary={brand}></ListItemText>
+                    </ListItem>
+                  </NextLink>
+                ))}
+              </List>
+            </Drawer>
             <div
               style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}
             >
@@ -161,43 +225,6 @@ export default function Layout({ title, description, children }) {
               ) : (
                 ""
               )}
-              {/* {userInfo ? (
-                <>
-                  <Button
-                    aria-controls="simple-menu"
-                    aria-haspopup="true"
-                    onClick={loginClickHandler}
-                    className={classes.navbarButton}
-                  >
-                    {userInfo.name}
-                  </Button>
-                  <Menu
-                    id="simple-menu"
-                    anchorEl={anchorEl}
-                    keepMounted
-                    open={Boolean(anchorEl)}
-                    onClose={loginMenuCloseHandler}
-                    getContentAnchorEl={null}
-                    anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-                    transformOrigin={{ vertical: "top", horizontal: "left" }}
-                  >
-                    <MenuItem onClick={loginMenuCloseHandler}>Profile</MenuItem>
-                    <MenuItem onClick={loginMenuCloseHandler}>
-                      My account
-                    </MenuItem>
-                    <MenuItem onClick={logoutClickHandler}>Logout</MenuItem>
-                  </Menu>
-                </>
-              ) : (
-                <Button
-                  onClick={loginHandler}
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                >
-                  Admin
-                </Button>
-              )} */}
               <Switch
                 checked={darkMode}
                 onChange={darkModeChangeHandler}
@@ -238,11 +265,13 @@ export default function Layout({ title, description, children }) {
             </div>
           </Toolbar>
         </AppBar>
-        <Container className={classes.main}>{children}</Container>
-        <footer className={classes.footer}>
-          <Typography>All rights reserved. Next10 Marketplace.</Typography>
-        </footer>
+        <Container component="main" sx={classes.main}>
+          {children}
+        </Container>
+        <Box component="footer" sx={classes.footer}>
+          <Typography>All rights reserved. Next10.</Typography>
+        </Box>
       </ThemeProvider>
-    </div>
+    </>
   );
 }
