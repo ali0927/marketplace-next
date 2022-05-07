@@ -4,69 +4,62 @@ import axios from "axios";
 import { useRouter } from "next/router";
 //components
 import Layout from "../components/Layout";
-import CheckContractApproval from "../components/CheckContractApproval";
+// import CheckContractApproval from "../components/CheckContractApproval";
 import { MarketplaceContext } from "../utils/MarketplaceContext";
 import db from "../utils/db";
 import Product from "../models/Product";
 import { Store } from "../utils/Store";
 //image
 import Image from "next/image";
-import UcdLogo from "../public/images/uu/candy.png";
-import ShoLogo from "../public/images/ss/token.png";
+import UcdCoin from "../public/images/uu/ucd-coin.png";
+import UcdRoundLogo from "../public/images/uu/uu-round-logo.png";
 //style
 import styled from "styled-components";
 import { Colors, Devices } from "../utils/Theme";
 import { Grid } from "@mui/material";
 import ProductItem from "../components/ProductItem";
+import { Box } from "@mui/system";
+import classes from "../utils/classes";
 
-const Button = styled.button`
+// const Button = styled.button`
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   cursor: pointer;
+//   border: none;
+//   padding: 0.5rem 1.5rem;
+//   font-weight: 500;
+//   color: ${Colors.White};
+//   width: max-content;
+//   background: linear-gradient(
+//     to right,
+//     ${Colors.Gradients.PrimaryToSec[0]},
+//     ${Colors.Gradients.PrimaryToSec[1]}
+//   );
+//   border-radius: ${(p) => (p.round ? "50px" : "5px")};
+// `;
+
+const HeaderContainer = styled.div`
   display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border: none;
-  padding: 0.5rem 1.5rem;
-  font-weight: 500;
-  color: ${Colors.White};
-  width: max-content;
-  background: linear-gradient(
-    to right,
-    ${Colors.Gradients.PrimaryToSec[0]},
-    ${Colors.Gradients.PrimaryToSec[1]}
-  );
-  border-radius: ${(p) => (p.round ? "50px" : "5px")};
-`;
-
-const WrongNetwork = styled.div`
-  text-align: center;
-  font-size: 18px;
-  line-height: 160%;
-  margin: 50px auto;
-  width: 500px;
-  line-height: 180%;
-  @media ${Devices.Laptop} {
-    width: calc(100% - 40px);
-  }
-`;
-/**
- *  Wallet
- **/
-const WalletListContainer = styled.div`
-  width: 1000px;
-  margin: 20px auto;
-  margin-right: 0px;
-  justify-self: end;
-  @media ${Devices.LaptopL} {
-    width: 800px;
-  }
+  margin: 20px 0px;
   @media ${Devices.Tablet} {
-    width: 500px;
-  }
-  @media ${Devices.MobileL} {
-    width: 300px;
+    flex-direction: row;
   }
 `;
-
+const HeaderMarketplace = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+`;
+const HeaderText = styled.div`
+  font-size: 38px;
+  font-weight: 600;
+`;
 const WalletGeneralInfo = styled.div`
   display: flex;
   justify-content: flex-end;
@@ -76,60 +69,96 @@ const WalletGeneralInfo = styled.div`
     flex-direction: column;
   }
 `;
-
 const WalletBalance = styled.div`
-  background: #203040;
+  background: #152266;
   border-radius: 20px;
-  padding: 10px 20px;
+  padding: 8px 15px;
   margin-bottom: 20px;
-  fonr-weight: 700;
+  font-weight: 700;
   font-size: 14px;
   display: flex;
   letter-spacing: 1px;
   margin-left: auto;
   align-items: center;
-  text-transform: uppercase;
-  /* @media ${Devices.MobileL} {
-    width: 100%;
-  } */
+  color: #fff;
 `;
-
 const WalletText = styled.span`
   font-size: 12px;
-  margin-right: 40px;
+  margin-right: 30px;
+  color: "#c4c4c4";
+  font-weight: 400;
 `;
-
 const WalletAmount = styled.div`
   margin-left: auto;
   display: flex;
   align-items: center;
-
   > img {
-    margin-right: 5px;
+    margin-right: 2px;
   }
 `;
-
 const WalletUULogo = styled.div`
   margin-right: 10px;
+`;
+const FilterContainer = styled.div`
+  margin-top: 20px;
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.7rem;
+`;
+const FilterText = styled.div`
+  color: #ffffff;
+  font-family: Oxanium;
+  font-size: 12px;
+`;
+const FilterButton = styled.button`
+  border: 2px solid ${Colors.bg};
+  padding: 10px 20px;
+  border-radius: 3em;
+  background-color: ${({ isSelected }) =>
+    isSelected ? "#152266" : "transparent"};
+  color: #ffffff;
+  cursor: pointer;
+  font-family: Oxanium;
+  font-size: 14px;
+  text-align: center;
+  :hover {
+    background-color: ${Colors.bg};
+  }
+  &:active {
+    background-color: ${Colors.bg};
+  }
 `;
 
 export default function Home(props) {
   const { products } = props;
-  const {
-    isOnMainnet,
-    ucdWalletBalance,
-    getUCDBalance,
-    shoWalletBalance,
-    getSHOBalance,
-  } = useContext(MarketplaceContext);
-  const router = useRouter();
+  const { isOnMainnet, ucdWalletBalance, getUCDBalance } =
+    useContext(MarketplaceContext);
   const { state, dispatch } = useContext(Store);
-  const [openDialog, setOpenDialog] = useState(false);
+
+  //filter
+  const [isSelected, setIsSelected] = useState(false);
+  const router = useRouter();
+  const allFilter = () => {
+    setIsSelected(!isSelected);
+    router.push("/marketplace/");
+  };
+  const whitelistFilter = () => {
+    setIsSelected(!isSelected);
+    router.push("/search?type=Whitelist");
+  };
+  const raffleFilter = () => {
+    setIsSelected(!isSelected);
+    router.push("/search?type=Raffle");
+  };
+
+  // const [openDialog, setOpenDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-  };
+  // const handleOpenDialog = () => {
+  //   setOpenDialog(true);
+  // };
 
   const handleLoading = () => {
     setIsLoading(false);
@@ -144,58 +173,54 @@ export default function Home(props) {
       return;
     }
     dispatch({ type: "CART_ADD_ITEM", payload: { ...product, quantity } });
-    router.push("/cart");
   };
 
   useEffect(() => {
     window.addEventListener("load", handleLoading);
     return () => window.removeEventListener("load", handleLoading);
-  }, [getUCDBalance, getSHOBalance]);
+  }, [getUCDBalance]);
   return (
     <Layout>
       <div>
-        {isOnMainnet ? (
+        {!isOnMainnet ? (
           <div>
-            <div style={{ display: "flex" }}>
-              <WalletListContainer>
-                <WalletGeneralInfo>
-                  <WalletBalance>
-                    <WalletText>SHO Wallet</WalletText>
-                    <WalletAmount>
-                      <WalletUULogo>
-                        <Image
-                          src={ShoLogo}
-                          width="20"
-                          height="20"
-                          alt="shoLogo"
-                        />
-                      </WalletUULogo>
-                      {shoWalletBalance} SHO
-                    </WalletAmount>
-                  </WalletBalance>
-                </WalletGeneralInfo>
-              </WalletListContainer>
-              <WalletListContainer style={{ marginLeft: "20px" }}>
-                <WalletGeneralInfo>
-                  <WalletBalance>
-                    <WalletText>UCD Wallet</WalletText>
-                    <WalletAmount>
-                      <WalletUULogo>
-                        <Image
-                          src={UcdLogo}
-                          width="20"
-                          height="20"
-                          alt="ucdLogo"
-                        />
-                      </WalletUULogo>
-                      {ucdWalletBalance} UCD
-                    </WalletAmount>
-                  </WalletBalance>
-                </WalletGeneralInfo>
-              </WalletListContainer>
-            </div>
+            <HeaderContainer>
+              <HeaderMarketplace>
+                <HeaderText style={{ color: "white" }}>Marketplace</HeaderText>
+                <Image
+                  src={UcdRoundLogo}
+                  alt="UcdRoundLogo"
+                  width={38}
+                  height={38}
+                />
+              </HeaderMarketplace>
+              <WalletGeneralInfo>
+                <WalletBalance>
+                  <WalletText style={{ color: "#c4c4c4" }}>
+                    In your wallet
+                  </WalletText>
+                  <WalletAmount>
+                    <WalletUULogo>
+                      <Image
+                        src={UcdCoin}
+                        width="20"
+                        height="20"
+                        alt="ucdCoin"
+                      />
+                    </WalletUULogo>
+                    {ucdWalletBalance} UCD
+                  </WalletAmount>
+                </WalletBalance>
+              </WalletGeneralInfo>
+            </HeaderContainer>
+            <FilterContainer>
+              <FilterText>Filter By:</FilterText>
+              <FilterButton onClick={allFilter}>All</FilterButton>
+              <FilterButton onClick={whitelistFilter}>Whitelist</FilterButton>
+              <FilterButton onClick={raffleFilter}>NFT Raffle</FilterButton>
+            </FilterContainer>
 
-            <div
+            {/*<div
               style={{
                 display: "flex",
                 gap: "0.5rem",
@@ -203,18 +228,22 @@ export default function Home(props) {
                 alignItems: "center",
               }}
             >
-              <h1>Products</h1>
-              <Button round onClick={handleOpenDialog}>
+               <Button round onClick={handleOpenDialog}>
                 Approve
               </Button>
               <CheckContractApproval
                 openDialog={openDialog}
                 setOpenDialog={setOpenDialog}
               />
-            </div>
-            <Grid container spacing={3}>
+            </div> */}
+            <Grid
+              container
+              spacing={4}
+              alignItems="center"
+              justifyContent="center"
+            >
               {products.map((product) => (
-                <Grid item md={4} key={product.name}>
+                <Grid item md={3} key={product.slug}>
                   <ProductItem
                     product={product}
                     addToCartHandler={addToCartHandler}
@@ -224,10 +253,10 @@ export default function Home(props) {
             </Grid>
           </div>
         ) : (
-          <WrongNetwork>
+          <Box sx={classes.wrongNetwork}>
             You are not on the correct network. Switch to Ethereum Mainnet to
             bid.
-          </WrongNetwork>
+          </Box>
         )}
       </div>
     </Layout>
@@ -235,11 +264,21 @@ export default function Home(props) {
 }
 
 //server side props
-export async function getServerSideProps() {
+export async function getServerSideProps({ query }) {
   await db.connect();
-  const products = await Product.find({}).lean();
+  const type = query.type || "";
+  const typeFilter = type && type !== "all" ? { type } : {};
+  const types = await Product.find().distinct("type");
+  const productDocs = await Product.find({
+    ...typeFilter,
+  }).lean();
   await db.disconnect();
+  const products = productDocs.map(db.convertDocToObj);
+
   return {
-    props: { products: products.map(db.convertDocToObj) },
+    props: {
+      products,
+      types,
+    },
   };
 }

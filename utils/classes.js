@@ -96,6 +96,7 @@ const classes = {
     color: "#ffffff",
     fontSize: "32px",
     letterSpacing: "1.5px",
+    textAlign: "center",
   },
   marketplaceUUCard: {
     height: "380px",
@@ -138,6 +139,16 @@ const classes = {
     display: "initial",
     background: "red",
     color: "#ffffff",
+  },
+  //nftCard
+  nftCardText: {
+    display: "flex",
+    justifyContent: "space-between",
+  },
+  //admin product edit
+  editContainer: {
+    display: "flex",
+    gap: "0.5rem",
   },
   //utils
   avatar: {

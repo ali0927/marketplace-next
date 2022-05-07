@@ -10,11 +10,10 @@ import ucdContract from "../lib/contracts/UniCandy.json";
 import shoContract from "../lib/contracts/MockSho.json";
 
 let signer, provider;
-let CHAIN_ID = environment.chainId; // Ethereum
-let CHAIN_ID_TEST = environmentTest.chainId; // Rinkeby
 
 //variables
-const ucdContractAddress = ucdContract.address[environmentTest.chainId]; //to update
+const ucdRinkebyContractAddress = ucdContract.address[environmentTest.chainId];
+const ucdContractAddress = ucdContract.address[environment.chainId];
 const ucdContractABI = ucdContract.abi;
 const shoContractAddress = shoContract.address; //to update (rinkeby)
 const shoContractABI = shoContract.abi;
@@ -95,10 +94,11 @@ export const MarketplaceProvider = ({ children }) => {
     if (MetaMaskOnboarding.isMetaMaskInstalled()) {
       try {
         const { chainId } = await provider.getNetwork();
-        if (CHAIN_ID_TEST === chainId) {
-          //to update
+        //to update
+        if (chainId === 1) {
           setIsOnMainnet(true);
-        } else {
+        }
+        if (chainId === 4) {
           setIsOnMainnet(false);
         }
       } catch (error) {
@@ -111,7 +111,17 @@ export const MarketplaceProvider = ({ children }) => {
    * Function to create a contract based on address, abi, and signer
    */
   async function createUcdContract() {
-    return new ethers.Contract(ucdContractAddress, ucdContractABI, signer);
+    await checkChain();
+    if (isOnMainnet) {
+      return new ethers.Contract(ucdContractAddress, ucdContractABI, signer);
+    }
+    if (!isOnMainnet) {
+      return new ethers.Contract(
+        ucdRinkebyContractAddress,
+        ucdContractABI,
+        signer
+      );
+    }
   }
   async function createShoContract() {
     return new ethers.Contract(shoContractAddress, shoContractABI, signer);
@@ -127,7 +137,10 @@ export const MarketplaceProvider = ({ children }) => {
 
       let balance = await contract.balanceOf(currentAccount);
       setUcdWalletBalance(
-        parseFloat(ethers.utils.formatEther(balance)).toFixed(0)
+        parseFloat(ethers.utils.formatEther(balance))
+          .toFixed(0)
+          .toString()
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
       );
     }
   }

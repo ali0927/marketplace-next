@@ -1,5 +1,5 @@
 //react/next/packages
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import UULogo from "../public/images/uu/uu-logo.png";
@@ -49,7 +49,8 @@ export default function Home() {
   return (
     <Layout>
       <div>
-        {isOnMainnet ? (
+        {/* to update */}
+        {!isOnMainnet ? (
           <Container>
             <Box sx={classes.marketplaceSelect}>Select Marketplace</Box>
             <Wrapper>

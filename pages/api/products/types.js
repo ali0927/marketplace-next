@@ -3,12 +3,12 @@ import Product from "../../../models/Product";
 import db from "../../../utils/db";
 
 const handler = nc();
-//users to filter brands
+//users to filter types
 handler.get(async (req, res) => {
   await db.connect();
-  const brands = await Product.find().distinct("brand");
+  const types = await Product.find().distinct("type");
   await db.disconnect();
-  res.send(brands);
+  res.send(types);
 });
 
 export default handler;

@@ -2,6 +2,7 @@ export const Colors = {
   Primary: "#0097DA",
   UUPrimary: "#F333CB",
   SSPrimary: "#F33333",
+  bg: "#152266",
   // lINK: "#93d2fd",
   // PrimaryDark: "##0f1c39",
   // PrimaryDisable: "#1e3f6f",

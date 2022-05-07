@@ -13,10 +13,6 @@ const GlobalStyle = createGlobalStyle`
     overflow-x: hidden;
   }
 
-  p,a,h1,h2,h3,h5,h6,div,span{
-    color: inherit;
-  }
-
   a {
     color: inherit;
     text-decoration: none;
@@ -61,6 +57,16 @@ const GlobalStyle = createGlobalStyle`
     display: flex;
     justify-content: center;
   }
+  /* NFT Card */
+  .css-bhp9pd-MuiPaper-root-MuiCard-root {
+    background-color: #152266;
+    padding: 20px 25px;
+    color: #ffffff;
+  }
+  .MuiCardContent-root {
+    padding: 16px 0px 0px 0px;
+  }
+  
 
   /* Contract Approval Dialog */
   .css-1t1j96h-MuiPaper-root-MuiDialog-paper {

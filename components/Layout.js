@@ -24,6 +24,7 @@ import {
   Divider,
   ListItemText,
 } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -93,13 +94,13 @@ export default function Layout({ title, description, children }) {
     setSidebarVisible(false);
   };
 
-  //filter by brands
-  const [brands, setBrands] = useState([]);
+  //filter by types
+  const [types, setTypes] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
   const fetchBrands = async () => {
     try {
-      const { data } = await axios.get(`/api/products/brands`);
-      setBrands(data);
+      const { data } = await axios.get(`/api/products/types`);
+      setTypes(data);
     } catch (err) {
       enqueueSnackbar(getError(err), { variant: "error" });
     }
@@ -139,8 +140,8 @@ export default function Layout({ title, description, children }) {
                   <Image
                     src={nex10Logo}
                     alt="nex10Logo"
-                    width={50}
-                    height={70}
+                    width={40}
+                    height={48}
                   />
                 </Link>
               </NextLink>
@@ -157,7 +158,7 @@ export default function Layout({ title, description, children }) {
                     alignItems="center"
                     justifyContent="space-between"
                   >
-                    <Typography>Shopping by category</Typography>
+                    <Typography>Types</Typography>
                     <IconButton
                       aria-label="close"
                       onClick={sidebarCloseHandler}
@@ -167,14 +168,14 @@ export default function Layout({ title, description, children }) {
                   </Box>
                 </ListItem>
                 <Divider light />
-                {brands.map((brand) => (
-                  <NextLink key={brand} href={`/search?brand=${brand}`}>
+                {types.map((type) => (
+                  <NextLink key={type} href={`/search?type=${type}`}>
                     <ListItem
                       button
                       component="a"
                       onClick={sidebarCloseHandler}
                     >
-                      <ListItemText primary={brand}></ListItemText>
+                      <ListItemText primary={type}></ListItemText>
                     </ListItem>
                   </NextLink>
                 ))}
@@ -239,7 +240,7 @@ export default function Layout({ title, description, children }) {
           {children}
         </Container>
         <Box component="footer" sx={classes.footer}>
-          Copyright © 2022 NEX10 Labs Pte Ltd. All Rights Reserved.{" "}
+          Copyright © 2022 NEX10 Labs Pte Ltd. All Rights Reserved.
         </Box>
       </ThemeProvider>
     </>

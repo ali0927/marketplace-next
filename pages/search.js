@@ -1,99 +1,145 @@
-//react/next/packages
-import React, { useContext } from "react";
+//react/next
+import { useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
-//material ui
-import {
-  Box,
-  Button,
-  Grid,
-  List,
-  ListItem,
-  MenuItem,
-  Select,
-  Typography,
-} from "@mui/material";
-import CancelIcon from "@mui/icons-material/Cancel";
-import { Pagination } from "@mui/material";
 //components
 import Layout from "../components/Layout";
+// import CheckContractApproval from "../components/CheckContractApproval";
+import { MarketplaceContext } from "../utils/MarketplaceContext";
 import db from "../utils/db";
 import Product from "../models/Product";
-import classes from "../utils/classes";
-import ProductItem from "../components/ProductItem";
 import { Store } from "../utils/Store";
+//image
+import Image from "next/image";
+import UcdCoin from "../public/images/uu/ucd-coin.png";
+import UcdRoundLogo from "../public/images/uu/uu-round-logo.png";
+//style
+import styled from "styled-components";
+import { Devices, Colors } from "../utils/Theme";
+import { Grid } from "@mui/material";
+import ProductItem from "../components/ProductItem";
+import { Box } from "@mui/system";
+import classes from "../utils/classes";
 
-const PAGE_SIZE = 5;
-
-const prices = [
-  {
-    name: "$1 to $50",
-    value: "1-50",
-  },
-  {
-    name: "$51 to $200",
-    value: "51-200",
-  },
-  {
-    name: "$201 to $1000",
-    value: "201-1000",
-  },
-];
+const HeaderContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0px;
+  @media ${Devices.Tablet} {
+    flex-direction: row;
+  }
+`;
+const HeaderMarketplace = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+`;
+const HeaderText = styled.div`
+  font-size: 38px;
+  font-weight: 600;
+`;
+const WalletGeneralInfo = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  @media ${Devices.MobileL} {
+    justify-content: center;
+    flex-direction: column;
+  }
+`;
+const WalletBalance = styled.div`
+  background: #152266;
+  border-radius: 20px;
+  padding: 8px 15px;
+  margin-bottom: 20px;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  letter-spacing: 1px;
+  margin-left: auto;
+  align-items: center;
+  color: #fff;
+`;
+const WalletText = styled.span`
+  font-size: 12px;
+  margin-right: 30px;
+  color: "#c4c4c4";
+  font-weight: 400;
+`;
+const WalletAmount = styled.div`
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  > img {
+    margin-right: 2px;
+  }
+`;
+const WalletUULogo = styled.div`
+  margin-right: 10px;
+`;
+const FilterContainer = styled.div`
+  margin-top: 20px;
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.7rem;
+`;
+const FilterText = styled.div`
+  color: #ffffff;
+  font-family: Oxanium;
+  font-size: 12px;
+`;
+const FilterButton = styled.button`
+  border: 2px solid ${Colors.bg};
+  padding: 10px 20px;
+  border-radius: 3em;
+  background-color: ${({ isSelected }) =>
+    isSelected ? "#152266" : "transparent"};
+  color: #ffffff;
+  cursor: pointer;
+  font-family: Oxanium;
+  font-size: 14px;
+  text-align: center;
+  :hover {
+    background-color: ${Colors.bg};
+  }
+  &:active {
+    background-color: ${Colors.bg};
+  }
+`;
 
 export default function Search(props) {
-  const router = useRouter();
-  const {
-    query = "all",
-    brand = "all",
-    type = "all",
-    price = "all",
-    sort = "featured",
-  } = router.query;
-  const { products, countProducts, brands, types, pages } = props;
-
-  const filterSearch = ({
-    page,
-    brand,
-    type,
-    sort,
-    min,
-    max,
-    searchQuery,
-    price,
-  }) => {
-    const path = router.pathname;
-    const { query } = router;
-    if (page) query.page = page;
-    if (searchQuery) query.searchQuery = searchQuery;
-    if (sort) query.sort = sort;
-    if (brand) query.brand = brand;
-    if (type) query.type = type;
-    if (price) query.price = price;
-    if (min) query.min ? query.min : query.min === 0 ? 0 : min;
-    if (max) query.max ? query.max : query.max === 0 ? 0 : max;
-
-    router.push({
-      pathname: path,
-      query: query,
-    });
-  };
-  const brandHandler = (e) => {
-    filterSearch({ brand: e.target.value });
-  };
-  const pageHandler = (e, page) => {
-    filterSearch({ page });
-  };
-  const typeHandler = (e) => {
-    filterSearch({ type: e.target.value });
-  };
-  const sortHandler = (e) => {
-    filterSearch({ sort: e.target.value });
-  };
-  const priceHandler = (e) => {
-    filterSearch({ price: e.target.value });
-  };
-
+  const { products } = props;
+  const { isOnMainnet, ucdWalletBalance, getUCDBalance } =
+    useContext(MarketplaceContext);
   const { state, dispatch } = useContext(Store);
+
+  //filter
+  const [isSelected, setIsSelected] = useState(false);
+  const router = useRouter();
+  const allFilter = () => {
+    setIsSelected(!isSelected);
+    router.push("/marketplace/");
+  };
+  const whitelistFilter = () => {
+    setIsSelected(!isSelected);
+    router.push("/search?type=Whitelist");
+  };
+  const raffleFilter = () => {
+    setIsSelected(!isSelected);
+    router.push("/search?type=Raffle");
+  };
+
+  const [isLoading, setIsLoading] = useState(true);
+  const handleLoading = () => {
+    setIsLoading(false);
+  };
+
   const addToCartHandler = async (product) => {
     const existItem = state.cart.cartItems.find((x) => x._id === product._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
@@ -103,171 +149,87 @@ export default function Search(props) {
       return;
     }
     dispatch({ type: "CART_ADD_ITEM", payload: { ...product, quantity } });
-    router.push("/cart");
   };
+
+  useEffect(() => {
+    window.addEventListener("load", handleLoading);
+    return () => window.removeEventListener("load", handleLoading);
+  }, [getUCDBalance]);
   return (
     <Layout title="Search">
-      <Grid sx={classes.section} container spacing={1}>
-        <Grid item md={3}>
-          <List>
-            <ListItem>
-              <Box sx={classes.fullWidth}>
-                <Typography>Collections</Typography>
-                <Select fullWidth value={brand} onChange={brandHandler}>
-                  <MenuItem value="all">All</MenuItem>
-                  {brands &&
-                    brands.map((brand) => (
-                      <MenuItem key={brand} value={brand}>
-                        {brand}
-                      </MenuItem>
-                    ))}
-                </Select>
-              </Box>
-            </ListItem>
-            <ListItem>
-              <Box sx={classes.fullWidth}>
-                <Typography>Type</Typography>
-                <Select value={type} onChange={typeHandler} fullWidth>
-                  <MenuItem value="all">All</MenuItem>
-                  {types &&
-                    types.map((type) => (
-                      <MenuItem key={type} value={type}>
-                        {type}
-                      </MenuItem>
-                    ))}
-                </Select>
-              </Box>
-            </ListItem>
-            <ListItem>
-              <Box sx={classes.fullWidth}>
-                <Typography>Prices</Typography>
-                <Select value={price} onChange={priceHandler} fullWidth>
-                  <MenuItem value="all">All</MenuItem>
-                  {prices.map((price) => (
-                    <MenuItem key={price.value} value={price.value}>
-                      {price.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Box>
-            </ListItem>
-          </List>
-        </Grid>
-        <Grid item md={9}>
-          <Grid container justifyContent="space-between" alignItems="center">
-            <Grid item>
-              {products.length === 0 ? "No" : countProducts} Results
-              {query !== "all" && query !== "" && " : " + query}
-              {brand !== "all" && " : " + brand}
-              {type !== "all" && " : " + type}
-              {price !== "all" && " : Price " + price}
-              {(query !== "all" && query !== "") ||
-              brand !== "all" ||
-              type !== "all" ||
-              price !== "all" ? (
-                <Button onClick={() => router.push("/search")}>
-                  <CancelIcon />
-                </Button>
-              ) : null}
-            </Grid>
-            <Grid item>
-              <Typography component="span" className={classes.sort}>
-                Sort by
-              </Typography>
-              <Select value={sort} onChange={sortHandler}>
-                <MenuItem value="lowest">Price: Low to High</MenuItem>
-                <MenuItem value="highest">Price: High to Low</MenuItem>
-                <MenuItem value="newest">Newest Arrivals</MenuItem>
-              </Select>
-            </Grid>
-          </Grid>
-          <Grid sx={classes.section} container spacing={3}>
-            {products.map((product) => (
-              <Grid item md={4} key={product.name}>
-                <ProductItem
-                  product={product}
-                  addToCartHandler={addToCartHandler}
+      <div>
+        {!isOnMainnet ? (
+          <div>
+            <HeaderContainer>
+              <HeaderMarketplace>
+                <HeaderText style={{ color: "white" }}>Marketplace</HeaderText>
+                <Image
+                  src={UcdRoundLogo}
+                  alt="UcdRoundLogo"
+                  width={38}
+                  height={38}
                 />
-              </Grid>
-            ))}
-          </Grid>
-          <Pagination
-            sx={classes.section}
-            defaultPage={parseInt(query.page || "1")}
-            count={pages}
-            onChange={pageHandler}
-          ></Pagination>
-        </Grid>
-      </Grid>
+              </HeaderMarketplace>
+              <WalletGeneralInfo>
+                <WalletBalance>
+                  <WalletText style={{ color: "#c4c4c4" }}>
+                    In your wallet
+                  </WalletText>
+                  <WalletAmount>
+                    <WalletUULogo>
+                      <Image
+                        src={UcdCoin}
+                        width="20"
+                        height="20"
+                        alt="ucdCoin"
+                      />
+                    </WalletUULogo>
+                    {ucdWalletBalance} UCD
+                  </WalletAmount>
+                </WalletBalance>
+              </WalletGeneralInfo>
+            </HeaderContainer>
+            <FilterContainer>
+              <FilterText>Filter By:</FilterText>
+              <FilterButton onClick={allFilter}>All</FilterButton>
+              <FilterButton onClick={whitelistFilter}>Whitelist</FilterButton>
+              <FilterButton onClick={raffleFilter}>NFT Raffle</FilterButton>
+            </FilterContainer>
+            <Grid
+              container
+              spacing={4}
+              alignItems="center"
+              justifyContent="center"
+            >
+              {products.map((product) => (
+                <Grid item md={3} key={product.slug}>
+                  <ProductItem
+                    product={product}
+                    addToCartHandler={addToCartHandler}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </div>
+        ) : (
+          <Box sx={classes.wrongNetwork}>
+            You are not on the correct network. Switch to Ethereum Mainnet to
+            bid.
+          </Box>
+        )}
+      </div>
     </Layout>
   );
 }
 
 export async function getServerSideProps({ query }) {
   await db.connect();
-  const pageSize = query.pageSize || PAGE_SIZE;
-  const page = query.page || 1;
-  const brand = query.brand || "";
   const type = query.type || "";
-  const price = query.price || "";
-  const sort = query.sort || "";
-  const searchQuery = query.query || "";
-
-  const queryFilter =
-    searchQuery && searchQuery !== "all"
-      ? {
-          name: {
-            $regex: searchQuery,
-            $options: "i",
-          },
-        }
-      : {};
-  const brandFilter = brand && brand !== "all" ? { brand } : {};
   const typeFilter = type && type !== "all" ? { type } : {};
-  // 10-50
-  const priceFilter =
-    price && price !== "all"
-      ? {
-          price: {
-            $gte: Number(price.split("-")[0]),
-            $lte: Number(price.split("-")[1]),
-          },
-        }
-      : {};
-
-  const order =
-    sort === "lowest"
-      ? { price: 1 }
-      : sort === "highest"
-      ? { price: -1 }
-      : sort === "toprated"
-      ? { rating: -1 }
-      : sort === "newest"
-      ? { createdAt: -1 }
-      : { _id: -1 };
-
-  const brands = await Product.find().distinct("brand");
   const types = await Product.find().distinct("type");
-  const productDocs = await Product.find(
-    {
-      ...queryFilter,
-      ...brandFilter,
-      ...priceFilter,
-      ...typeFilter,
-    },
-    "-reviews"
-  )
-    .sort(order)
-    .skip(pageSize * (page - 1))
-    .limit(pageSize)
-    .lean();
-
-  const countProducts = await Product.countDocuments({
-    ...queryFilter,
-    ...brandFilter,
-    ...priceFilter,
+  const productDocs = await Product.find({
     ...typeFilter,
-  });
+  }).lean();
   await db.disconnect();
 
   const products = productDocs.map(db.convertDocToObj);
@@ -275,10 +237,6 @@ export async function getServerSideProps({ query }) {
   return {
     props: {
       products,
-      countProducts,
-      page,
-      pages: Math.ceil(countProducts / pageSize),
-      brands,
       types,
     },
   };

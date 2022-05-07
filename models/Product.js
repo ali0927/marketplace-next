@@ -8,11 +8,9 @@ const productSchema = new mongoose.Schema(
     brand: { type: String, required: true },
     currency: { type: String, required: true },
     image: { type: String, required: true },
-    featuredImage: { type: String },
-    isFeatured: { type: Boolean, required: true, default: false },
     price: { type: Number, required: true },
+    originalCount: { type: Number, required: true, default: 0 },
     countInStock: { type: Number, required: true, default: 0 },
-    description: { type: String, required: true },
   },
   {
     timestamps: true,
