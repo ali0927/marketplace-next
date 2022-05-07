@@ -56,7 +56,7 @@ export const MarketplaceProvider = ({ children }) => {
         getUCDBalance();
       });
       window.ethereum.on("accountsChanged", () => {
-        window.location.reload();
+        // window.location.reload();
         checkChain();
         getAccount();
         getUCDBalance();

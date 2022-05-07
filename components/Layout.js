@@ -4,10 +4,9 @@ import React, { useContext, useEffect, useState } from "react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
-import Cookies from "js-cookie";
 import axios from "axios";
 //material ui
-import { CssBaseline, ThemeProvider } from "@mui/material";
+import { Avatar, CssBaseline, ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import {
   AppBar,
@@ -15,7 +14,6 @@ import {
   Typography,
   Container,
   Link,
-  Switch,
   Badge,
   Button,
   Box,
@@ -26,59 +24,23 @@ import {
   Divider,
   ListItemText,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
+import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import CancelIcon from "@mui/icons-material/Cancel";
 import classes from "../utils/classes";
-
 //styling
-import styled from "styled-components";
-import { Colors } from "../utils/Theme";
+import nex10Logo from "../public/images/logo/nex10-logo.png";
+
 //components
 import { Store } from "../utils/Store";
 import { MarketplaceContext } from "../utils/MarketplaceContext";
 import data from "../utils/data";
 import { getError } from "../utils/error";
-
-const ConnectMetamask = styled.div`
-  outline: 0;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
-  position: relative;
-  border-radius: 40px;
-  border: 0;
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  padding: 15px 20px;
-  text-align: center;
-  background-color: ${Colors.Primary};
-  cursor: pointer;
-`;
-
-const ConnectedMetamask = styled.div`
-  outline: 0;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
-  position: relative;
-  border-radius: 40px;
-  border: 0;
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  padding: 15px 20px;
-  text-align: center;
-  background: rgb(21, 17, 32, 0.4);
-  cursor: default;
-  border: 2px solid ${Colors.Primary};
-`;
+import Image from "next/image";
 
 export default function Layout({ title, description, children }) {
   const router = useRouter();
-  const { state, dispatch } = useContext(Store);
+  const { state } = useContext(Store);
   const { hasMetamask, currentAccount, connectWallet } =
     useContext(MarketplaceContext);
   const { darkMode, cart } = state;
@@ -112,13 +74,16 @@ export default function Layout({ title, description, children }) {
         main: "#208080",
       },
     },
+    breakpoints: {
+      values: {
+        xs: 0,
+        sm: 600,
+        md: 900,
+        lg: 1200,
+        xl: 1536,
+      },
+    },
   });
-  //light/dark toggle
-  const darkModeChangeHandler = () => {
-    dispatch({ type: darkMode ? "DARK_MODE_OFF" : "DARK_MODE_ON" });
-    const newDarkMode = !darkMode;
-    Cookies.set("darkMode", newDarkMode ? "ON" : "OFF");
-  };
   //togle sidebar
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const sidebarOpenHandler = () => {
@@ -161,17 +126,22 @@ export default function Layout({ title, description, children }) {
         <AppBar position="static" sx={classes.appbar}>
           <Toolbar sx={classes.toolbar}>
             <Box display="flex" alignItems="center">
-              <IconButton
+              {/* <IconButton
                 edge="start"
                 aria-label="open drawer"
                 onClick={sidebarOpenHandler}
                 sx={classes.menuButton}
               >
                 <MenuIcon sx={classes.navbarButton} />
-              </IconButton>
+              </IconButton> */}
               <NextLink href="/" passHref>
                 <Link>
-                  <Typography sx={classes.brand}>nex10</Typography>
+                  <Image
+                    src={nex10Logo}
+                    alt="nex10Logo"
+                    width={50}
+                    height={70}
+                  />
                 </Link>
               </NextLink>
             </Box>
@@ -213,39 +183,6 @@ export default function Layout({ title, description, children }) {
             <div
               style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}
             >
-              {data.admin.includes(currentAccount) ? (
-                <Button
-                  onClick={adminHandler}
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                >
-                  Admin
-                </Button>
-              ) : (
-                ""
-              )}
-              <Switch
-                checked={darkMode}
-                onChange={darkModeChangeHandler}
-              ></Switch>
-              <div>
-                {hasMetamask ? (
-                  currentAccount ? (
-                    <ConnectedMetamask>
-                      {currentAccount.slice(0, 5)}...{currentAccount.slice(38)}
-                    </ConnectedMetamask>
-                  ) : (
-                    <ConnectMetamask onClick={() => connectWallet()}>
-                      Connect Wallet
-                    </ConnectMetamask>
-                  )
-                ) : (
-                  <ConnectMetamask>
-                    <Link href="https://metamask.io/">Install Metamask</Link>
-                  </ConnectMetamask>
-                )}
-              </div>
               <NextLink href="/cart" passHref>
                 <Link>
                   <Typography component="span">
@@ -254,14 +191,47 @@ export default function Layout({ title, description, children }) {
                         color="secondary"
                         badgeContent={cart.cartItems.length}
                       >
-                        Cart
+                        <Avatar sx={classes.avatar}>
+                          <ShoppingBagOutlinedIcon style={{ fontSize: 22 }} />
+                        </Avatar>
                       </Badge>
                     ) : (
-                      "Cart"
+                      <Avatar sx={classes.avatar}>
+                        <ShoppingBagOutlinedIcon style={{ fontSize: 22 }} />
+                      </Avatar>
                     )}
                   </Typography>
                 </Link>
               </NextLink>
+              {data.admin.includes(currentAccount) ? (
+                <Button onClick={adminHandler} fullWidth>
+                  <Avatar sx={classes.avatar}>
+                    <PersonOutlineOutlinedIcon style={{ fontSize: 22 }} />
+                  </Avatar>
+                </Button>
+              ) : (
+                ""
+              )}
+              <div>
+                {hasMetamask ? (
+                  currentAccount ? (
+                    <Button sx={classes.connectedMetamaskButton}>
+                      {currentAccount.slice(0, 5)}...{currentAccount.slice(38)}
+                    </Button>
+                  ) : (
+                    <Button
+                      sx={classes.metamaskButton}
+                      onClick={() => connectWallet()}
+                    >
+                      Connect Wallet
+                    </Button>
+                  )
+                ) : (
+                  <Button sx={classes.metamaskButton}>
+                    <Link href="https://metamask.io/">Install Metamask</Link>
+                  </Button>
+                )}
+              </div>
             </div>
           </Toolbar>
         </AppBar>
@@ -269,7 +239,7 @@ export default function Layout({ title, description, children }) {
           {children}
         </Container>
         <Box component="footer" sx={classes.footer}>
-          <Typography>All rights reserved. Next10.</Typography>
+          Copyright © 2022 NEX10 Labs Pte Ltd. All Rights Reserved.{" "}
         </Box>
       </ThemeProvider>
     </>

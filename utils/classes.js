@@ -27,8 +27,11 @@ const classes = {
     minHeight: "80vh",
   },
   footer: {
-    marginTop: 1,
+    marginTop: 3,
+    paddingBottom: 3,
     textAlign: "center",
+    color: "#ffffff",
+    fontSize: "14px",
   },
   section: {
     marginTop: 1,
@@ -37,7 +40,7 @@ const classes = {
 
   // header
   appbar: {
-    backgroundColor: "#203040",
+    backgroundColor: "transparent",
     "& a": {
       color: "#ffffff",
       marginLeft: 1,
@@ -58,27 +61,95 @@ const classes = {
     textTransform: "initial",
   },
   menuButton: { padding: 0 },
-
-  // search
-  searchForm: {
-    border: "1px solid #ffffff",
-    backgroundColor: "#ffffff",
-    borderRadius: 1,
+  metamaskButton: {
+    outline: 0,
+    color: "#fff",
+    fontSize: "0.9rem",
+    fontWeight: "500",
+    textDecoration: "none",
+    position: "relative",
+    borderRadius: "40px",
+    border: 0,
+    letterSpacing: "1.5px",
+    padding: "10px 15px",
+    textAlign: "center",
+    backgroundColor: "#0097DA",
+    cursor: "pointer",
   },
-  searchInput: {
-    paddingLeft: 1,
-    color: "#000000",
-    "& ::placeholder": {
-      color: "#606060",
+  connectedMetamaskButton: {
+    outline: 0,
+    color: "#fff",
+    fontSize: "0.9rem",
+    fontWeight: "500",
+    textDecoration: "none",
+    position: "relative",
+    borderRadius: "40px",
+    letterSpacing: "1.5px",
+    padding: "10px 15px",
+    textAlign: "center",
+    background: "rgb(21, 17, 32, 0.4)",
+    cursor: "default",
+    border: "2px solid #0097DA",
+  },
+  //landing page
+  marketplaceSelect: {
+    color: "#ffffff",
+    fontSize: "32px",
+    letterSpacing: "1.5px",
+  },
+  marketplaceUUCard: {
+    height: "380px",
+    width: "480px",
+    border: "1px solid #152266",
+    background: "transparent",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+    "&:hover": {
+      transform: "scale3d(1.05, 1.05, 1)",
+      border: "2px solid #F333CB",
+      cursor: "pointer",
     },
   },
-  searchButton: {
-    backgroundColor: "#f8c040",
-    padding: 1,
-    borderRadius: "0 5px 5px 0",
-    "& span": {
-      color: "#000000",
+  marketplaceSSCard: {
+    height: "380px",
+    width: "480px",
+    border: "1px solid #152266",
+    background: "transparent",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+    "&:hover": {
+      transform: "scale3d(1.05, 1.05, 1)",
+      border: "2px solid #F33333",
+      cursor: "pointer",
     },
+  },
+  logoImg: {
+    background: "transparent",
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+  },
+  enterMarketplace: {
+    display: "initial",
+    background: "red",
+    color: "#ffffff",
+  },
+  //utils
+  avatar: {
+    backgroundColor: "#152266",
+  },
+  wrongNetwork: {
+    textAlign: "center",
+    fontSize: "18px",
+    margin: "50px auto",
+    width: "calc(100% - 40px)",
+    lineHeight: "180%",
+    color: "#fff",
   },
 };
 export default classes;

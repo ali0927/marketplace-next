@@ -8,7 +8,9 @@ import createEmotionCache from "../utils/createEmotionCache";
 const GlobalStyle = createGlobalStyle`
   html,
   body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Oxanium', cursive;
+    background-image: url("/images/bg/background-1.png");
+    overflow-x: hidden;
   }
 
   p,a,h1,h2,h3,h5,h6,div,span{
@@ -46,6 +48,18 @@ const GlobalStyle = createGlobalStyle`
   /* Handle on hover */
   body::-webkit-scrollbar-thumb:hover {
     background: rgb(43, 43, 43);
+  }
+  
+  /* Overriding MateriaL UI Styles */
+  
+  /* App Bar */
+  .css-1im6ja8-MuiToolbar-root {
+    padding: 30px 40px 20px;
+  }
+  /* Grid Container */
+  .css-yfyvtz-MuiContainer-root {
+    display: flex;
+    justify-content: center;
   }
 
   /* Contract Approval Dialog */
