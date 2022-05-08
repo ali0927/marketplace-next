@@ -86,8 +86,12 @@ const FilterContainer = styled.div`
   margin-bottom: 40px;
   display: flex;
   flex-direction: row;
+  justify-content: center;
   align-items: center;
   gap: 0.7rem;
+  @media ${Devices.Laptop} {
+    justify-content: flex-start;
+  }
 `;
 const FilterText = styled.div`
   color: #ffffff;

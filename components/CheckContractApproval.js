@@ -1,117 +1,129 @@
-//react
-import { useState, useEffect } from "react";
+//react/next/packages
+import { useState, useEffect, useContext } from "react";
+import { useSnackbar } from "notistack";
 //blockchain
 import { ethers } from "ethers";
 import MetaMaskOnboarding from "@metamask/onboarding";
 //material ui
-import { Dialog, DialogActions } from "@mui/material";
+import { CircularProgress, Dialog, DialogActions } from "@mui/material";
 //styles
 import styled from "styled-components";
 import { Colors } from "../utils/Theme";
-//toast
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
+import classes from "../utils/classes";
+//components/utils/context
+import { MarketplaceContext } from "../utils/MarketplaceContext";
+import { getError } from "../utils/error";
 //environment
 import { environmentTest } from "../lib/environments/environment";
 import { environment } from "../lib/environments/environment.prod";
 //contracts
-import uniVoxelContract from "../lib/contracts/UninterestedUnicornsV3.json";
+import escrowContract from "../lib/contracts/EscrowWallet.json";
 import ucdContract from "../lib/contracts/UniCandy.json";
-
-const DialogTitle = styled.div`
-  font-size: 24px;
-  margin-top: 0;
-  color: ${Colors.Primary};
-  font-weight: 700;
-`;
 
 const DialogText = styled.div`
   line-height: 150%;
   font-size: 16px;
   margin-top: 1em;
   margin-bottom: 1em;
+  color: #fff;
+`;
+
+const DialogLoading = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  color: #fff;
 `;
 
 const DialogApproveButton = styled.div`
-  width: 200px;
-  margin-right: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  color: #fff;
-  background: ${Colors.Background};
-  box-shadow: 0 0 14px rgb(112 51 213 / 80%);
-  padding: 20px 20px;
-  border-radius: 40px;
-  font-size: 18px;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  font-weight: 500;
+  color: #ffffff;
+  max-width: 200px;
+  background: ${Colors.Primary};
+  border-radius: 50px;
+  margin: 0 auto 20px;
   text-decoration: none;
-  transition: 0.3s ease-in-out background-position;
-  text-transform: uppercase;
-  text-align: center;
-  outline: none;
-`;
-
-const DialogButton = styled.div`
-  width: 200px;
-  font-size: 18px;
+  box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
   cursor: pointer;
-  text-transform: uppercase;
+  outline: none;
+  transition: 0.2s all;
+  :active {
+    transform: scale(0.98);
+    box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.5);
+  }
 `;
 
-//variables
-const uniGen3ContractAddress = uniVoxelContract.address; //currently on rinkeby
-const uniGen3ContractAbi = uniVoxelContract.abi;
-const ucdContractAddress = ucdContract.address[environmentTest.chainId]; //to update
+// const DialogButton = styled.div`
+//   width: 200px;
+//   font-size: 18px;
+//   cursor: pointer;
+//   text-transform: uppercase;
+// `;
+
+const escrowContractAddress = escrowContract.address; //currently on rinkeby
+const ucdRinkebyContractAddress = ucdContract.address[environmentTest.chainId];
+const ucdContractAddress = ucdContract.address[environment.chainId];
 const ucdContractABI = ucdContract.abi;
 
 let signer, provider;
-// toast.configure();
 
 const CheckContractApproval = (props) => {
-  const [openDialog, setOpenDialog] = useState(props.openDialog);
+  //open dialog
+  // const [openDialog, setOpenDialog] = useState(props.openDialog);
   const [isLoading, setIsLoading] = useState(false);
-
+  const { enqueueSnackbar } = useSnackbar();
   const handleDialogClose = () => {
     props.setOpenDialog(false);
   };
 
-  /**
-   * Function to create a contract based on address, abi, and signer
-   */
+  //create contract
+  const { isOnMainnet, checkChain } = useContext(MarketplaceContext);
   async function createContract() {
-    return new ethers.Contract(ucdContractAddress, ucdContractABI, signer);
+    await checkChain();
+    console.log("isOnMainnet? ", isOnMainnet);
+    if (isOnMainnet) {
+      return new ethers.Contract(ucdContractAddress, ucdContractABI, signer);
+    }
+    if (!isOnMainnet) {
+      return new ethers.Contract(
+        ucdRinkebyContractAddress,
+        ucdContractABI,
+        signer
+      );
+    }
   }
-
-  /**
-   * Set approval for transfer of tokens
-   */
+  //approve transfer
   async function setApproval() {
     const contract = await createContract();
 
     await contract
-      .approve(uniGen3ContractAddress, ethers.constants.MaxUint256)
+      .approve(escrowContractAddress, ethers.constants.MaxUint256)
       .then(async (tx) => {
         setIsLoading(true);
-        tx.wait().then((success) => {
+        tx.wait().then(() => {
           setIsLoading(false);
           handleDialogClose();
-          toast.success("Permissions approved successfully");
+          enqueueSnackbar("Permissions approved successfully", {
+            variant: "success",
+          });
         });
       })
       .catch((err) => {
         setIsLoading(false);
+        enqueueSnackbar(getError(err), { variant: "error" });
       });
   }
 
   useEffect(() => {
-    // Check if Ethereum is enabled via metamask or some other provider
     if (MetaMaskOnboarding.isMetaMaskInstalled()) {
-      // A Web3Provider wraps a standard Web3 provider, which is
-      // what Metamask injects as window.ethereum into each page
       provider = new ethers.providers.Web3Provider(window.ethereum);
-
-      // The Metamask plugin also allows signing transactions to
-      // send ether and pay to change state within the blockchain.
-      // For this, you need the account signer...
       signer = provider.getSigner();
     }
   }, []);
@@ -123,21 +135,23 @@ const CheckContractApproval = (props) => {
       aria-labelledby="dialog-title"
       aria-describedby="dialog-description"
     >
-      <DialogTitle>Requesting Permission</DialogTitle>
       {isLoading ? (
-        <DialogText>Loading Permissions...</DialogText>
+        <DialogLoading>
+          Loading Permissions
+          <CircularProgress />
+        </DialogLoading>
       ) : (
         <>
           <DialogText>
-            We need your approval in order to exchange UCD/SHO tokens for Nex10
-            services.
+            Please allow our marketplace contract to access the $UCD in your
+            wallet before you can spend you $UCD.
           </DialogText>
 
-          <DialogActions>
+          <DialogActions sx={classes.approveContract}>
             <DialogApproveButton autoFocus onClick={setApproval}>
               Approve
             </DialogApproveButton>
-            <DialogButton onClick={handleDialogClose}>Cancel</DialogButton>
+            {/* <DialogButton onClick={handleDialogClose}>Cancel</DialogButton> */}
           </DialogActions>
         </>
       )}

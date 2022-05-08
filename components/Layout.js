@@ -33,11 +33,13 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import classes from "../utils/classes";
 //components
 import { Store } from "../utils/Store";
-import { MarketplaceContext } from "../utils/MarketplaceContext";
 import data from "../utils/data";
 import { getError } from "../utils/error";
+import { MarketplaceContext } from "../utils/MarketplaceContext";
+import CheckContractApproval from "../components/CheckContractApproval";
 //styling
 import nex10Logo from "../public/images/logo/nex10-logo.png";
+import { Colors } from "../utils/Theme";
 import styled from "styled-components";
 
 const CartItem = styled.span`
@@ -52,6 +54,29 @@ const CartItemDetail = styled.div`
   flex: 1;
   padding: 0 20px;
   flex-direction: column;
+`;
+const PurchaseButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  font-weight: 500;
+  color: #ffffff;
+  width: 90%;
+  background: ${Colors.Dialog};
+  border-radius: 50px;
+  margin: 0 auto 20px;
+  text-decoration: none;
+  box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
+  cursor: pointer;
+  outline: none;
+  transition: 0.2s all;
+  :active {
+    transform: scale(0.98);
+    box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.5);
+  }
 `;
 
 export default function Layout({ title, description, children }) {
@@ -84,7 +109,7 @@ export default function Layout({ title, description, children }) {
     },
     palette: {
       primary: {
-        main: "#f0c000",
+        main: "#0097DA",
       },
       secondary: {
         main: "#208080",
@@ -134,6 +159,12 @@ export default function Layout({ title, description, children }) {
     const existItem = cart.cartItems.find((x) => x._id === product._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
     dispatch({ type: "CART_REMOVE_ITEM", payload: { ...product, quantity } });
+  };
+
+  //open contract dialog
+  const [openDialog, setOpenDialog] = useState(false);
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
   };
 
   return (
@@ -213,6 +244,7 @@ export default function Layout({ title, description, children }) {
                     background: "transparent",
                     border: "none",
                     cursor: "pointer",
+                    transformation: "none",
                   }}
                 >
                   <Typography component="span">
@@ -267,6 +299,13 @@ export default function Layout({ title, description, children }) {
                         />
                       </CartItem>
                     ))}
+                    <PurchaseButton onClick={handleOpenDialog}>
+                      Purchase
+                    </PurchaseButton>
+                    <CheckContractApproval
+                      openDialog={openDialog}
+                      setOpenDialog={setOpenDialog}
+                    />
                   </Dropdown.Menu>
                 ) : (
                   <div style={{ background: "transparent" }}></div>

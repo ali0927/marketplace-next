@@ -162,5 +162,9 @@ const classes = {
     lineHeight: "180%",
     color: "#fff",
   },
+  approveContract: {
+    padding: "0px",
+    marginBottom: "0px",
+  },
 };
 export default classes;

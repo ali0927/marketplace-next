@@ -14,30 +14,11 @@ import { Box } from "@mui/system";
 import classes from "../../utils/classes";
 //components
 import Layout from "../../components/Layout";
-// import CheckContractApproval from "../components/CheckContractApproval";
 import { MarketplaceContext } from "../../utils/MarketplaceContext";
 import db from "../../utils/db";
 import Product from "../../models/Product";
 import { Store } from "../../utils/Store";
 import ProductItem from "../../components/ProductItem";
-
-// const Button = styled.button`
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   cursor: pointer;
-//   border: none;
-//   padding: 0.5rem 1.5rem;
-//   font-weight: 500;
-//   color: ${Colors.White};
-//   width: max-content;
-//   background: linear-gradient(
-//     to right,
-//     ${Colors.Gradients.PrimaryToSec[0]},
-//     ${Colors.Gradients.PrimaryToSec[1]}
-//   );
-//   border-radius: ${(p) => (p.round ? "50px" : "5px")};
-// `;
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -104,8 +85,12 @@ const FilterContainer = styled.div`
   margin-bottom: 40px;
   display: flex;
   flex-direction: row;
+  justify-content: center;
   align-items: center;
   gap: 0.7rem;
+  @media ${Devices.Laptop} {
+    justify-content: flex-start;
+  }
 `;
 const FilterText = styled.div`
   color: #ffffff;
@@ -149,12 +134,7 @@ export default function Home(props) {
     router.push("/uu/search?type=Raffle");
   };
 
-  // const [openDialog, setOpenDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
-  // const handleOpenDialog = () => {
-  //   setOpenDialog(true);
-  // };
 
   const handleLoading = () => {
     setIsLoading(false);
@@ -217,23 +197,6 @@ export default function Home(props) {
               <FilterButton onClick={whitelistFilter}>Whitelist</FilterButton>
               <FilterButton onClick={raffleFilter}>NFT Raffle</FilterButton>
             </FilterContainer>
-
-            {/*<div
-              style={{
-                display: "flex",
-                gap: "0.5rem",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-               <Button round onClick={handleOpenDialog}>
-                Approve
-              </Button>
-              <CheckContractApproval
-                openDialog={openDialog}
-                setOpenDialog={setOpenDialog}
-              />
-            </div> */}
             <Grid
               container
               spacing={4}

@@ -112,6 +112,7 @@ export const MarketplaceProvider = ({ children }) => {
    */
   async function createUcdContract() {
     await checkChain();
+
     if (isOnMainnet) {
       return new ethers.Contract(ucdContractAddress, ucdContractABI, signer);
     }
@@ -134,8 +135,8 @@ export const MarketplaceProvider = ({ children }) => {
     await getAccount();
     if (currentAccount) {
       const contract = await createUcdContract();
-
       let balance = await contract.balanceOf(currentAccount);
+
       setUcdWalletBalance(
         parseFloat(ethers.utils.formatEther(balance))
           .toFixed(0)

@@ -3,6 +3,7 @@ export const Colors = {
   UUPrimary: "#F333CB",
   SSPrimary: "#F33333",
   bg: "#152266",
+  Dialog: "#30358C",
   // lINK: "#93d2fd",
   // PrimaryDark: "##0f1c39",
   // PrimaryDisable: "#1e3f6f",
@@ -12,7 +13,6 @@ export const Colors = {
   // Border: "#e3e3e3",
   // Gray: "rgb(148, 155, 164)",
   // GrayBG: "#f7f9fa",
-  Gradients: { PrimaryToSec: ["#1199fa", "#10c0e9"] },
 };
 
 const BreakPoints = {
