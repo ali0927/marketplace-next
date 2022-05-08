@@ -12,6 +12,9 @@ import UcdCoin from "../public/images/uu/ucd-coin.png";
 import styled from "styled-components";
 import { Colors } from "../utils/Theme";
 import Image from "next/image";
+import { useContext } from "react";
+import { Store } from "../utils/Store";
+import axios from "axios";
 const Trapezium = styled.div`
   padding: 5px 8px;
   background: ${Colors.bg};
@@ -75,7 +78,25 @@ const AddToCart = styled.button`
   cursor: pointer;
 `;
 
-function ProductItem({ product, addToCartHandler }) {
+function ProductItem({ product }) {
+  const { state, dispatch } = useContext(Store);
+
+  const addToCartHandler = async (product) => {
+    const existItem = state.cart.cartItems.find((x) => x._id === product._id);
+    const quantity = existItem ? existItem.quantity + 1 : 1;
+    const { data } = await axios.get(`/api/products/${product._id}`);
+    if (data.countInStock < quantity) {
+      window.alert("Sorry. Product is out of stock");
+      return;
+    }
+    dispatch({ type: "CART_ADD_ITEM", payload: { ...product, quantity } });
+  };
+  const removeFromCartHandler = async (product) => {
+    const existItem = state.cart.cartItems.find((x) => x._id === product._id);
+    const quantity = existItem ? existItem.quantity + 1 : 1;
+    dispatch({ type: "CART_REMOVE_ITEM", payload: { ...product, quantity } });
+  };
+
   return (
     <Card>
       <CardActionArea disableRipple sx={{ position: "relative" }}>
@@ -102,7 +123,15 @@ function ProductItem({ product, addToCartHandler }) {
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <AddToCart onClick={() => addToCartHandler(product)}>Buy Now</AddToCart>
+        {state.cart.cartItems.some((x) => x._id === product._id) ? (
+          <AddToCart onClick={() => removeFromCartHandler(product)}>
+            Remove from cart
+          </AddToCart>
+        ) : (
+          <AddToCart onClick={() => addToCartHandler(product)}>
+            Buy Now
+          </AddToCart>
+        )}
       </CardActions>
     </Card>
   );

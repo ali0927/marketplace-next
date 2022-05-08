@@ -2,24 +2,42 @@
 import { useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
-//components
-import Layout from "../components/Layout";
-// import CheckContractApproval from "../components/CheckContractApproval";
-import { MarketplaceContext } from "../utils/MarketplaceContext";
-import db from "../utils/db";
-import Product from "../models/Product";
-import { Store } from "../utils/Store";
 //image
 import Image from "next/image";
-import UcdCoin from "../public/images/uu/ucd-coin.png";
-import UcdRoundLogo from "../public/images/uu/uu-round-logo.png";
+import UcdCoin from "../../public/images/uu/ucd-coin.png";
+import UcdRoundLogo from "../../public/images/uu/uu-round-logo.png";
 //style
 import styled from "styled-components";
-import { Devices, Colors } from "../utils/Theme";
+import { Colors, Devices } from "../../utils/Theme";
 import { Grid } from "@mui/material";
-import ProductItem from "../components/ProductItem";
 import { Box } from "@mui/system";
-import classes from "../utils/classes";
+import classes from "../../utils/classes";
+//components
+import Layout from "../../components/Layout";
+// import CheckContractApproval from "../components/CheckContractApproval";
+import { MarketplaceContext } from "../../utils/MarketplaceContext";
+import db from "../../utils/db";
+import Product from "../../models/Product";
+import { Store } from "../../utils/Store";
+import ProductItem from "../../components/ProductItem";
+
+// const Button = styled.button`
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   cursor: pointer;
+//   border: none;
+//   padding: 0.5rem 1.5rem;
+//   font-weight: 500;
+//   color: ${Colors.White};
+//   width: max-content;
+//   background: linear-gradient(
+//     to right,
+//     ${Colors.Gradients.PrimaryToSec[0]},
+//     ${Colors.Gradients.PrimaryToSec[1]}
+//   );
+//   border-radius: ${(p) => (p.round ? "50px" : "5px")};
+// `;
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -98,44 +116,46 @@ const FilterButton = styled.button`
   border: 2px solid ${Colors.bg};
   padding: 10px 20px;
   border-radius: 3em;
-  background-color: ${({ isSelected }) =>
-    isSelected ? "#152266" : "transparent"};
-  color: #ffffff;
   cursor: pointer;
   font-family: Oxanium;
   font-size: 14px;
   text-align: center;
+  color: #ffffff;
+  background-color: ${(props) => (props.color ? props.color : "transparent")};
   :hover {
     background-color: ${Colors.bg};
   }
-  &:active {
+  &.active {
     background-color: ${Colors.bg};
   }
 `;
 
-export default function Search(props) {
+export default function Home(props) {
   const { products } = props;
   const { isOnMainnet, ucdWalletBalance, getUCDBalance } =
     useContext(MarketplaceContext);
   const { state, dispatch } = useContext(Store);
 
   //filter
-  const [isSelected, setIsSelected] = useState(false);
   const router = useRouter();
+
   const allFilter = () => {
-    setIsSelected(!isSelected);
-    router.push("/marketplace/");
+    router.push("/uu/marketplace");
   };
   const whitelistFilter = () => {
-    setIsSelected(!isSelected);
-    router.push("/search?type=Whitelist");
+    router.push("/uu/search?type=Whitelist");
   };
   const raffleFilter = () => {
-    setIsSelected(!isSelected);
-    router.push("/search?type=Raffle");
+    router.push("/uu/search?type=Raffle");
   };
 
+  // const [openDialog, setOpenDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  // const handleOpenDialog = () => {
+  //   setOpenDialog(true);
+  // };
+
   const handleLoading = () => {
     setIsLoading(false);
   };
@@ -156,7 +176,7 @@ export default function Search(props) {
     return () => window.removeEventListener("load", handleLoading);
   }, [getUCDBalance]);
   return (
-    <Layout title="Search">
+    <Layout>
       <div>
         {!isOnMainnet ? (
           <div>
@@ -191,10 +211,29 @@ export default function Search(props) {
             </HeaderContainer>
             <FilterContainer>
               <FilterText>Filter By:</FilterText>
-              <FilterButton onClick={allFilter}>All</FilterButton>
+              <FilterButton color={"#152266"} onClick={allFilter}>
+                All
+              </FilterButton>
               <FilterButton onClick={whitelistFilter}>Whitelist</FilterButton>
               <FilterButton onClick={raffleFilter}>NFT Raffle</FilterButton>
             </FilterContainer>
+
+            {/*<div
+              style={{
+                display: "flex",
+                gap: "0.5rem",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+               <Button round onClick={handleOpenDialog}>
+                Approve
+              </Button>
+              <CheckContractApproval
+                openDialog={openDialog}
+                setOpenDialog={setOpenDialog}
+              />
+            </div> */}
             <Grid
               container
               spacing={4}
@@ -222,6 +261,7 @@ export default function Search(props) {
   );
 }
 
+//server side props
 export async function getServerSideProps({ query }) {
   await db.connect();
   const type = query.type || "";
@@ -231,7 +271,6 @@ export async function getServerSideProps({ query }) {
     ...typeFilter,
   }).lean();
   await db.disconnect();
-
   const products = productDocs.map(db.convertDocToObj);
 
   return {

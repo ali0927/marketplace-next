@@ -5,6 +5,8 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
 import axios from "axios";
+import Image from "next/image";
+import { Dropdown } from "react-bootstrap";
 //material ui
 import { Avatar, CssBaseline, ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
@@ -24,27 +26,41 @@ import {
   Divider,
   ListItemText,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
+// import MenuIcon from "@mui/icons-material/Menu";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import CancelIcon from "@mui/icons-material/Cancel";
 import classes from "../utils/classes";
-//styling
-import nex10Logo from "../public/images/logo/nex10-logo.png";
-
 //components
 import { Store } from "../utils/Store";
 import { MarketplaceContext } from "../utils/MarketplaceContext";
 import data from "../utils/data";
 import { getError } from "../utils/error";
-import Image from "next/image";
+//styling
+import nex10Logo from "../public/images/logo/nex10-logo.png";
+import styled from "styled-components";
+
+const CartItem = styled.span`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 20px;
+  margin-bottom: 20px;
+`;
+const CartItemDetail = styled.div`
+  display: flex;
+  flex: 1;
+  padding: 0 20px;
+  flex-direction: column;
+`;
 
 export default function Layout({ title, description, children }) {
   const router = useRouter();
-  const { state } = useContext(Store);
   const { hasMetamask, currentAccount, connectWallet } =
     useContext(MarketplaceContext);
-  const { darkMode, cart } = state;
+  const { state, dispatch } = useContext(Store);
+  const { cart } = state;
+
   const theme = createTheme({
     components: {
       MuiLink: {
@@ -67,7 +83,6 @@ export default function Layout({ title, description, children }) {
       },
     },
     palette: {
-      mode: darkMode ? "dark" : "light",
       primary: {
         main: "#f0c000",
       },
@@ -112,6 +127,13 @@ export default function Layout({ title, description, children }) {
 
   const adminHandler = () => {
     router.push("/admin/products");
+  };
+
+  //remove product from cart
+  const removeFromCartHandler = async (product) => {
+    const existItem = cart.cartItems.find((x) => x._id === product._id);
+    const quantity = existItem ? existItem.quantity + 1 : 1;
+    dispatch({ type: "CART_REMOVE_ITEM", payload: { ...product, quantity } });
   };
 
   return (
@@ -184,8 +206,15 @@ export default function Layout({ title, description, children }) {
             <div
               style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}
             >
-              <NextLink href="/cart" passHref>
-                <Link>
+              <Dropdown alignRight>
+                <Dropdown.Toggle
+                  variant="success"
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    cursor: "pointer",
+                  }}
+                >
                   <Typography component="span">
                     {cart.cartItems.length > 0 ? (
                       <Badge
@@ -202,8 +231,47 @@ export default function Layout({ title, description, children }) {
                       </Avatar>
                     )}
                   </Typography>
-                </Link>
-              </NextLink>
+                </Dropdown.Toggle>
+                {cart.cartItems.length > 0 ? (
+                  <Dropdown.Menu
+                    style={{
+                      paddingTop: "20px",
+                      marginTop: "10px",
+                      color: "#ffffff",
+                      minWidth: 200,
+                      background: "#152266",
+                      zIndex: 10,
+                    }}
+                  >
+                    {cart.cartItems.map((product) => (
+                      <CartItem key={product._id}>
+                        <Image
+                          src={product.image}
+                          alt={product.name}
+                          height={50}
+                          width={50}
+                          style={{ borderRadius: "50%", objectFit: "cover" }}
+                        />
+
+                        <CartItemDetail>
+                          <span>
+                            {product.brand} {product.name}
+                          </span>
+                          <span>
+                            {product.price} {product.currency}
+                          </span>
+                        </CartItemDetail>
+                        <CancelIcon
+                          style={{ fontSize: 22, cursor: "pointer" }}
+                          onClick={() => removeFromCartHandler(product)}
+                        />
+                      </CartItem>
+                    ))}
+                  </Dropdown.Menu>
+                ) : (
+                  <div style={{ background: "transparent" }}></div>
+                )}
+              </Dropdown>
               {data.admin.includes(currentAccount) ? (
                 <Button onClick={adminHandler} fullWidth>
                   <Avatar sx={classes.avatar}>

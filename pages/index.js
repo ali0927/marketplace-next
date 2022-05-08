@@ -35,7 +35,7 @@ export default function Home() {
   const { isOnMainnet } = useContext(MarketplaceContext);
   const router = useRouter();
   const accessUuMarketplace = () => {
-    router.push("/marketplace");
+    router.push("/uu/marketplace");
   };
 
   //hover on marketplace
