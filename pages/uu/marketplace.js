@@ -76,7 +76,8 @@ const WalletAmount = styled.div`
   margin-left: auto;
   display: flex;
   align-items: center;
-  font-family: "Oxanium", > img {
+  font-family: "Oxanium";
+  > img {
     margin-right: 2px;
   }
 `;

@@ -64,6 +64,7 @@ const PurchaseButton = styled.button`
   border: none;
   padding: 0.5rem 1.5rem;
   font-weight: 500;
+  font-family: "Oxanium";
   color: #ffffff;
   width: 90%;
   background: ${Colors.Dialog};
@@ -89,25 +90,21 @@ export default function Layout({ title, description, children }) {
 
   const theme = createTheme({
     components: {
-      MuiLink: {
-        defaultProps: {
-          underline: "hover",
-        },
-      },
       MuiPaper: {
-        root: {
-          background: "#30358C",
-          boxShadow:
-            "0px 11px 15px -7px rgb(0 0 0 / 20%), 0px 24px 38px 3px rgb(0 0 0 / 14%), 0px 9px 46px 8px rgb(0 0 0 / 12%)",
-          display: "block",
-          padding: "24px",
-          borderRadius: "4px",
-          boxSizing: "border-box",
-          width: "100%",
+        styleOverrides: {
+          root: {
+            background: "#30358C",
+            boxShadow:
+              "0px 11px 15px -7px rgb(0 0 0 / 20%), 0px 24px 38px 3px rgb(0 0 0 / 14%), 0px 9px 46px 8px rgb(0 0 0 / 12%)",
+            display: "block",
+            padding: "24px",
+            borderRadius: "4px",
+            boxSizing: "border-box",
+            width: "100%",
+          },
         },
       },
     },
-
     typography: {
       h1: {
         fontSize: "1.6rem",
@@ -283,6 +280,7 @@ export default function Layout({ title, description, children }) {
                       minWidth: 200,
                       background: "#152266",
                       zIndex: 10,
+                      fontFamily: "Oxanium",
                     }}
                   >
                     {cart.cartItems.map((product) => (

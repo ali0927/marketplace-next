@@ -13,7 +13,7 @@ import classes from "../../utils/classes";
 //components/utils/context
 import { MarketplaceContext } from "../../utils/MarketplaceContext";
 import { getError } from "../../utils/error";
-import ProceedWithPurchase from "./ProceedWithPurchase";
+
 //environment
 import { environmentTest } from "../../lib/environments/environment";
 import { environment } from "../../lib/environments/environment.prod";
