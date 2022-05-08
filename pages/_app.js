@@ -4,6 +4,7 @@ import { MarketplaceProvider } from "../utils/MarketplaceContext";
 import { SnackbarProvider } from "notistack";
 import { CacheProvider } from "@emotion/react";
 import createEmotionCache from "../utils/createEmotionCache";
+import Head from "next/head";
 
 const GlobalStyle = createGlobalStyle`
   html,
@@ -58,25 +59,8 @@ const GlobalStyle = createGlobalStyle`
     justify-content: center;
   }
   /* NFT Card */
-  .css-bhp9pd-MuiPaper-root-MuiCard-root {
-    background-color: #152266;
-    padding: 20px 25px;
-    color: #ffffff;
-  }
   .MuiCardContent-root {
     padding: 16px 0px 0px 0px;
-  }
-  
-
-  /* Contract Approval Dialog */
-  .css-1t1j96h-MuiPaper-root-MuiDialog-paper {
-    background: #30358C;
-    box-shadow: 0px 11px 15px -7px rgb(0 0 0 / 20%), 0px 24px 38px 3px rgb(0 0 0 / 14%), 0px 9px 46px 8px rgb(0 0 0 / 12%);
-    display: block;
-    padding: 24px;
-    border-radius: 4px;
-    box-sizing: border-box;
-    width: 100%;
   }
 `;
 
@@ -86,18 +70,29 @@ function MyApp(props) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
 
   return (
-    <CacheProvider value={emotionCache}>
-      <SnackbarProvider
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <MarketplaceProvider>
-          <StoreProvider>
-            <GlobalStyle />
-            <Component {...pageProps} />
-          </StoreProvider>
-        </MarketplaceProvider>
-      </SnackbarProvider>
-    </CacheProvider>
+    <>
+      <Head>
+        <title>Nex10 Marketplace</title>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;600;700&display=swap"
+        />
+      </Head>
+      <CacheProvider value={emotionCache}>
+        <SnackbarProvider
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <MarketplaceProvider>
+            <StoreProvider>
+              <GlobalStyle />
+              <Component {...pageProps} />
+            </StoreProvider>
+          </MarketplaceProvider>
+        </SnackbarProvider>
+      </CacheProvider>
+    </>
   );
 }
 

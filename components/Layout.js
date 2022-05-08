@@ -36,11 +36,12 @@ import { Store } from "../utils/Store";
 import data from "../utils/data";
 import { getError } from "../utils/error";
 import { MarketplaceContext } from "../utils/MarketplaceContext";
-import CheckContractApproval from "../components/CheckContractApproval";
+import CheckContractApproval from "./Dialogs/CheckContractApproval";
 //styling
 import nex10Logo from "../public/images/logo/nex10-logo.png";
 import { Colors } from "../utils/Theme";
 import styled from "styled-components";
+import ProceedWithPurchase from "./Dialogs/ProceedWithPurchase";
 
 const CartItem = styled.span`
   display: flex;
@@ -93,6 +94,18 @@ export default function Layout({ title, description, children }) {
           underline: "hover",
         },
       },
+      MuiPaper: {
+        root: {
+          background: "#30358C",
+          boxShadow:
+            "0px 11px 15px -7px rgb(0 0 0 / 20%), 0px 24px 38px 3px rgb(0 0 0 / 14%), 0px 9px 46px 8px rgb(0 0 0 / 12%)",
+          display: "block",
+          padding: "24px",
+          borderRadius: "4px",
+          boxSizing: "border-box",
+          width: "100%",
+        },
+      },
     },
 
     typography: {
@@ -125,8 +138,12 @@ export default function Layout({ title, description, children }) {
       },
     },
   });
-  //togle sidebar
+  //state
   const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [types, setTypes] = useState([]);
+  const [openDialog, setOpenDialog] = useState("");
+
+  //togle sidebar
   const sidebarOpenHandler = () => {
     setSidebarVisible(true);
   };
@@ -135,7 +152,6 @@ export default function Layout({ title, description, children }) {
   };
 
   //filter by types
-  const [types, setTypes] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
   const fetchBrands = async () => {
     try {
@@ -159,12 +175,6 @@ export default function Layout({ title, description, children }) {
     const existItem = cart.cartItems.find((x) => x._id === product._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
     dispatch({ type: "CART_REMOVE_ITEM", payload: { ...product, quantity } });
-  };
-
-  //open contract dialog
-  const [openDialog, setOpenDialog] = useState(false);
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
   };
 
   return (
@@ -299,18 +309,22 @@ export default function Layout({ title, description, children }) {
                         />
                       </CartItem>
                     ))}
-                    <PurchaseButton onClick={handleOpenDialog}>
+                    <PurchaseButton onClick={() => setOpenDialog("first")}>
                       Purchase
                     </PurchaseButton>
-                    <CheckContractApproval
-                      openDialog={openDialog}
-                      setOpenDialog={setOpenDialog}
-                    />
                   </Dropdown.Menu>
                 ) : (
                   <div style={{ background: "transparent" }}></div>
                 )}
               </Dropdown>
+              <CheckContractApproval
+                openDialog={openDialog}
+                setOpenDialog={setOpenDialog}
+              />
+              <ProceedWithPurchase
+                openDialog={openDialog}
+                setOpenDialog={setOpenDialog}
+              />
               {data.admin.includes(currentAccount) ? (
                 <Button onClick={adminHandler} fullWidth>
                   <Avatar sx={classes.avatar}>
@@ -343,9 +357,11 @@ export default function Layout({ title, description, children }) {
             </div>
           </Toolbar>
         </AppBar>
+
         <Container component="main" sx={classes.main}>
           {children}
         </Container>
+
         <Box component="footer" sx={classes.footer}>
           Copyright © 2022 NEX10 Labs Pte Ltd. All Rights Reserved.
         </Box>

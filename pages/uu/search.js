@@ -41,6 +41,7 @@ const HeaderMarketplace = styled.div`
 const HeaderText = styled.div`
   font-size: 38px;
   font-weight: 600;
+  font-family: "Oxanium";
 `;
 const WalletGeneralInfo = styled.div`
   display: flex;
@@ -58,6 +59,7 @@ const WalletBalance = styled.div`
   margin-bottom: 20px;
   font-weight: 700;
   font-size: 14px;
+  font-family: "Oxanium",
   display: flex;
   letter-spacing: 1px;
   margin-left: auto;
@@ -69,12 +71,13 @@ const WalletText = styled.span`
   margin-right: 30px;
   color: "#c4c4c4";
   font-weight: 400;
+  font-family: "Oxanium";
 `;
 const WalletAmount = styled.div`
   margin-left: auto;
   display: flex;
   align-items: center;
-  > img {
+  font-family: "Oxanium", > img {
     margin-right: 2px;
   }
 `;
@@ -102,7 +105,9 @@ const FilterButton = styled.button`
   border: 2px solid ${Colors.bg};
   padding: 10px 20px;
   border-radius: 3em;
-  background-color: ${(props) => (props.color ? props.color : "transparent")};
+  background-color: ${(props) => {
+    return props.active ? "#152266" : "transparent";
+  }};
   color: #ffffff;
   cursor: pointer;
   font-family: Oxanium;
@@ -117,6 +122,9 @@ const FilterButton = styled.button`
 `;
 
 export default function Search(props) {
+  //state
+  const [isLoading, setIsLoading] = useState(true);
+
   const { products } = props;
   const { isOnMainnet, ucdWalletBalance, getUCDBalance } =
     useContext(MarketplaceContext);
@@ -124,22 +132,17 @@ export default function Search(props) {
 
   //filter
   const router = useRouter();
-  const [active, setActive] = useState(false);
-
+  const queryUrl = router.query.type;
   const allFilter = () => {
-    setActive(!active);
     router.push("/uu/marketplace");
   };
   const whitelistFilter = () => {
-    setActive(!active);
     router.push("/uu/search?type=Whitelist");
   };
   const raffleFilter = () => {
-    setActive(!active);
     router.push("/uu/search?type=Raffle");
   };
 
-  const [isLoading, setIsLoading] = useState(true);
   const handleLoading = () => {
     setIsLoading(false);
   };
@@ -159,6 +162,7 @@ export default function Search(props) {
     window.addEventListener("load", handleLoading);
     return () => window.removeEventListener("load", handleLoading);
   }, [getUCDBalance]);
+
   return (
     <Layout title="Search">
       <div style={{ width: "1200px" }}>
@@ -196,10 +200,18 @@ export default function Search(props) {
             <FilterContainer>
               <FilterText>Filter By:</FilterText>
               <FilterButton onClick={allFilter}>All</FilterButton>
-              <FilterButton onClick={whitelistFilter} color={"#152266"}>
+              <FilterButton
+                onClick={whitelistFilter}
+                active={queryUrl === "Whitelist"}
+              >
                 Whitelist
               </FilterButton>
-              <FilterButton onClick={raffleFilter}>NFT Raffle</FilterButton>
+              <FilterButton
+                onClick={raffleFilter}
+                active={queryUrl === "Raffle"}
+              >
+                NFT Raffle
+              </FilterButton>
             </FilterContainer>
             <Grid
               container

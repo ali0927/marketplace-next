@@ -40,6 +40,7 @@ const HeaderMarketplace = styled.div`
 const HeaderText = styled.div`
   font-size: 38px;
   font-weight: 600;
+  font-family: "Oxanium";
 `;
 const WalletGeneralInfo = styled.div`
   display: flex;
@@ -57,6 +58,7 @@ const WalletBalance = styled.div`
   margin-bottom: 20px;
   font-weight: 700;
   font-size: 14px;
+  font-family: "Oxanium",
   display: flex;
   letter-spacing: 1px;
   margin-left: auto;
@@ -68,12 +70,13 @@ const WalletText = styled.span`
   margin-right: 30px;
   color: "#c4c4c4";
   font-weight: 400;
+  font-family: "Oxanium";
 `;
 const WalletAmount = styled.div`
   margin-left: auto;
   display: flex;
   align-items: center;
-  > img {
+  font-family: "Oxanium", > img {
     margin-right: 2px;
   }
 `;

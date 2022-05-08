@@ -32,6 +32,7 @@ const classes = {
     textAlign: "center",
     color: "#ffffff",
     fontSize: "14px",
+    fontFamily: "Oxanium",
   },
   section: {
     marginTop: 1,
@@ -97,6 +98,7 @@ const classes = {
     fontSize: "32px",
     letterSpacing: "1.5px",
     textAlign: "center",
+    fontFamily: "Oxanium",
   },
   marketplaceUUCard: {
     height: "380px",
@@ -141,6 +143,11 @@ const classes = {
     color: "#ffffff",
   },
   //nftCard
+  nftCard: {
+    backgroundColor: "#152266",
+    padding: "20px 25px",
+    color: "#ffffff",
+  },
   nftCardText: {
     display: "flex",
     justifyContent: "space-between",

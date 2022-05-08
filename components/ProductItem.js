@@ -1,4 +1,5 @@
-//react
+//react/next/packages
+import axios from "axios";
 //material ui
 import {
   Card,
@@ -8,13 +9,13 @@ import {
   CardMedia,
 } from "@mui/material";
 //styling
-import UcdCoin from "../public/images/uu/ucd-coin.png";
-import styled from "styled-components";
 import { Colors } from "../utils/Theme";
 import Image from "next/image";
 import { useContext } from "react";
 import { Store } from "../utils/Store";
-import axios from "axios";
+import classes from "../utils/classes";
+import UcdCoin from "../public/images/uu/ucd-coin.png";
+import styled from "styled-components";
 const Trapezium = styled.div`
   padding: 5px 8px;
   background: ${Colors.bg};
@@ -98,7 +99,7 @@ function ProductItem({ product }) {
   };
 
   return (
-    <Card>
+    <Card sx={classes.nftCard}>
       <CardActionArea disableRipple sx={{ position: "relative" }}>
         <Trapezium>
           <p>{product.brand}</p>

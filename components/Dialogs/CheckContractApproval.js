@@ -5,20 +5,21 @@ import { useSnackbar } from "notistack";
 import { ethers } from "ethers";
 import MetaMaskOnboarding from "@metamask/onboarding";
 //material ui
-import { CircularProgress, Dialog, DialogActions } from "@mui/material";
+import { Dialog, DialogActions } from "@mui/material";
 //styles
 import styled from "styled-components";
-import { Colors } from "../utils/Theme";
-import classes from "../utils/classes";
+import { Colors } from "../../utils/Theme";
+import classes from "../../utils/classes";
 //components/utils/context
-import { MarketplaceContext } from "../utils/MarketplaceContext";
-import { getError } from "../utils/error";
+import { MarketplaceContext } from "../../utils/MarketplaceContext";
+import { getError } from "../../utils/error";
+import ProceedWithPurchase from "./ProceedWithPurchase";
 //environment
-import { environmentTest } from "../lib/environments/environment";
-import { environment } from "../lib/environments/environment.prod";
+import { environmentTest } from "../../lib/environments/environment";
+import { environment } from "../../lib/environments/environment.prod";
 //contracts
-import escrowContract from "../lib/contracts/EscrowWallet.json";
-import ucdContract from "../lib/contracts/UniCandy.json";
+import escrowContract from "../../lib/contracts/EscrowWallet.json";
+import ucdContract from "../../lib/contracts/UniCandy.json";
 
 const DialogText = styled.div`
   line-height: 150%;
@@ -26,6 +27,7 @@ const DialogText = styled.div`
   margin-top: 1em;
   margin-bottom: 1em;
   color: #fff;
+  background-color: "red";
 `;
 
 const DialogLoading = styled.div`
@@ -60,13 +62,6 @@ const DialogApproveButton = styled.div`
   }
 `;
 
-// const DialogButton = styled.div`
-//   width: 200px;
-//   font-size: 18px;
-//   cursor: pointer;
-//   text-transform: uppercase;
-// `;
-
 const escrowContractAddress = escrowContract.address; //currently on rinkeby
 const ucdRinkebyContractAddress = ucdContract.address[environmentTest.chainId];
 const ucdContractAddress = ucdContract.address[environment.chainId];
@@ -76,18 +71,16 @@ let signer, provider;
 
 const CheckContractApproval = (props) => {
   //open dialog
-  // const [openDialog, setOpenDialog] = useState(props.openDialog);
   const [isLoading, setIsLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const handleDialogClose = () => {
-    props.setOpenDialog(false);
+    props.setOpenDialog("second");
   };
 
   //create contract
   const { isOnMainnet, checkChain } = useContext(MarketplaceContext);
   async function createContract() {
     await checkChain();
-    console.log("isOnMainnet? ", isOnMainnet);
     if (isOnMainnet) {
       return new ethers.Contract(ucdContractAddress, ucdContractABI, signer);
     }
@@ -100,6 +93,7 @@ const CheckContractApproval = (props) => {
     }
   }
   //approve transfer
+  //open contract dialog
   async function setApproval() {
     const contract = await createContract();
 
@@ -130,16 +124,13 @@ const CheckContractApproval = (props) => {
 
   return (
     <Dialog
-      open={props.openDialog}
+      open={props.openDialog === "first"}
       onClose={handleDialogClose}
       aria-labelledby="dialog-title"
       aria-describedby="dialog-description"
     >
       {isLoading ? (
-        <DialogLoading>
-          Loading Permissions
-          <CircularProgress />
-        </DialogLoading>
+        <DialogLoading>Loading Permissions...</DialogLoading>
       ) : (
         <>
           <DialogText>
