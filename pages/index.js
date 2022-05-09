@@ -14,7 +14,7 @@ import classes from "../utils/classes";
 import { Box } from "@mui/system";
 import { Button, Card } from "@mui/material";
 import styled from "styled-components";
-import { Devices } from "../utils/Theme";
+import { Colors, Devices } from "../utils/Theme";
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -30,7 +30,44 @@ const Wrapper = styled.div`
     flex-direction: row;
   }
 `;
-
+const ParentCard = styled.div`
+  > button {
+    display: none;
+  }
+  &:hover {
+    > button {
+      display: flex;
+    }
+  }
+`;
+const EnterButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: "Oxanium";
+  color: #ffffff;
+  width: 70%;
+  position: absolute;
+  bottom: 20px;
+  left: 60px;
+  background: ${Colors.UUPrimary};
+  border-radius: 50px;
+  margin: 0 auto 20px;
+  text-decoration: none;
+  box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
+  cursor: pointer;
+  outline: none;
+  transition: 0.2s all;
+  :active {
+    transform: scale(0.98);
+    box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.5);
+  }
+`;
 export default function Home() {
   const { isOnMainnet } = useContext(MarketplaceContext);
   const router = useRouter();
@@ -61,12 +98,13 @@ export default function Home() {
                 style={{ backgroundColor: "transparent" }}
                 disableRipple
               >
-                <div>
+                <ParentCard>
                   <Image src={UUMain} alt="UU Main" width={378} height={378} />
                   <Card sx={classes.logoImg}>
                     <Image src={UULogo} alt="UU Logo" width={310} />
                   </Card>
-                </div>
+                  <EnterButton>Enter</EnterButton>
+                </ParentCard>
                 {/*  <button
                   sx={isHovering ? classes.enterMarketplace : classes.hidden}
                   onMouseOver={handleMouseOver}
