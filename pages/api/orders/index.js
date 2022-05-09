@@ -1,5 +1,5 @@
 import nc from "next-connect";
-import Order from "../../../models/Order";
+import Order from "../../../models/Order.model";
 import db from "../../../utils/db";
 import { onError } from "../../../utils/error";
 

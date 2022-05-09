@@ -16,7 +16,7 @@ import classes from "../../utils/classes";
 import Layout from "../../components/Layout";
 import { MarketplaceContext } from "../../utils/MarketplaceContext";
 import db from "../../utils/db";
-import Product from "../../models/Product";
+import Product from "../../models/Product.model";
 import { Store } from "../../utils/Store";
 import ProductItem from "../../components/ProductItem";
 

@@ -19,36 +19,56 @@ import { Store } from "../utils/Store";
 //environment
 import { environmentTest } from "../lib/environments/environment";
 import { environment } from "../lib/environments/environment.prod";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { useSnackbar } from "notistack";
+import { getError } from "../utils/error";
 
 function PaymentForm() {
+  //state
+  const [loading, setLoading] = useState(false);
+
+  //retrieve variables
+  const { closeSnackbar, enqueueSnackbar } = useSnackbar();
+  const { currentAccount } = useContext(MarketplaceContext);
+  const ethAddress = currentAccount;
+  const { state } = useContext(Store);
+  const {
+    cart: { cartItems, dispatch },
+  } = state;
+
+  //form validation
   const validationSchema = Yup.object().shape({
     discordId: Yup.string().min(3, "It's too short").required("Required"),
     email: Yup.string().email("Enter valid email").required("Required"),
   });
-  const { currentAccount } = useContext(MarketplaceContext);
-  const { state } = useContext(Store);
-  const {
-    cart: { cartItems },
-  } = state;
 
   const initialValues = {
     email: "",
     discordId: "",
     ethAddress: currentAccount,
     shippingAddress: "",
-    cartItems: cartItems,
+    cartItems: cartItems.map((x) => x._id),
   };
-  const getSignature = async (values) => {
+
+  //get signature
+  const getSignature = async (
+    email,
+    discordId,
+    ethAddress,
+    shippingAddress,
+    cartItems
+  ) => {
     const msgParams = {
       domain: {
         name: "Nex10 Marketplace",
         version: "1",
-        chainId: environmentTest.chainId.toString(),
+        chainId: process.env.NODE_ENV === "prod" ? 1 : 4,
       },
       message: {
-        email: values.email,
-        discordId: values.discordId,
-        shippingAddress: values.shippingAddress,
+        email: email,
+        discordId: discordId,
+        shippingAddress: shippingAddress,
         cartItems: cartItems,
       },
       primaryType: "Purchase",
@@ -62,12 +82,12 @@ function PaymentForm() {
           { name: "email", type: "string" },
           { name: "discordId", type: "string" },
           { name: "shippingAddress", type: "string" },
-          { name: "cartItems", type: "uint256[]" },
+          { name: "cartItems", type: "string[]" },
         ],
       },
     };
     try {
-      const from = currentAccount;
+      const from = ethAddress;
       const sign = await ethereum.request({
         method: "eth_signTypedData_v4",
         params: [from, JSON.stringify(msgParams)],
@@ -83,20 +103,43 @@ function PaymentForm() {
     discordId,
     shippingAddress,
     cartItems,
-    props,
+    // props,
   }) => {
-    // let signature = await getSignature(values);
-    // dispatch({
-    //   type: "SAVE_USER_DETAILS",
-    //   payload: { email, discordId, shippingAddress, cartItems },
-    // });
-    // Cookies.set("userDetails", {
-    //   email, discordId, shippingAddress, cartItems, signature
-    // });
-    // await placeOrderHandler();
-    console.log(email, discordId, shippingAddress, cartItems);
-    // console.log(signature);
-    props.resetForm();
+    try {
+      setLoading(true);
+      closeSnackbar();
+      let signature = await getSignature(
+        email,
+        discordId,
+        ethAddress,
+        shippingAddress,
+        cartItems
+      );
+      const { data } = await axios.post("/api/purchase", {
+        email,
+        discordId,
+        ethAddress,
+        shippingAddress,
+        cartItems,
+        signature,
+      });
+      console.log(
+        email,
+        discordId,
+        ethAddress,
+        shippingAddress,
+        cartItems,
+        signature
+      );
+      console.log(data);
+
+      // dispatch({ type: "CART_CLEAR" });
+      // Cookies.remove("cartItems");
+      // setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      enqueueSnackbar(getError(err), { variant: "error" });
+    }
   };
 
   return (

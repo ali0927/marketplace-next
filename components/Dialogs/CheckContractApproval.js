@@ -73,8 +73,14 @@ const CheckContractApproval = (props) => {
   //open dialog
   const [isLoading, setIsLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const [isApproved, setIsApproved] = useState(false);
   const handleDialogClose = () => {
-    props.setOpenDialog("second");
+    //if yes run this
+    if (isApproved) {
+      props.setOpenDialog("second");
+    } else {
+      props.setOpenDialog(null);
+    }
   };
 
   //create contract
@@ -103,6 +109,7 @@ const CheckContractApproval = (props) => {
         setIsLoading(true);
         tx.wait().then(() => {
           setIsLoading(false);
+          setIsApproved(true);
           handleDialogClose();
           enqueueSnackbar("Permissions approved successfully", {
             variant: "success",
