@@ -116,7 +116,7 @@ export default function Home() {
               <Card sx={classes.marketplaceSSCard}>
                 <div>
                   <Image src={SSMain} alt="SS Main" width={378} height={378} />
-                  <Card sx={classes.logoImg}>
+                  <Card sx={classes.ssLogoImg}>
                     <Image src={SSLogo} alt="SS Logo" width={310} />
                   </Card>
                 </div>

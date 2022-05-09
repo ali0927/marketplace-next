@@ -37,6 +37,7 @@ const classes = {
   section: {
     marginTop: 1,
     marginBottom: 1,
+    backgroundColor: "#ffffff",
   },
 
   // header
@@ -119,16 +120,12 @@ const classes = {
     height: "380px",
     width: "480px",
     border: "1px solid #152266",
-    background: "transparent",
+    backgroundColor: "rgba(0,0,0,0.35)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     position: "relative",
-    "&:hover": {
-      transform: "scale3d(1.05, 1.05, 1)",
-      border: "2px solid #F33333",
-      cursor: "pointer",
-    },
+    cursor: "default",
   },
   logoImg: {
     background: "transparent",
@@ -136,6 +133,16 @@ const classes = {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
+    display: "flex",
+    justifyContent: "center",
+  },
+  ssLogoImg: {
+    background: "transparent",
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    filter: "brightness(50%)",
   },
   enterMarketplace: {
     display: "initial",
@@ -152,11 +159,35 @@ const classes = {
     display: "flex",
     justifyContent: "space-between",
   },
+  //payment form
+  paperStyle: {
+    padding: "0 15px 40px 15px",
+    width: "250px",
+  },
+  particularsTitle: {
+    fontFamily: "Oxanium",
+    fontSize: "24px",
+    fontWeight: "600",
+    color: "#ffffff",
+  },
+  particularsCaption: {
+    color: "#ffffff",
+    fontSize: "12px",
+    fontFamily: "Oxanium",
+  },
+  particularsField: {
+    marginBottom: 1,
+    color: "#ffffff",
+  },
+  particularsLastField: {
+    color: "#ffffff",
+  },
   //admin product edit
   editContainer: {
     display: "flex",
     gap: "0.5rem",
   },
+  btnStyle: { marginTop: 10 },
   //utils
   avatar: {
     backgroundColor: "#152266",

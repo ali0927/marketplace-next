@@ -52,9 +52,11 @@ const WalletGeneralInfo = styled.div`
   }
 `;
 const WalletBalance = styled.div`
+display: flex;
+flex-direction: row;
   background: #152266;
   border-radius: 20px;
-  padding: 8px 15px;
+  padding: 10px 15px;
   margin-bottom: 20px;
   font-weight: 700;
   font-size: 14px;
