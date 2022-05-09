@@ -1,51 +1,29 @@
 const ethers = require("ethers")
 const mongoose = require("mongoose")
-const EscrowWallet = require("./lib/contracts/EscrowWallet.json")
-const MockSho = require("./lib/contracts/MockSho.json")
+const EscrowWallet = require("../lib/contracts/EscrowWallet.json")
+const MockSho = require("../lib/contracts/MockSho.json")
+const Wallet = require("../models/Wallet.model")
+const BurnEvent = require("../models/BurnEvent.model")
 
 require("dotenv").config()
 
-const rinkebyProvider = new ethers.providers.JsonRpcProvider(process.env.INFURA_PROVIDER_RINKEBY)
+const ethProvider = new ethers.providers.JsonRpcProvider(process.env.RPC_ETHEREUM)
 
 const EscrowWalletContract = new ethers.Contract(
-  EscrowWallet.address,
+  EscrowWallet.address[process.env.CHAINID_ETH],
   EscrowWallet.abi,
-  rinkebyProvider
+  ethProvider
 );
-
-const walletSchema = new mongoose.Schema(
-  {
-    address: { type: String, required: true, unique: true },
-    balances: [{
-        token_address: { type: String, required: true, unique: true },
-        token_name: { type: String, required: true },
-        token_symbol: { type: String, required: true },
-        balance: { type: Number, required: true }
-      }]
-  },
-  {
-    timestamps: true,
-  }
-);
-const Wallet = mongoose.model("Wallet", walletSchema)
-
-const nonceArr = []
-let nonce
 
 EscrowWalletContract.on('BurnToken', async (user, token, amount_bn, nonce_bn, event) => {
-  nonce = nonce_bn.toNumber()
-  if (nonceArr[nonce]) { 
-    return
-  }
-  nonceArr[nonce] = true
-
-  console.log('BurnToken---', user, token, amount_bn)
-  const address = ethers.utils.getAddress(user)
-  const tokenAddress = ethers.utils.getAddress(token)
-  const amount = parseFloat(ethers.utils.formatEther(amount_bn))
-
+  console.log('Eth BurnToken---', user, token, amount_bn)
   try {
-    const TokenContract = new ethers.Contract(tokenAddress, MockSho.abi, rinkebyProvider)
+    const nonce = nonce_bn.toNumber()  
+    const address = ethers.utils.getAddress(user)
+    const tokenAddress = ethers.utils.getAddress(token)
+    const amount = parseFloat(ethers.utils.formatEther(amount_bn))
+
+    const TokenContract = new ethers.Contract(tokenAddress, MockSho.abi, ethProvider)
     const tokenSymbol = await TokenContract.symbol()
     const tokenName = await TokenContract.name()
 
@@ -54,7 +32,26 @@ EscrowWalletContract.on('BurnToken', async (user, token, amount_bn, nonce_bn, ev
       useUnifiedTopology: true,
     });
 
-    let data;
+    let burnEvent
+    burnEvent = await BurnEvent.findOne({
+      nonce: nonce,
+      chainId: process.env.CHAINID_ETH
+    })
+
+    if (burnEvent) {
+      return
+    }
+    else {
+      burnEvent = await BurnEvent.create({
+        nonce: nonce,
+        chainId: process.env.CHAINID_ETH,
+        user: address, 
+        token: tokenAddress, 
+        amount: amount
+      })
+    }
+    
+    let data
     data = await Wallet.findOne({ address: address })
    
     if (data) {
@@ -81,7 +78,6 @@ EscrowWalletContract.on('BurnToken', async (user, token, amount_bn, nonce_bn, ev
         address: address, 
         balances: [
           {
-            token_id: 1,
             token_address: tokenAddress,
             token_name: tokenName,
             token_symbol: tokenSymbol,
