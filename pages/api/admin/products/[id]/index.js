@@ -1,5 +1,5 @@
 import nc from "next-connect";
-import Product from "../../../../../models/Product";
+import Product from "../../../../../models/Product.model";
 import db from "../../../../../utils/db";
 
 const handler = nc();
@@ -23,8 +23,8 @@ handler.put(async (req, res) => {
     product.currency = req.body.currency;
     product.image = req.body.image;
     product.price = req.body.price;
+    product.originalCount = req.body.originalCount;
     product.countInStock = req.body.countInStock;
-    product.description = req.body.description;
     await product.save();
     await db.disconnect();
     res.send({ message: "Product Updated Successfully" });

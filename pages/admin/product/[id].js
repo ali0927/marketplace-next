@@ -1,11 +1,11 @@
 //react/next/packages
 import axios from "axios";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 import NextLink from "next/link";
 import React, { useEffect, useReducer } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useSnackbar } from "notistack";
-import { useRouter } from "next/router";
 //material ui
 import {
   Grid,
@@ -17,13 +17,13 @@ import {
   ListItemText,
   TextField,
   CircularProgress,
-} from "@material-ui/core";
+} from "@mui/material";
 //components
 import { getError } from "../../../utils/error";
 import Layout from "../../../components/Layout";
-import useStyles from "../../../utils/styles";
+import Form from "../../../components/Form";
+import classes from "../../../utils/classes";
 
-//fetch product details from backend
 function reducer(state, action) {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -33,24 +33,28 @@ function reducer(state, action) {
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
     case "UPDATE_REQUEST":
-      return { ...state, loadingUpdate: true, error: "" };
+      return { ...state, loadingUpdate: true, errorUpdate: "" };
     case "UPDATE_SUCCESS":
-      return { ...state, loadingUpdate: false, error: "" };
+      return { ...state, loadingUpdate: false, errorUpdate: "" };
     case "UPDATE_FAIL":
-      return { ...state, loadingUpdate: false, error: action.payload };
+      return { ...state, loadingUpdate: false, errorUpdate: action.payload };
     case "UPLOAD_REQUEST":
-      return { ...state, loadingUpload: true, error: "" };
+      return { ...state, loadingUpload: true, errorUpload: "" };
     case "UPLOAD_SUCCESS":
-      return { ...state, loadingUpload: false, error: "" };
+      return {
+        ...state,
+        loadingUpload: false,
+        errorUpload: "",
+      };
     case "UPLOAD_FAIL":
-      return { ...state, loadingUpload: false, error: action.payload };
+      return { ...state, loadingUpload: false, errorUpload: action.payload };
+
     default:
       return state;
   }
 }
 
 function ProductEdit({ params }) {
-  const router = useRouter();
   const productId = params.id;
   const [{ loading, error, loadingUpdate, loadingUpload }, dispatch] =
     useReducer(reducer, {
@@ -64,7 +68,7 @@ function ProductEdit({ params }) {
     setValue,
   } = useForm();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const classes = useStyles();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -79,8 +83,8 @@ function ProductEdit({ params }) {
         setValue("currency", data.currency);
         setValue("image", data.image);
         setValue("price", data.price);
+        setValue("originalCount", data.originalCount);
         setValue("countInStock", data.countInStock);
-        setValue("description", data.description);
       } catch (err) {
         dispatch({ type: "FETCH_FAIL", payload: getError(err) });
       }
@@ -88,23 +92,26 @@ function ProductEdit({ params }) {
     fetchData();
   }, []);
 
-  const uploadHandler = async (e) => {
+  const uploadHandler = async (e, imageField = "image") => {
     const file = e.target.files[0];
     const bodyFormData = new FormData();
     bodyFormData.append("file", file);
     try {
       dispatch({ type: "UPLOAD_REQUEST" });
       const { data } = await axios.post("/api/admin/upload", bodyFormData, {
-        headers: { "Content-Type": "multipart/form-data" }, //upload file through ajax request
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
       dispatch({ type: "UPLOAD_SUCCESS" });
-      setValue("image", data.secure_url); //cloudinary server
+      setValue(imageField, data.secure_url);
       enqueueSnackbar("File uploaded successfully", { variant: "success" });
     } catch (err) {
       dispatch({ type: "UPLOAD_FAIL", payload: getError(err) });
       enqueueSnackbar(getError(err), { variant: "error" });
     }
   };
+
   const submitHandler = async ({
     name,
     slug,
@@ -113,8 +120,8 @@ function ProductEdit({ params }) {
     currency,
     image,
     price,
+    originalCount,
     countInStock,
-    description,
   }) => {
     closeSnackbar();
     try {
@@ -127,8 +134,8 @@ function ProductEdit({ params }) {
         currency,
         image,
         price,
+        originalCount,
         countInStock,
-        description,
       });
 
       enqueueSnackbar("Product updated successfully", { variant: "success" });
@@ -138,11 +145,12 @@ function ProductEdit({ params }) {
       enqueueSnackbar(getError(err), { variant: "error" });
     }
   };
+
   return (
     <Layout title={`Edit Product ${productId}`}>
       <Grid container spacing={1}>
         <Grid item md={3} xs={12}>
-          <Card className={classes.section}>
+          <Card sx={classes.section}>
             <List>
               <NextLink href="/admin/products" passHref>
                 <ListItem selected button component="a">
@@ -153,7 +161,7 @@ function ProductEdit({ params }) {
           </Card>
         </Grid>
         <Grid item md={9} xs={12}>
-          <Card className={classes.section}>
+          <Card sx={classes.section}>
             <List>
               <ListItem>
                 <Typography component="h1" variant="h1">
@@ -167,7 +175,7 @@ function ProductEdit({ params }) {
                 )}
               </ListItem>
               <ListItem>
-                <form
+                <Form
                   onSubmit={handleSubmit(submitHandler)}
                   className={classes.form}
                 >
@@ -269,10 +277,10 @@ function ProductEdit({ params }) {
                             variant="outlined"
                             fullWidth
                             id="currency"
-                            label="Collection"
+                            label="Token"
                             error={Boolean(errors.currency)}
                             helperText={
-                              errors.currency ? "Currency is required" : ""
+                              errors.currency ? "Token is required" : ""
                             }
                             {...field}
                           ></TextField>
@@ -330,6 +338,31 @@ function ProductEdit({ params }) {
                     </ListItem>
                     <ListItem>
                       <Controller
+                        name="originalCount"
+                        control={control}
+                        defaultValue=""
+                        rules={{
+                          required: true,
+                        }}
+                        render={({ field }) => (
+                          <TextField
+                            variant="outlined"
+                            fullWidth
+                            id="originalCount"
+                            label="Original Count"
+                            error={Boolean(errors.originalCount)}
+                            helperText={
+                              errors.originalCount
+                                ? "Original Count is required"
+                                : ""
+                            }
+                            {...field}
+                          ></TextField>
+                        )}
+                      ></Controller>
+                    </ListItem>
+                    <ListItem>
+                      <Controller
                         name="countInStock"
                         control={control}
                         defaultValue=""
@@ -354,33 +387,6 @@ function ProductEdit({ params }) {
                       ></Controller>
                     </ListItem>
                     <ListItem>
-                      <Controller
-                        name="description"
-                        control={control}
-                        defaultValue=""
-                        rules={{
-                          required: true,
-                        }}
-                        render={({ field }) => (
-                          <TextField
-                            variant="outlined"
-                            fullWidth
-                            multiline
-                            id="description"
-                            label="Description"
-                            error={Boolean(errors.description)}
-                            helperText={
-                              errors.description
-                                ? "Description is required"
-                                : ""
-                            }
-                            {...field}
-                          ></TextField>
-                        )}
-                      ></Controller>
-                    </ListItem>
-
-                    <ListItem>
                       <Button
                         variant="contained"
                         type="submit"
@@ -392,7 +398,7 @@ function ProductEdit({ params }) {
                       {loadingUpdate && <CircularProgress />}
                     </ListItem>
                   </List>
-                </form>
+                </Form>
               </ListItem>
             </List>
           </Card>
@@ -402,7 +408,6 @@ function ProductEdit({ params }) {
   );
 }
 
-//server side rendering
 export async function getServerSideProps({ params }) {
   return {
     props: { params },
