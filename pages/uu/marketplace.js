@@ -123,13 +123,16 @@ const FilterButton = styled.button`
 
 export default function Home(props) {
   const { products } = props;
+  //state
+  const [isLoading, setIsLoading] = useState(true);
+
+  //context
   const { isOnMainnet, ucdWalletBalance, getUCDBalance } =
     useContext(MarketplaceContext);
   const { state, dispatch } = useContext(Store);
 
   //filter
   const router = useRouter();
-
   const allFilter = () => {
     router.push("/uu/marketplace");
   };
@@ -140,12 +143,12 @@ export default function Home(props) {
     router.push("/uu/search?type=Raffle");
   };
 
-  const [isLoading, setIsLoading] = useState(true);
-
+  //loading
   const handleLoading = () => {
     setIsLoading(false);
   };
 
+  //add to cart
   const addToCartHandler = async (product) => {
     const existItem = state.cart.cartItems.find((x) => x._id === product._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
@@ -157,6 +160,7 @@ export default function Home(props) {
     dispatch({ type: "CART_ADD_ITEM", payload: { ...product, quantity } });
   };
 
+  //get UCD balance
   useEffect(() => {
     window.addEventListener("load", handleLoading);
     return () => window.removeEventListener("load", handleLoading);
@@ -230,7 +234,7 @@ export default function Home(props) {
   );
 }
 
-//server side props
+//server side props (filter function)
 export async function getServerSideProps({ query }) {
   await db.connect();
   const type = query.type || "";

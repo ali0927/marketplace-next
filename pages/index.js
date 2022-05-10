@@ -69,20 +69,13 @@ const EnterButton = styled.button`
   }
 `;
 export default function Home() {
+  //context
   const { isOnMainnet } = useContext(MarketplaceContext);
+  //route
   const router = useRouter();
   const accessUuMarketplace = () => {
     router.push("/uu/marketplace");
   };
-
-  //hover on marketplace
-  //   const [isHovering, setIsHovering] = useState(true);
-  //   const handleMouseOver = () => {
-  //     setIsHovering(true);
-  //   };
-  //   const handleMouseOut = () => {
-  //     setIsHovering(false);
-  //   };
 
   return (
     <Layout>
@@ -105,13 +98,6 @@ export default function Home() {
                   </Card>
                   <EnterButton>Enter</EnterButton>
                 </ParentCard>
-                {/*  <button
-                  sx={isHovering ? classes.enterMarketplace : classes.hidden}
-                  onMouseOver={handleMouseOver}
-                  onMouseOut={handleMouseOut}
-                >
-                  Hover me
-               </button> */}
               </Button>
               <Card sx={classes.marketplaceSSCard}>
                 <div>
