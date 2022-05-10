@@ -6,60 +6,43 @@ import { CircularProgress, Dialog, DialogActions } from "@mui/material";
 import styled from "styled-components";
 import { Colors } from "../../utils/Theme";
 import classes from "../../utils/classes";
+//components
+import Particulars from "./Particulars";
+import PaymentForm from "../PaymentForm";
+
 const DialogText = styled.div`
   line-height: 150%;
-  font-size: 16px;
+  font-size: 17px;
+  font-family: "Oxanium";
+  font-weight: 700;
   margin-top: 1em;
   margin-bottom: 1em;
   color: #fff;
+  text-align: center;
 `;
-
 const DialogLoading = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
   justify-content: center;
   color: #fff;
+  font-family: "Oxanium";
 `;
-
-const DialogApproveButton = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border: none;
-  padding: 0.8rem 1.5rem;
-  font-weight: 500;
-  color: #ffffff;
-  max-width: 200px;
-  background: ${Colors.Primary};
-  border-radius: 50px;
-  margin: 0 auto 20px;
-  text-decoration: none;
-  box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
-  cursor: pointer;
-  outline: none;
-  transition: 0.2s all;
-  :active {
-    transform: scale(0.98);
-    box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.5);
-  }
-`;
-
 const DialogButton = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   border: none;
-  padding: 1rem 1.5rem;
+  padding: 0.7rem 1.5rem;
   font-weight: 500;
   font-size: 13px;
+  font-family: "Oxanium";
   color: #ffffff;
   max-width: 200px;
   background: ${Colors.bg};
   border-radius: 50px;
-  margin: 0 auto 20px;
+  margin: 0 auto;
   text-decoration: none;
   box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
   cursor: pointer;
@@ -95,7 +78,10 @@ function ProceedWithPurchase(props) {
           <DialogText>Ready to proceed with your purchase(s)?</DialogText>
 
           <DialogActions sx={classes.approveContract}>
-            <DialogApproveButton autoFocus>Absolutely Yes!</DialogApproveButton>
+            <Particulars>
+              <PaymentForm />
+            </Particulars>
+
             <DialogButton onClick={handleDialogClose}>
               No, Let Me Think Again{" "}
             </DialogButton>

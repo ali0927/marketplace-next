@@ -6,6 +6,7 @@ import { ethers } from "ethers";
 import MetaMaskOnboarding from "@metamask/onboarding";
 //material ui
 import { Dialog, DialogActions } from "@mui/material";
+import Button from "@mui/material/Button";
 //styles
 import styled from "styled-components";
 import { Colors } from "../../utils/Theme";
@@ -23,11 +24,13 @@ import ucdContract from "../../lib/contracts/UniCandy.json";
 
 const DialogText = styled.div`
   line-height: 150%;
-  font-size: 16px;
+  font-size: 17px;
+  font-family: "Oxanium";
+  font-weight: 700;
   margin-top: 1em;
   margin-bottom: 1em;
   color: #fff;
-  background-color: "red";
+  text-align: center;
 `;
 
 const DialogLoading = styled.div`
@@ -36,6 +39,7 @@ const DialogLoading = styled.div`
   gap: 0.5rem;
   justify-content: center;
   color: #fff;
+  font-family: "Oxanium";
 `;
 
 const DialogApproveButton = styled.div`
@@ -44,13 +48,13 @@ const DialogApproveButton = styled.div`
   justify-content: center;
   cursor: pointer;
   border: none;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 3rem;
   font-weight: 500;
   color: #ffffff;
   max-width: 200px;
   background: ${Colors.Primary};
   border-radius: 50px;
-  margin: 0 auto 20px;
+  margin: 0 auto;
   text-decoration: none;
   box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
   cursor: pointer;
@@ -146,10 +150,14 @@ const CheckContractApproval = (props) => {
           </DialogText>
 
           <DialogActions sx={classes.approveContract}>
-            <DialogApproveButton autoFocus onClick={setApproval}>
+            <Button
+              autoFocus
+              disableRipple
+              onClick={setApproval}
+              sx={classes.dialogApprovalButton}
+            >
               Approve
-            </DialogApproveButton>
-            {/* <DialogButton onClick={handleDialogClose}>Cancel</DialogButton> */}
+            </Button>
           </DialogActions>
         </>
       )}

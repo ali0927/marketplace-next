@@ -1,12 +1,15 @@
+//react/next/packages
 import { useState } from "react";
+//material ui
 import Button from "@mui/material/Button";
-import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+//styling
 import classes from "../../utils/classes";
+import { styled } from "@mui/material/styles";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -53,8 +56,13 @@ export default function Particulars({ children }) {
 
   return (
     <div>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Proceed
+      <Button
+        autoFocus
+        disableRipple
+        onClick={handleClickOpen}
+        sx={classes.dialogApprovalButton}
+      >
+        Absolutely, Yes!
       </Button>
       <BootstrapDialog
         onClose={handleClose}

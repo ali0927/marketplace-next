@@ -182,6 +182,32 @@ const classes = {
   particularsLastField: {
     color: "#ffffff",
   },
+  dialogApprovalButton: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    border: "none",
+    padding: "0.5rem 1.5rem",
+    fontWeight: "500",
+    color: "#ffffff",
+    maxWidth: "200px",
+    background: "#0097DA",
+    borderRadius: "50px",
+    margin: "0 auto",
+    textDecoration: "none",
+    boxShadow: "7px 6px 28px 1px rgba(0, 0, 0, 0.24)",
+    outline: "none",
+    transition: "0.2s all",
+    textTransform: "unset",
+    fontFamily: "Oxanium",
+
+    "&:active": {
+      background: "#0097DA",
+      transform: "scale(0.98)",
+      boxShadow: "3px 2px 22px 1px rgba(0, 0, 0, 0.5)",
+    },
+  },
   //admin product edit
   editContainer: {
     display: "flex",

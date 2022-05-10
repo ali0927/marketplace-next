@@ -42,8 +42,6 @@ import nex10Logo from "../public/images/logo/nex10-logo.png";
 import { Colors } from "../utils/Theme";
 import styled from "styled-components";
 import ProceedWithPurchase from "./Dialogs/ProceedWithPurchase";
-import PaymentForm from "./PaymentForm";
-import Particulars from "./Dialogs/Particulars";
 
 const CartItem = styled.span`
   display: flex;
@@ -319,9 +317,6 @@ export default function Layout({ title, description, children }) {
                 openDialog={openDialog}
                 setOpenDialog={setOpenDialog}
               />
-              <Particulars>
-                <PaymentForm />
-              </Particulars>
               {data.admin.includes(currentAccount) ? (
                 <Button onClick={adminHandler} fullWidth>
                   <Avatar sx={classes.avatar}>

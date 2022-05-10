@@ -7,6 +7,7 @@ import {
   TextField,
   List,
   ListItem,
+  CircularProgress,
 } from "@mui/material";
 //formik
 import { Formik, Form, Field, ErrorMessage } from "formik";
@@ -32,9 +33,9 @@ function PaymentForm() {
   const { closeSnackbar, enqueueSnackbar } = useSnackbar();
   const { currentAccount } = useContext(MarketplaceContext);
   const ethAddress = currentAccount;
-  const { state } = useContext(Store);
+  const { state, dispatch } = useContext(Store);
   const {
-    cart: { cartItems, dispatch },
+    cart: { cartItems },
   } = state;
 
   //form validation
@@ -115,7 +116,7 @@ function PaymentForm() {
         shippingAddress,
         cartItems
       );
-      const { data } = await axios.post("/api/purchase", {
+      const { data } = await axios.post("/api/orders", {
         email,
         discordId,
         ethAddress,
@@ -132,10 +133,12 @@ function PaymentForm() {
         signature
       );
       console.log(data);
-
-      // dispatch({ type: "CART_CLEAR" });
-      // Cookies.remove("cartItems");
-      // setLoading(false);
+      dispatch({ type: "CART_CLEAR" });
+      Cookies.remove("cartItems");
+      setLoading(false);
+      enqueueSnackbar("Purchase successfully made", {
+        variant: "success",
+      });
     } catch (err) {
       setLoading(false);
       enqueueSnackbar(getError(err), { variant: "error" });
@@ -204,6 +207,11 @@ function PaymentForm() {
                     Submit
                   </Button>
                 </ListItem>
+                {loading && (
+                  <ListItem>
+                    <CircularProgress />
+                  </ListItem>
+                )}
               </List>
             </Form>
           )}
