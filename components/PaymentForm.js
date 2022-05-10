@@ -124,15 +124,6 @@ function PaymentForm() {
         cartItems,
         signature,
       });
-      console.log(
-        email,
-        discordId,
-        ethAddress,
-        shippingAddress,
-        cartItems,
-        signature
-      );
-      console.log(data);
       dispatch({ type: "CART_CLEAR" });
       Cookies.remove("cartItems");
       setLoading(false);

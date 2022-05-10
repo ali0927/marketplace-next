@@ -3,7 +3,7 @@ import axios from "axios";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
-import React, { useEffect, useReducer } from "react";
+import React, { useContext, useEffect, useReducer } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useSnackbar } from "notistack";
 //material ui
@@ -23,6 +23,7 @@ import { getError } from "../../../utils/error";
 import Layout from "../../../components/Layout";
 import Form from "../../../components/Form";
 import classes from "../../../utils/classes";
+import { MarketplaceContext } from "../../../utils/MarketplaceContext";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -55,20 +56,25 @@ function reducer(state, action) {
 }
 
 function ProductEdit({ params }) {
+  //variables
   const productId = params.id;
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const router = useRouter();
+  const { currentAccount } = useContext(MarketplaceContext);
+  const ethAddress = currentAccount;
+  //reducer
   const [{ loading, error, loadingUpdate, loadingUpload }, dispatch] =
     useReducer(reducer, {
       loading: true,
       error: "",
     });
+  //useForm
   const {
     handleSubmit,
     control,
     formState: { errors },
     setValue,
   } = useForm();
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -92,6 +98,7 @@ function ProductEdit({ params }) {
     fetchData();
   }, []);
 
+  //upload image
   const uploadHandler = async (e, imageField = "image") => {
     const file = e.target.files[0];
     const bodyFormData = new FormData();
@@ -112,6 +119,67 @@ function ProductEdit({ params }) {
     }
   };
 
+  //signatures
+  //get signature (for update)
+  const getUpdateSignature = async (
+    name,
+    slug,
+    type,
+    brand,
+    currency,
+    image,
+    price,
+    originalCount,
+    countInStock
+  ) => {
+    const msgParams = {
+      domain: {
+        name: "Nex10 Marketplace",
+        version: "1",
+        chainId: process.env.NODE_ENV === "prod" ? 1 : 4,
+      },
+      message: {
+        name: name,
+        slug: slug,
+        type: type,
+        brand: brand,
+        currency: currency,
+        image: image,
+        price: price,
+        originalCount: originalCount,
+        countInStock: countInStock,
+      },
+      primaryType: "Product",
+      types: {
+        EIP712Domain: [
+          { name: "name", type: "string" },
+          { name: "version", type: "string" },
+          { name: "chainId", type: "uint256" },
+        ],
+        Product: [
+          { name: "name", type: "string" },
+          { name: "slug", type: "string" },
+          { name: "type", type: "string" },
+          { name: "brand", type: "string" },
+          { name: "currency", type: "string" },
+          { name: "image", type: "string" },
+          { name: "originalCount", type: "uint256" },
+          { name: "countInStock", type: "uint256" },
+        ],
+      },
+    };
+    try {
+      const from = ethAddress;
+      const sign = await ethereum.request({
+        method: "eth_signTypedData_v4",
+        params: [from, JSON.stringify(msgParams)],
+      });
+      return sign;
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const submitHandler = async ({
     name,
     slug,
@@ -125,6 +193,31 @@ function ProductEdit({ params }) {
   }) => {
     closeSnackbar();
     try {
+      let signature = await getUpdateSignature(
+        name,
+        slug,
+        type,
+        brand,
+        currency,
+        image,
+        price,
+        originalCount,
+        countInStock,
+        ethAddress
+      );
+      console.log(
+        name,
+        slug,
+        type,
+        brand,
+        currency,
+        image,
+        price,
+        originalCount,
+        countInStock,
+        ethAddress,
+        signature
+      );
       dispatch({ type: "UPDATE_REQUEST" });
       await axios.put(`/api/admin/products/${productId}`, {
         name,
@@ -136,8 +229,10 @@ function ProductEdit({ params }) {
         price,
         originalCount,
         countInStock,
+        ethAddress,
+        signature,
       });
-
+      enqueueSnackbar("Admin verified", { variant: "success" });
       enqueueSnackbar("Product updated successfully", { variant: "success" });
       router.push("/admin/products");
     } catch (err) {

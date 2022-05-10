@@ -22,7 +22,7 @@ handler.post(async (req, res) => {
     name: "sample name",
     slug: "type-brand-" + Math.random(),
     type: "Raffle/Whitelist",
-    brand: "e.g. Uninterested Unicorns, Tasty Bones",
+    brand: "e.g. Uninterested Unicorns",
     currency: "UCD/SHO",
     image: "/images/shirt1.jpg",
     price: 0,

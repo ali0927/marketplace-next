@@ -15,9 +15,16 @@ async function connect() {
     }
     await mongoose.disconnect();
   }
+  // set the connection options
+  const opts = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  };
+
   // const db = await mongoose.connect(process.env.MONGODB_URI);
   const db = await mongoose.connect(
-    `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.gury7.mongodb.net/NEX10Marketplace?retryWrites=true&w=majority`
+    `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.gury7.mongodb.net/NEX10Marketplace-Dev?retryWrites=true&w=majority`,
+    opts
   );
   console.log("new connection");
   connection.isConnected = db.connections[0].readyState;
@@ -44,4 +51,4 @@ function convertDocToObj(doc) {
 const db = { connect, disconnect, convertDocToObj };
 export default db;
 
-// `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.gury7.mongodb.net/NEX10Marketplace?retryWrites=true&w=majority`
+// // `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.gury7.mongodb.net/NEX10Marketplace?retryWrites=true&w=majority`

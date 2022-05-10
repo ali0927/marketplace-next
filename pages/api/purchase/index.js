@@ -1,4 +1,4 @@
-const { ethers } = require("ethers");
+import { ethers } from "ethers";
 import nc from "next-connect";
 import { onError } from "../../../utils/error";
 import Order from "../../../models/Order.model";
