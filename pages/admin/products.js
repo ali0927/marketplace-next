@@ -1,207 +1,11 @@
-// //next/react
-// import axios from "axios";
-// import dynamic from "next/dynamic";
-// import NextLink from "next/link";
-// import React, { useEffect, useReducer } from "react";
-// import { useRouter } from "next/router";
-// import { useSnackbar } from "notistack";
-
-// //material ui
-// import {
-//   CircularProgress,
-//   Grid,
-//   List,
-//   ListItem,
-//   Typography,
-//   Card,
-//   Button,
-//   ListItemText,
-//   TableContainer,
-//   Table,
-//   TableHead,
-//   TableRow,
-//   TableCell,
-//   TableBody,
-// } from "@material-ui/core";
-// //components
-// import { getError } from "../../utils/error";
-// import Layout from "../../components/Layout";
-// import useStyles from "../../utils/styles";
-
-// function reducer(state, action) {
-//   switch (action.type) {
-//     case "FETCH_REQUEST":
-//       return { ...state, loading: true, error: "" };
-//     case "FETCH_SUCCESS":
-//       return { ...state, loading: false, products: action.payload, error: "" };
-//     case "FETCH_FAIL":
-//       return { ...state, loading: false, error: action.payload };
-//     case "CREATE_REQUEST":
-//       return { ...state, loadingCreate: true, error: "" };
-//     case "CREATE_SUCCESS":
-//       return {
-//         ...state,
-//         loadingCreate: false,
-//         products: action.payload,
-//         error: "",
-//       };
-//     case "CREATE_FAIL":
-//       return { ...state, loadingCreate: false, error: action.payload };
-//     default:
-//       state;
-//   }
-// }
-
-// function AdminDashboard() {
-//   const router = useRouter();
-//   const classes = useStyles();
-//   const { enqueueSnackbar } = useSnackbar();
-
-//   const [{ loading, error, products, loadingCreate }, dispatch] = useReducer(
-//     reducer,
-//     {
-//       loading: true,
-//       products: [],
-//       error: "",
-//     }
-//   );
-
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       try {
-//         dispatch({ type: "FETCH_REQUEST" });
-//         const { data } = await axios.get(`/api/admin/products`, {});
-//         dispatch({ type: "FETCH_SUCCESS", payload: data });
-//       } catch (err) {
-//         dispatch({ type: "FETCH_FAIL", payload: getError(err) });
-//       }
-//     };
-//     fetchData();
-//   }, []);
-
-//   const createHandler = async () => {
-//     if (!window.confirm("Are you sure?")) {
-//       return;
-//     }
-//     try {
-//       dispatch({ type: "CREATE_REQUEST" });
-//       const { data } = await axios.post(
-//         `/api/admin/products`,
-//         {},
-//         {
-//           // headers: { authorization: `Bearer ${userInfo.token}` },
-//         }
-//       );
-//       dispatch({ type: "CREATE_SUCCESS" });
-//       enqueueSnackbar("Product created successfully", { variant: "success" });
-//       router.push(`/admin/product/${data.product._id}`);
-//     } catch (err) {
-//       dispatch({ type: "CREATE_FAIL" });
-//       enqueueSnackbar(getError(err), { variant: "error" });
-//     }
-//   };
-//   return (
-//     <Layout title="Products">
-//       <Grid container spacing={1}>
-//         <Grid item md={3} xs={12}>
-//           <Card className={classes.section}>
-//             <List>
-//               <NextLink href="/admin/products" passHref>
-//                 <ListItem selected button component="a">
-//                   <ListItemText primary="Products"></ListItemText>
-//                 </ListItem>
-//               </NextLink>
-//             </List>
-//           </Card>
-//         </Grid>
-//         <Grid item md={9} xs={12}>
-//           <Card className={classes.section}>
-//             <List>
-//               <ListItem>
-//                 <Grid container alignItems="center">
-//                   <Grid item xs={6}>
-//                     <Typography component="h1" variant="h1">
-//                       Products
-//                     </Typography>
-//                   </Grid>
-//                   <Grid align="right" item xs={6}>
-//                     <Button
-//                       onClick={createHandler}
-//                       color="primary"
-//                       variant="contained"
-//                     >
-//                       Create
-//                     </Button>
-//                     {loadingCreate && <CircularProgress />}
-//                   </Grid>
-//                 </Grid>
-//               </ListItem>
-
-//               <ListItem>
-//                 {loading ? (
-//                   <CircularProgress />
-//                 ) : error ? (
-//                   <Typography className={classes.error}>{error}</Typography>
-//                 ) : (
-//                   <TableContainer>
-//                     <Table>
-//                       <TableHead>
-//                         <TableRow>
-//                           <TableCell>ID</TableCell>
-//                           <TableCell>NAME</TableCell>
-//                           <TableCell>PRICE</TableCell>
-//                           <TableCell>COLLECTION</TableCell>
-//                           <TableCell>COUNT</TableCell>
-//                           <TableCell>ACTIONS</TableCell>
-//                         </TableRow>
-//                       </TableHead>
-//                       <TableBody>
-//                         {products.map((product) => (
-//                           <TableRow key={product._id}>
-//                             <TableCell>
-//                               {product._id.substring(20, 24)}
-//                             </TableCell>
-//                             <TableCell>{product.name}</TableCell>
-//                             <TableCell>
-//                               {product.price} {product.currency}
-//                             </TableCell>
-//                             <TableCell>{product.brand}</TableCell>
-//                             <TableCell>{product.countInStock}</TableCell>
-//                             <TableCell>
-//                               <NextLink
-//                                 href={`/admin/product/${product._id}`}
-//                                 passHref
-//                               >
-//                                 <Button size="small" variant="contained">
-//                                   Edit
-//                                 </Button>
-//                               </NextLink>{" "}
-//                               <Button size="small" variant="contained">
-//                                 Delete
-//                               </Button>
-//                             </TableCell>
-//                           </TableRow>
-//                         ))}
-//                       </TableBody>
-//                     </Table>
-//                   </TableContainer>
-//                 )}
-//               </ListItem>
-//             </List>
-//           </Card>
-//         </Grid>
-//       </Grid>
-//     </Layout>
-//   );
-// }
-
-// export default dynamic(() => Promise.resolve(AdminDashboard), { ssr: false });
-
+//react/next/packages
 import axios from "axios";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useContext } from "react";
+import { useSnackbar } from "notistack";
+//material ui
 import {
   CircularProgress,
   Grid,
@@ -217,11 +21,12 @@ import {
   TableRow,
   TableCell,
   TableBody,
-} from "@material-ui/core";
+} from "@mui/material";
+import classes from "../../utils/classes";
+//components
 import { getError } from "../../utils/error";
 import Layout from "../../components/Layout";
-import useStyles from "../../utils/styles";
-import { useSnackbar } from "notistack";
+import { MarketplaceContext } from "../../utils/MarketplaceContext";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -252,8 +57,6 @@ function reducer(state, action) {
 
 function AdminProducts() {
   const router = useRouter();
-  const classes = useStyles();
-
   const [
     { loading, error, products, loadingCreate, successDelete, loadingDelete },
     dispatch,
@@ -262,6 +65,11 @@ function AdminProducts() {
     products: [],
     error: "",
   });
+
+  //retrieve variables
+  const { currentAccount } = useContext(MarketplaceContext);
+  const ethAddress = currentAccount;
+  const { closeSnackbar, enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -280,14 +88,81 @@ function AdminProducts() {
     }
   }, [successDelete]);
 
-  const { enqueueSnackbar } = useSnackbar();
+  //signatures
+  //get signature (for delete)
+  const getDeleteSignature = async (productId, ethAddress) => {
+    const msgParams = {
+      domain: {
+        name: "Nex10 Marketplace",
+        version: "1",
+        chainId: process.env.NODE_ENV === "prod" ? 1 : 4,
+      },
+      message: {
+        productId: productId,
+      },
+      primaryType: "Product",
+      types: {
+        EIP712Domain: [
+          { name: "name", type: "string" },
+          { name: "version", type: "string" },
+          { name: "chainId", type: "uint256" },
+        ],
+        Product: [{ name: "productId", type: "string" }],
+      },
+    };
+    try {
+      const from = ethAddress;
+      const sign = await ethereum.request({
+        method: "eth_signTypedData_v4",
+        params: [from, JSON.stringify(msgParams)],
+      });
+      return sign;
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  //get signature (for creation)
+  const getCreateSignature = async (productId, ethAddress) => {
+    const msgParams = {
+      domain: {
+        name: "Nex10 Marketplace",
+        version: "1",
+        chainId: process.env.NODE_ENV === "prod" ? 1 : 4,
+      },
+      message: {
+        productId: productId,
+      },
+      primaryType: "Product",
+      types: {
+        EIP712Domain: [
+          { name: "name", type: "string" },
+          { name: "version", type: "string" },
+          { name: "chainId", type: "uint256" },
+        ],
+        Product: [{ name: "productId", type: "string" }],
+      },
+    };
+    try {
+      const from = ethAddress;
+      const sign = await ethereum.request({
+        method: "eth_signTypedData_v4",
+        params: [from, JSON.stringify(msgParams)],
+      });
+      return sign;
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const createHandler = async () => {
     if (!window.confirm("Are you sure?")) {
       return;
     }
     try {
       dispatch({ type: "CREATE_REQUEST" });
-      const { data } = await axios.post(`/api/admin/products`, {}, {});
+      const { data } = await axios.post(`/api/admin/products`, {});
+
       dispatch({ type: "CREATE_SUCCESS" });
       enqueueSnackbar("Product created successfully", { variant: "success" });
       router.push(`/admin/product/${data.product._id}`);
@@ -296,13 +171,23 @@ function AdminProducts() {
       enqueueSnackbar(getError(err), { variant: "error" });
     }
   };
+
   const deleteHandler = async (productId) => {
     if (!window.confirm("Are you sure?")) {
       return;
     }
     try {
+      closeSnackbar();
+      let signature = await getDeleteSignature(productId, ethAddress);
       dispatch({ type: "DELETE_REQUEST" });
-      await axios.delete(`/api/admin/products/${productId}`, {});
+      await axios.delete(`/api/admin/products/${productId}`, {
+        data: {
+          productId,
+          ethAddress,
+          signature,
+        },
+      });
+      enqueueSnackbar("Admin verified", { variant: "success" });
       dispatch({ type: "DELETE_SUCCESS" });
       enqueueSnackbar("Product deleted successfully", { variant: "success" });
     } catch (err) {
@@ -310,11 +195,12 @@ function AdminProducts() {
       enqueueSnackbar(getError(err), { variant: "error" });
     }
   };
+
   return (
     <Layout title="Products">
       <Grid container spacing={1}>
         <Grid item md={3} xs={12}>
-          <Card className={classes.section}>
+          <Card sx={classes.section}>
             <List>
               <NextLink href="/admin/products" passHref>
                 <ListItem selected button component="a">
@@ -325,7 +211,7 @@ function AdminProducts() {
           </Card>
         </Grid>
         <Grid item md={9} xs={12}>
-          <Card className={classes.section}>
+          <Card sx={classes.section}>
             <List>
               <ListItem>
                 <Grid container alignItems="center">
@@ -352,7 +238,7 @@ function AdminProducts() {
                 {loading ? (
                   <CircularProgress />
                 ) : error ? (
-                  <Typography className={classes.error}>{error}</Typography>
+                  <Typography sx={classes.error}>{error}</Typography>
                 ) : (
                   <TableContainer>
                     <Table>
@@ -360,8 +246,10 @@ function AdminProducts() {
                         <TableRow>
                           <TableCell>ID</TableCell>
                           <TableCell>NAME</TableCell>
+                          <TableCell>TYPE</TableCell>
                           <TableCell>PRICE</TableCell>
-                          <TableCell>COLLECTION</TableCell>
+                          <TableCell>BRAND</TableCell>
+                          <TableCell>ORIGINAL COUNT</TableCell>
                           <TableCell>COUNT</TableCell>
                           <TableCell>ACTIONS</TableCell>
                         </TableRow>
@@ -373,15 +261,21 @@ function AdminProducts() {
                               {product._id.substring(20, 24)}
                             </TableCell>
                             <TableCell>{product.name}</TableCell>
+                            <TableCell>{product.type}</TableCell>
                             <TableCell>{product.price}</TableCell>
                             <TableCell>{product.brand}</TableCell>
+                            <TableCell>{product.originalCount}</TableCell>
                             <TableCell>{product.countInStock}</TableCell>
                             <TableCell>
                               <NextLink
                                 href={`/admin/product/${product._id}`}
                                 passHref
                               >
-                                <Button size="small" variant="contained">
+                                <Button
+                                  size="small"
+                                  variant="contained"
+                                  color="secondary"
+                                >
                                   Edit
                                 </Button>
                               </NextLink>{" "}
@@ -389,6 +283,7 @@ function AdminProducts() {
                                 onClick={() => deleteHandler(product._id)}
                                 size="small"
                                 variant="contained"
+                                color="error"
                               >
                                 Delete
                               </Button>

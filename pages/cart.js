@@ -22,7 +22,7 @@ import {
   Card,
   List,
   ListItem,
-} from "@material-ui/core";
+} from "@mui/material";
 
 //components
 import Layout from "../components/Layout";

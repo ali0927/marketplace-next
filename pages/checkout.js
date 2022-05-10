@@ -6,13 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useSnackbar } from "notistack";
 import axios from "axios";
 //material ui
-import {
-  List,
-  ListItem,
-  Typography,
-  TextField,
-  Button,
-} from "@material-ui/core";
+import { List, ListItem, Typography, TextField, Button } from "@mui/material";
 import { CircularProgress } from "@mui/material";
 //environment
 import { environmentTest } from "../lib/environments/environment";
@@ -20,7 +14,7 @@ import { environment } from "../lib/environments/environment.prod";
 //components
 import Layout from "../components/Layout";
 import { Store } from "../utils/Store";
-import useStyles from "../utils/styles";
+import classes from "../utils/classes";
 import { MarketplaceContext } from "../utils/MarketplaceContext";
 import { getError } from "../utils/error";
 
@@ -40,11 +34,9 @@ export default function Checkout() {
     cart: { cartItems, userDetails },
   } = state;
 
-  const classes = useStyles();
-
-  if (cartItems.length === 0) {
-    router.push("/cart");
-  }
+  // if (cartItems.length === 0) {
+  //   router.push("/cart");
+  // }
 
   const getSignature = async (discordId, physicalAddress, email) => {
     const sign = "testSignature";
@@ -60,14 +52,14 @@ export default function Checkout() {
     //     physicalAddress: physicalAddress,
     //     email: email,
     //   },
-    //   primaryType: "Checkout",
+    //   primaryType: "PurchaseOrder",
     //   types: {
     //     EIP712Domain: [
     //       { name: "name", type: "string" },
     //       { name: "version", type: "string" },
     //       { name: "chainId", type: "uint256" },
     //     ],
-    //     Checkout: [
+    //     PurchaseOrder: [
     //       { name: "discordId", type: "string" },
     //       { name: "physicalAddress", type: "string" },
     //       { name: "email", type: "string" },
@@ -138,7 +130,7 @@ export default function Checkout() {
 
   return (
     <Layout title="Shipping Address">
-      <form onSubmit={handleSubmit(submitHandler)} className={classes.form}>
+      <form onSubmit={handleSubmit(submitHandler)} sx={classes.section}>
         <Typography component="h1" variant="h1">
           Checkout
         </Typography>

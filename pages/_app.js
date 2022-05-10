@@ -1,18 +1,17 @@
-import { useEffect } from "react";
 import { createGlobalStyle } from "styled-components";
-import "../styles/globals.css";
 import { StoreProvider } from "../utils/Store";
 import { MarketplaceProvider } from "../utils/MarketplaceContext";
 import { SnackbarProvider } from "notistack";
+import { CacheProvider } from "@emotion/react";
+import createEmotionCache from "../utils/createEmotionCache";
+import Head from "next/head";
 
 const GlobalStyle = createGlobalStyle`
   html,
   body {
-    font-family: 'Roboto', sans-serif;
-  }
-
-  p,a,h1,h2,h3,h5,h6,div,span{
-    color: inherit;
+    font-family: 'Oxanium', cursive;
+    background-image: url("/images/bg/background-1.png");
+    overflow-x: hidden;
   }
 
   a {
@@ -47,36 +46,53 @@ const GlobalStyle = createGlobalStyle`
   body::-webkit-scrollbar-thumb:hover {
     background: rgb(43, 43, 43);
   }
-
-  /* Contract Approval Dialog */
-  .css-1t1j96h-MuiPaper-root-MuiDialog-paper {
-    background: rgba(34, 28, 51, 0.9);
-    color: rgba(255, 255, 255, 0.7);
-    box-shadow: 0px 11px 15px -7px rgb(0 0 0 / 20%), 0px 24px 38px 3px rgb(0 0 0 / 14%), 0px 9px 46px 8px rgb(0 0 0 / 12%);
-    display: block;
-    padding: 24px;
-    border-radius: 4px;
-    box-sizing: border-box;
-    width: 100%;
+  
+  /* Overriding MateriaL UI Styles */
+  
+  /* App Bar */
+  .css-1im6ja8-MuiToolbar-root {
+    padding: 30px 40px 20px;
+  }
+  /* Grid Container */
+  .css-yfyvtz-MuiContainer-root {
+    display: flex;
+    justify-content: center;
+  }
+  /* NFT Card */
+  .MuiCardContent-root {
+    padding: 16px 0px 0px 0px;
   }
 `;
 
-function MyApp({ Component, pageProps }) {
-  useEffect(() => {
-    const jssStyles = document.querySelector("#jss-server-side");
-    if (jssStyles) {
-      jssStyles.parentElement.removeChild(jssStyles);
-    }
-  }, []);
+const clientSideEmotionCache = createEmotionCache();
+
+function MyApp(props) {
+  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+
   return (
-    <SnackbarProvider anchorOrigin={{ vertical: "top", horizontal: "center" }}>
-      <MarketplaceProvider>
-        <StoreProvider>
-          <GlobalStyle />
-          <Component {...pageProps} />
-        </StoreProvider>
-      </MarketplaceProvider>
-    </SnackbarProvider>
+    <>
+      <Head>
+        <title>Nex10 Marketplace</title>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;600;700&display=swap"
+        />
+      </Head>
+      <CacheProvider value={emotionCache}>
+        <SnackbarProvider
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <MarketplaceProvider>
+            <StoreProvider>
+              <GlobalStyle />
+              <Component {...pageProps} />
+            </StoreProvider>
+          </MarketplaceProvider>
+        </SnackbarProvider>
+      </CacheProvider>
+    </>
   );
 }
 
