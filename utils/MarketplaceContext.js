@@ -7,20 +7,21 @@ import { environmentTest } from "../lib/environments/environment";
 import { environment } from "../lib/environments/environment.prod";
 //contract
 import ucdContract from "../lib/contracts/UniCandy.json";
-import shoContract from "../lib/contracts/MockSho.json";
+// import shoContract from "../lib/contracts/MockSho.json";
 
 let signer, provider;
 
 //variables
-
-const ucdRinkebyContractAddress = ucdContract.address[environmentTest.chainId];
-const ucdContractAddress = ucdContract.address[environment.chainId];
+const ucdContractAddress =
+  process.env.NODE_ENV === "prod"
+    ? ucdContract.address[environment.chainId]
+    : ucdContract.address[environmentTest.chainId];
 const ucdContractABI = ucdContract.abi;
-const shoContractAddress =
-process.env.NODE_ENV === "prod"
-? shoContract.address[environment.chainId_polygon]
-: shoContract.address[environmentTest.chainId_polygon]; //to update (rinkeby)
-const shoContractABI = shoContract.abi;
+// const shoContractAddress =
+//   process.env.NODE_ENV === "prod"
+//     ? shoContract.address[environment.chainId_polygon]
+//     : shoContract.address[environmentTest.chainId_polygon];
+// const shoContractABI = shoContract.abi;
 
 export const MarketplaceContext = createContext();
 
@@ -29,22 +30,15 @@ export const MarketplaceProvider = ({ children }) => {
   const [hasMetamask, setHasMetamask] = useState(false);
   const [currentAccount, setCurrentAccount] = useState("");
   const [ucdWalletBalance, setUcdWalletBalance] = useState("");
-  const [shoWalletBalance, setShoWalletBalance] = useState("");
+  // const [shoWalletBalance, setShoWalletBalance] = useState("");
 
   //check if metamask wallet is connected
   useEffect(() => {
     if (typeof window.ethereum !== "undefined") {
       setHasMetamask(true);
     }
-    // Check if Ethereum is enabled via metamask or some other provider
     if (MetaMaskOnboarding.isMetaMaskInstalled()) {
-      // A Web3Provider wraps a standard Web3 provider, which is
-      // what Metamask injects as window.ethereum into each page
       provider = new ethers.providers.Web3Provider(window.ethereum);
-
-      // The Metamask plugin also allows signing transactions to
-      // send ether and pay to change state within the blockchain.
-      // For this, you need the account signer...
       signer = provider.getSigner();
     }
     checkChain();
@@ -65,7 +59,11 @@ export const MarketplaceProvider = ({ children }) => {
         getUCDBalance();
       });
     }
-  }, [currentAccount, ucdWalletBalance, shoWalletBalance]);
+  }, [
+    currentAccount,
+    ucdWalletBalance,
+    // shoWalletBalance
+  ]);
 
   const connectWallet = async () => {
     if (!window.ethereum) return;
@@ -115,22 +113,11 @@ export const MarketplaceProvider = ({ children }) => {
    * Function to create a contract based on address, abi, and signer
    */
   async function createUcdContract() {
-    await checkChain();
-
-    if (isOnMainnet) {
-      return new ethers.Contract(ucdContractAddress, ucdContractABI, signer);
-    }
-    if (!isOnMainnet) {
-      return new ethers.Contract(
-        ucdRinkebyContractAddress,
-        ucdContractABI,
-        signer
-      );
-    }
+    return new ethers.Contract(ucdContractAddress, ucdContractABI, signer);
   }
-  async function createShoContract() {
-    return new ethers.Contract(shoContractAddress, shoContractABI, signer);
-  }
+  // async function createShoContract() {
+  //   return new ethers.Contract(shoContractAddress, shoContractABI, signer);
+  // }
 
   /**
    * Get UCD balance for wallet address
@@ -153,17 +140,17 @@ export const MarketplaceProvider = ({ children }) => {
   /**
    * Get SHO balance for wallet address
    */
-  async function getSHOBalance() {
-    await getAccount();
-    if (currentAccount) {
-      const contract = await createShoContract();
+  // async function getSHOBalance() {
+  //   await getAccount();
+  //   if (currentAccount) {
+  //     const contract = await createShoContract();
 
-      let balance = await contract.balanceOf(currentAccount);
-      setShoWalletBalance(
-        parseFloat(ethers.utils.formatEther(balance)).toFixed(0)
-      );
-    }
-  }
+  //     let balance = await contract.balanceOf(currentAccount);
+  //     setShoWalletBalance(
+  //       parseFloat(ethers.utils.formatEther(balance)).toFixed(0)
+  //     );
+  //   }
+  // }
 
   return (
     <MarketplaceContext.Provider
@@ -173,10 +160,10 @@ export const MarketplaceProvider = ({ children }) => {
         connectWallet,
         checkChain,
         getUCDBalance,
-        getSHOBalance,
+        // getSHOBalance,
         isOnMainnet,
         ucdWalletBalance,
-        shoWalletBalance,
+        // shoWalletBalance,
       }}
     >
       {children}

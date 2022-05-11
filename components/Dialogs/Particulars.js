@@ -74,7 +74,7 @@ export default function Particulars({ children }) {
           onClose={handleClose}
           sx={classes.particularsTitle}
         >
-          Payment
+          Fill in your details.
         </BootstrapDialogTitle>
         <DialogContent dividers>{children}</DialogContent>
       </BootstrapDialog>

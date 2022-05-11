@@ -72,8 +72,8 @@ const AddToCart = styled.button`
   text-align: center;
   border-radius: 40px;
   color: #ffffff;
-  font-size: 18px;
-  padding: 8px 16px;
+  font-size: 15px;
+  padding: 6px 14px;
   font-family: "Oxanium";
   border: none;
   cursor: pointer;

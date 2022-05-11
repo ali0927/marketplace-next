@@ -1,5 +1,4 @@
-import mongoose from 'mongoose';
-
+const mongoose = require('mongoose');
 const burnEventSchema = new mongoose.Schema(
   {
     nonce: { type: Number, required: true },
