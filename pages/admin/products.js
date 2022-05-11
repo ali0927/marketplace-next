@@ -122,39 +122,6 @@ function AdminProducts() {
     }
   };
 
-  //get signature (for creation)
-  const getCreateSignature = async (productId, ethAddress) => {
-    const msgParams = {
-      domain: {
-        name: "Nex10 Marketplace",
-        version: "1",
-        chainId: process.env.NODE_ENV === "prod" ? 1 : 4,
-      },
-      message: {
-        productId: productId,
-      },
-      primaryType: "Product",
-      types: {
-        EIP712Domain: [
-          { name: "name", type: "string" },
-          { name: "version", type: "string" },
-          { name: "chainId", type: "uint256" },
-        ],
-        Product: [{ name: "productId", type: "string" }],
-      },
-    };
-    try {
-      const from = ethAddress;
-      const sign = await ethereum.request({
-        method: "eth_signTypedData_v4",
-        params: [from, JSON.stringify(msgParams)],
-      });
-      return sign;
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const createHandler = async () => {
     if (!window.confirm("Are you sure?")) {
       return;

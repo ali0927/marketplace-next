@@ -205,19 +205,6 @@ function ProductEdit({ params }) {
         countInStock,
         ethAddress
       );
-      console.log(
-        name,
-        slug,
-        type,
-        brand,
-        currency,
-        image,
-        price,
-        originalCount,
-        countInStock,
-        ethAddress,
-        signature
-      );
       dispatch({ type: "UPDATE_REQUEST" });
       await axios.put(`/api/admin/products/${productId}`, {
         name,

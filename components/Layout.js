@@ -6,9 +6,15 @@ import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
 import axios from "axios";
 import Image from "next/image";
-import { Dropdown } from "react-bootstrap";
+//components
+import { Store } from "../utils/Store";
+import data from "../utils/data";
+import { getError } from "../utils/error";
+import { MarketplaceContext } from "../utils/MarketplaceContext";
+import CheckContractApproval from "./Dialogs/CheckContractApproval";
+import ProceedWithPurchase from "./Dialogs/ProceedWithPurchase";
 //material ui
-import { Avatar, CssBaseline, ThemeProvider } from "@mui/material";
+import { Avatar, CssBaseline, Menu, ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import {
   AppBar,
@@ -26,35 +32,72 @@ import {
   Divider,
   ListItemText,
 } from "@mui/material";
-// import MenuIcon from "@mui/icons-material/Menu";
+import MenuIcon from "@mui/icons-material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import CancelIcon from "@mui/icons-material/Cancel";
 import classes from "../utils/classes";
-//components
-import { Store } from "../utils/Store";
-import data from "../utils/data";
-import { getError } from "../utils/error";
-import { MarketplaceContext } from "../utils/MarketplaceContext";
-import CheckContractApproval from "./Dialogs/CheckContractApproval";
 //styling
 import nex10Logo from "../public/images/logo/nex10-logo.png";
+import UcdCoin from "../public/images/uu/ucd-coin.png";
 import { Colors } from "../utils/Theme";
 import styled from "styled-components";
-import ProceedWithPurchase from "./Dialogs/ProceedWithPurchase";
 
 const CartItem = styled.span`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0 20px;
   margin-bottom: 20px;
+  width: 100%;
+  background: #152266;
+  padding: 10px;
+  border-radius: 8px;
+`;
+const CartTitle = styled.div`
+  font-family: Oxanium;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 20px;
+  margin-bottom: 15px;
 `;
 const CartItemDetail = styled.div`
   display: flex;
   flex: 1;
-  padding: 0 20px;
+  padding: 0 10px;
   flex-direction: column;
+  width: 60%;
+  align-self: flex-start;
+`;
+const ProductTitle = styled.div`
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+`;
+const ProductBrand = styled.div`
+  font-family: Oxanium;
+  font-size: 14px;
+`;
+const ProductType = styled.div`
+  font-size: 14px;
+  font-family: Oxanium;
+  color: #f333cb;
+`;
+const ProductPricing = styled.div`
+  margin-top: 10px;
+`;
+const ProductPrice = styled.span`
+  font-size: 17px;
+  color: #ffffff;
+  font-family: "Oxanium";
+  font-weight: 700;
+  margin-left: 5px;
+`;
+const ProductCurrency = styled.span`
+  font-size: 12px;
+  color: #ffffff;
+  font-family: "Oxanium";
+  margin-left: 3px;
 `;
 const PurchaseButton = styled.button`
   display: flex;
@@ -67,9 +110,9 @@ const PurchaseButton = styled.button`
   font-family: "Oxanium";
   color: #ffffff;
   width: 90%;
-  background: ${Colors.Dialog};
+  background: ${Colors.UUPrimary};
   border-radius: 50px;
-  margin: 0 auto 20px;
+  margin: 0 auto;
   text-decoration: none;
   box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
   cursor: pointer;
@@ -83,6 +126,7 @@ const PurchaseButton = styled.button`
 
 export default function Layout({ title, description, children }) {
   const router = useRouter();
+  //context
   const { hasMetamask, currentAccount, connectWallet } =
     useContext(MarketplaceContext);
   const { state, dispatch } = useContext(Store);
@@ -132,7 +176,8 @@ export default function Layout({ title, description, children }) {
   //state
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [types, setTypes] = useState([]);
-  const [openDialog, setOpenDialog] = useState("");
+  const [openDialog, setOpenDialog] = useState(""); //dialog authentication
+  const [anchorEl, setAnchorEl] = useState(null); //cart menu
 
   //togle sidebar
   const sidebarOpenHandler = () => {
@@ -140,6 +185,15 @@ export default function Layout({ title, description, children }) {
   };
   const sidebarCloseHandler = () => {
     setSidebarVisible(false);
+  };
+
+  //toggle cart menu
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   //filter by types
@@ -200,7 +254,7 @@ export default function Layout({ title, description, children }) {
                 </Link>
               </NextLink>
             </Box>
-            <Drawer
+            {/* <Drawer
               anchor="left"
               open={sidebarVisible}
               onClose={sidebarCloseHandler}
@@ -234,19 +288,17 @@ export default function Layout({ title, description, children }) {
                   </NextLink>
                 ))}
               </List>
-            </Drawer>
+                </Drawer> */}
             <div
               style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}
             >
-              <Dropdown alignRight>
-                <Dropdown.Toggle
-                  variant="success"
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    cursor: "pointer",
-                    transformation: "none",
-                  }}
+              <div>
+                <Button
+                  id="basic-button"
+                  aria-controls={open ? "basic-menu" : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? "true" : undefined}
+                  onClick={handleClick}
                 >
                   <Typography component="span">
                     {cart.cartItems.length > 0 ? (
@@ -264,51 +316,81 @@ export default function Layout({ title, description, children }) {
                       </Avatar>
                     )}
                   </Typography>
-                </Dropdown.Toggle>
-                {cart.cartItems.length > 0 ? (
-                  <Dropdown.Menu
-                    style={{
-                      paddingTop: "20px",
-                      marginTop: "10px",
-                      color: "#ffffff",
-                      minWidth: 200,
-                      background: "#152266",
-                      zIndex: 10,
-                      fontFamily: "Oxanium",
-                    }}
-                  >
-                    {cart.cartItems.map((product) => (
-                      <CartItem key={product._id}>
-                        <Image
-                          src={product.image}
-                          alt={product.name}
-                          height={50}
-                          width={50}
-                          style={{ borderRadius: "50%", objectFit: "cover" }}
-                        />
+                </Button>
+                <Menu
+                  id="basic-menu"
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  MenuListProps={{
+                    "aria-labelledby": "basic-button",
+                  }}
+                >
+                  {cart.cartItems.length > 0 ? (
+                    <>
+                      <CartTitle>Your Cart</CartTitle>
+                      <MenuItem
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          padding: "0",
+                        }}
+                      >
+                        {cart.cartItems.map((product) => (
+                          <CartItem key={product._id}>
+                            <Image
+                              src={product.image}
+                              alt={product.name}
+                              height={60}
+                              width={60}
+                              style={{
+                                borderRadius: "10px",
+                                objectFit: "cover",
+                              }}
+                            />
 
-                        <CartItemDetail>
-                          <span>
-                            {product.brand} {product.name}
-                          </span>
-                          <span>
-                            {product.price} {product.currency}
-                          </span>
-                        </CartItemDetail>
-                        <CancelIcon
-                          style={{ fontSize: 22, cursor: "pointer" }}
-                          onClick={() => removeFromCartHandler(product)}
-                        />
-                      </CartItem>
-                    ))}
-                    <PurchaseButton onClick={() => setOpenDialog("first")}>
-                      Purchase
-                    </PurchaseButton>
-                  </Dropdown.Menu>
-                ) : (
-                  <div style={{ background: "transparent" }}></div>
-                )}
-              </Dropdown>
+                            <CartItemDetail>
+                              <ProductTitle>
+                                <ProductBrand>{product.brand}</ProductBrand>
+                                <ProductType>{product.type}</ProductType>
+                              </ProductTitle>
+
+                              <ProductPricing>
+                                <Image
+                                  src={UcdCoin}
+                                  width="15"
+                                  height="15"
+                                  alt="ucdCoin"
+                                />
+                                <ProductPrice>{product.price}</ProductPrice>
+                                <ProductCurrency>
+                                  {product.currency}
+                                </ProductCurrency>
+                              </ProductPricing>
+                            </CartItemDetail>
+
+                            <CancelIcon
+                              style={{
+                                fontSize: 22,
+                                cursor: "pointer",
+                                color: "white",
+                              }}
+                              onClick={() => removeFromCartHandler(product)}
+                            />
+                          </CartItem>
+                        ))}
+                      </MenuItem>
+                      <PurchaseButton onClick={() => setOpenDialog("first")}>
+                        Purchase
+                      </PurchaseButton>
+                    </>
+                  ) : (
+                    <div style={{ background: "transparent" }}></div>
+                  )}
+                </Menu>
+              </div>
               <CheckContractApproval
                 openDialog={openDialog}
                 setOpenDialog={setOpenDialog}
@@ -317,6 +399,7 @@ export default function Layout({ title, description, children }) {
                 openDialog={openDialog}
                 setOpenDialog={setOpenDialog}
               />
+
               {data.admin.includes(currentAccount) ? (
                 <Button onClick={adminHandler} fullWidth>
                   <Avatar sx={classes.avatar}>
@@ -353,11 +436,10 @@ export default function Layout({ title, description, children }) {
         <Container component="main" sx={classes.main}>
           {children}
         </Container>
-
-        <Box component="footer" sx={classes.footer}>
-          Copyright © 2022 NEX10 Labs Pte Ltd. All Rights Reserved.
-        </Box>
       </ThemeProvider>
+      <Box component="footer" sx={classes.footer}>
+        Copyright © 2022 NEX10 Labs Pte Ltd. All Rights Reserved.
+      </Box>
     </>
   );
 }
