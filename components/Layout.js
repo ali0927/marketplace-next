@@ -399,6 +399,7 @@ export default function Layout({ title, description, children }) {
                 openDialog={openDialog}
                 setOpenDialog={setOpenDialog}
               />
+
               {data.admin.includes(currentAccount) ? (
                 <Button onClick={adminHandler} fullWidth>
                   <Avatar sx={classes.avatar}>
