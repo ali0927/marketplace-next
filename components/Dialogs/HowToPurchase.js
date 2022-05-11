@@ -26,24 +26,7 @@ const Item = styled.div`
   padding: 20px 30px;
   display: flex;
   flex-direction: column;
-`;
-const ItemShort = styled.div`
-  color: #ffffff;
-  font-family: "Oxanium";
-  background: #152266;
-  padding: 20px 30px;
-  display: flex;
-  flex-direction: column;
-  min-height: 215px;
-`;
-const ItemShort2 = styled.div`
-  color: #ffffff;
-  font-family: "Oxanium";
-  background: #152266;
-  padding: 20px 30px;
-  display: flex;
-  flex-direction: column;
-  min-height: 185px;
+  height: 100%;
 `;
 const Step = styled.div`
   font-size: 14px;
@@ -110,7 +93,7 @@ const DialogButton = styled.div`
 function HowToPurchase(props) {
   //handle Clicks
   const handleClose = () => {
-    props.setOpen(null);
+    props.setOpen(false);
   };
   return (
     <Dialog
@@ -125,8 +108,8 @@ function HowToPurchase(props) {
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
           <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <ItemShort>
+            <Grid item sm={6} xs={12}>
+              <Item>
                 <SubTitle>
                   <Number>1</Number>
                   <Step>Contract Approval</Step>
@@ -147,9 +130,9 @@ function HowToPurchase(props) {
                     }}
                   />
                 </Info>
-              </ItemShort>
+              </Item>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item sm={6} xs={12}>
               <Item>
                 <SubTitle>
                   <Number>2</Number>
@@ -173,7 +156,7 @@ function HowToPurchase(props) {
                 </Info>
               </Item>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item sm={6} xs={12}>
               <Item>
                 <SubTitle>
                   <Number>3</Number>
@@ -195,8 +178,8 @@ function HowToPurchase(props) {
                 </Info>
               </Item>
             </Grid>
-            <Grid item xs={6}>
-              <ItemShort2>
+            <Grid item sm={6} xs={12}>
+              <Item>
                 <SubTitle>
                   <Number>4</Number>
                   <Step>Check your inventory</Step>
@@ -215,7 +198,7 @@ function HowToPurchase(props) {
                     }}
                   />
                 </Info>
-              </ItemShort2>
+              </Item>
             </Grid>
           </Grid>
         </DialogContentText>

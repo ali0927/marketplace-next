@@ -28,7 +28,7 @@ const Trapezium = styled.div`
   transform: translate(-50%, -50%);
   z-index: 10;
   font-family: "Oxanium";
-  & p {
+  > div {
     margin-top: 55px;
     text-align: center;
   }
@@ -102,7 +102,7 @@ function ProductItem({ product }) {
     <Card sx={classes.nftCard}>
       <CardActionArea disableRipple sx={{ position: "relative" }}>
         <Trapezium>
-          <p>{product.brand}</p>
+          <div>{product.brand}</div>
         </Trapezium>
         <CardMedia
           component="img"

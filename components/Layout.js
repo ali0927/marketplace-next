@@ -241,6 +241,11 @@ export default function Layout({ title, description, children }) {
     setAnchorEl(null);
   };
 
+  const startPurchaseMobile = () => {
+    setOpenDialog("first");
+    sidebarCloseHandler();
+  };
+
   return (
     <>
       <Head>
@@ -464,7 +469,7 @@ export default function Layout({ title, description, children }) {
                         </CartItem>
                       ))}
                     </ListItem>
-                    <PurchaseButton onClick={() => setOpenDialog("first")}>
+                    <PurchaseButton onClick={() => startPurchaseMobile()}>
                       Purchase
                     </PurchaseButton>
                   </List>
