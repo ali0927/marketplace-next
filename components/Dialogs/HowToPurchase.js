@@ -7,53 +7,79 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Grid,
 } from "@mui/material";
+import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
+import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import BentoOutlinedIcon from "@mui/icons-material/BentoOutlined";
 //styles
 import styled from "styled-components";
 import { Colors } from "../../utils/Theme";
 import classes from "../../utils/classes";
 
 //components
-const List = styled.div`
+const Item = styled.div`
   color: #ffffff;
   font-family: "Oxanium";
+  background: #152266;
+  padding: 20px 30px;
+  display: flex;
+  flex-direction: column;
+`;
+const ItemShort = styled.div`
+  color: #ffffff;
+  font-family: "Oxanium";
+  background: #152266;
+  padding: 20px 30px;
+  display: flex;
+  flex-direction: column;
+  min-height: 215px;
+`;
+const ItemShort2 = styled.div`
+  color: #ffffff;
+  font-family: "Oxanium";
+  background: #152266;
+  padding: 20px 30px;
+  display: flex;
+  flex-direction: column;
+  min-height: 185px;
 `;
 const Step = styled.div`
+  font-size: 14px;
+  font-weight: 700;
+  color: ${Colors.UUPrimary};
+`;
+const SubTitle = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   font-weight: 400;
+  padding-bottom: 8px;
+  border-bottom: 2px solid ${Colors.UUPrimary};
 `;
 const Number = styled.div`
-  font-size: 16px;
-  padding: 5px 13px;
-  background: #0097da;
+  font-size: 13px;
+  padding: 3px 10px;
+  background: ${Colors.UUPrimary};
   border-radius: 50%;
-  margin-right: 20px;
+  margin-right: 10px;
   position: relative;
   z-index: 10;
-  &: before {
-    content: "";
-    position: absolute;
-    left: 1em;
-    top: 1em;
-    width: 0.1rem;
-    height: 4rem;
-    background: ${Colors.Primary};
-    z-index: 5;
-  }
+  color: ${Colors.bg};
+  font-weight: 700;
+  text-align: center;
 `;
-const NumberLast = styled.div`
-  font-size: 16px;
-  padding: 5px 13px;
-  background: #0097da;
-  border-radius: 50%;
-  margin-right: 20px;
-  position: relative;
-  z-index: 10;
+
+const Info = styled.div`
+  display: flex;
 `;
-const Instruction = styled.div``;
+const Instruction = styled.div`
+  font-size: 11px;
+  width: 95%;
+  margin-right: 5px;
+`;
 
 const DialogButton = styled.div`
   display: flex;
@@ -67,7 +93,7 @@ const DialogButton = styled.div`
   font-family: "Oxanium";
   color: #ffffff;
   max-width: 220px;
-  background: ${Colors.Primary};
+  background: ${Colors.UUPrimary};
   border-radius: 50px;
   margin: 0 auto;
   text-decoration: none;
@@ -94,44 +120,108 @@ function HowToPurchase(props) {
       aria-describedby="alert-dialog-description"
     >
       <DialogTitle id="alert-dialog-title" sx={classes.dialogTitle}>
-        Please follow the steps below to purchase:
+        Here’s a quick guide for you before proceed to make any purchase.
       </DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
-          <List>
-            <Step>
-              <Number>1</Number>
-              <Instruction>
-                Allow our marketplace contract to access $UCD in your metamask
-                wallet. (Require one time approval fee)
-              </Instruction>
-            </Step>
-            <Step>
-              <Number>2</Number>
-              <Instruction>
-                Transfer $UCD from your metamask wallet to NEX wallet. (Require
-                gas fee to burn the token)
-              </Instruction>
-            </Step>
-            <Step>
-              <Number>3</Number>
-              <Instruction>
-                You will use the $UCD in the NEX wallet to make any purchases in
-                the marketplace and it’s gasless!
-              </Instruction>
-            </Step>
-            <Step>
-              <NumberLast>4</NumberLast>
-              <Instruction>
-                Upon a successful purchase, you can access the purchased items
-                in the [Inventory] page.
-              </Instruction>
-            </Step>
-          </List>
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <ItemShort>
+                <SubTitle>
+                  <Number>1</Number>
+                  <Step>Contract Approval</Step>
+                </SubTitle>
+                <Info>
+                  <Instruction>
+                    Allow our marketplace contract to access $UCD in your
+                    metamask wallet.
+                    <br />
+                    (Require one time approval fee)
+                  </Instruction>
+                  <FactCheckOutlinedIcon
+                    style={{
+                      fontSize: 35,
+                      color: "#F333CB",
+                      alignSelf: "flex-end",
+                      marginTop: "5px",
+                    }}
+                  />
+                </Info>
+              </ItemShort>
+            </Grid>
+            <Grid item xs={6}>
+              <Item>
+                <SubTitle>
+                  <Number>2</Number>
+                  <Step>Deposit $UCD to NEX wallet</Step>
+                </SubTitle>
+                <Info>
+                  <Instruction>
+                    Transfer any amount of $UCD from your metamask wallet to NEX
+                    wallet. The $UCD in your metamask wallet will be burnt.
+                    <br />
+                    (Require gas fee)
+                  </Instruction>
+                  <AccountBalanceWalletOutlinedIcon
+                    style={{
+                      fontSize: 35,
+                      color: "#F333CB",
+                      alignSelf: "flex-end",
+                      marginTop: "5px",
+                    }}
+                  />
+                </Info>
+              </Item>
+            </Grid>
+            <Grid item xs={6}>
+              <Item>
+                <SubTitle>
+                  <Number>3</Number>
+                  <Step>Purchase items using NEX wallet</Step>
+                </SubTitle>
+                <Info>
+                  <Instruction>
+                    You will use the $UCD amount in the NEX wallet to make any
+                    purchases in the marketplace and it’s gasless!
+                  </Instruction>
+                  <ShoppingCartOutlinedIcon
+                    style={{
+                      fontSize: 35,
+                      color: "#F333CB",
+                      alignSelf: "flex-end",
+                      marginTop: "5px",
+                    }}
+                  />
+                </Info>
+              </Item>
+            </Grid>
+            <Grid item xs={6}>
+              <ItemShort2>
+                <SubTitle>
+                  <Number>4</Number>
+                  <Step>Check your inventory</Step>
+                </SubTitle>
+                <Info>
+                  <Instruction>
+                    Upon a successful purchase, you can check your purchased
+                    items in the [Inventory] page.
+                  </Instruction>
+                  <BentoOutlinedIcon
+                    style={{
+                      fontSize: 35,
+                      color: "#F333CB",
+                      alignSelf: "flex-end",
+                      marginTop: "5px",
+                    }}
+                  />
+                </Info>
+              </ItemShort2>
+            </Grid>
+          </Grid>
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <DialogButton onClick={handleClose}>Ok, Let&apos;s Go!</DialogButton>
+        <DialogButton onClick={handleClose}>Understand!</DialogButton>
       </DialogActions>
     </Dialog>
   );

@@ -150,7 +150,8 @@ const classes = {
     color: "#ffffff",
     fontFamily: "Oxanium",
     fontWeight: "600",
-    fontSize: "24px",
+    fontSize: "22px",
+    textAlign: "center",
   },
   //payment form
   paperStyle: {
