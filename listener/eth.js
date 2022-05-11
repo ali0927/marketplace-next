@@ -7,10 +7,17 @@ const BurnEvent = require("../models/BurnEvent.model")
 
 require("dotenv").config()
 
-const ethProvider = new ethers.providers.JsonRpcProvider(process.env.RPC_ETHEREUM)
+let CHAINID_ETH =
+  process.env.NODE_ENV === "prod"
+    ? process.env.CHAINID_ETH
+    : process.env.CHAINID_ETH_TEST;
+
+const ethProvider = new ethers.providers.JsonRpcProvider(
+  process.env.RPC_ETHEREUM
+);
 
 const EscrowWalletContract = new ethers.Contract(
-  EscrowWallet.address[process.env.CHAINID_ETH],
+  EscrowWallet.address[CHAINID_ETH],
   EscrowWallet.abi,
   ethProvider
 );
@@ -35,7 +42,7 @@ EscrowWalletContract.on('BurnToken', async (user, token, amount_bn, nonce_bn, ev
     let burnEvent
     burnEvent = await BurnEvent.findOne({
       nonce: nonce,
-      chainId: process.env.CHAINID_ETH
+      chainId: CHAINID_ETH
     })
 
     if (burnEvent) {
@@ -44,20 +51,19 @@ EscrowWalletContract.on('BurnToken', async (user, token, amount_bn, nonce_bn, ev
     else {
       burnEvent = await BurnEvent.create({
         nonce: nonce,
-        chainId: process.env.CHAINID_ETH,
-        user: address, 
-        token: tokenAddress, 
-        amount: amount
-      })
-    }
-    
-    let data
-    data = await Wallet.findOne({ address: address })
-   
-    if (data) {
-      const tokenIdx = data.balances.findIndex(item => item.token_address === tokenAddress)
-      if (tokenIdx != -1) {
-        data.balances[tokenIdx].balance += amount
+        chainId: CHAINID_ETH,
+      });
+
+      if (burnEvent) {
+        return;
+      } else {
+        burnEvent = await BurnEvent.create({
+          nonce: nonce,
+          chainId: CHAINID_ETH,
+          user: address,
+          token: tokenAddress,
+          amount: amount,
+        });
       }
       else {
         data.balances.push({
