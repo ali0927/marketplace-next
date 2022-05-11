@@ -31,12 +31,9 @@ import {
   Badge,
   Button,
   Box,
-  IconButton,
   Drawer,
   List,
   ListItem,
-  Divider,
-  ListItemText,
 } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
@@ -150,6 +147,13 @@ export default function Layout({ title, description, children }) {
           },
         },
       },
+      MuiTableContainer: {
+        styleOverrides: {
+          root: {
+            overflowX: "hidden",
+          },
+        },
+      },
     },
     typography: {
       h1: {
@@ -229,6 +233,12 @@ export default function Layout({ title, description, children }) {
     const existItem = cart.cartItems.find((x) => x._id === product._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
     dispatch({ type: "CART_REMOVE_ITEM", payload: { ...product, quantity } });
+  };
+
+  //start purchase process
+  const startPurchase = () => {
+    setOpenDialog("first");
+    setAnchorEl(null);
   };
 
   return (
@@ -356,7 +366,7 @@ export default function Layout({ title, description, children }) {
                         </CartItem>
                       ))}
                     </MenuItem>
-                    <PurchaseButton onClick={() => setOpenDialog("first")}>
+                    <PurchaseButton onClick={() => startPurchase()}>
                       Purchase
                     </PurchaseButton>
                   </Menu>

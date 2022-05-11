@@ -1,5 +1,5 @@
 //react/next/packages
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { useSnackbar } from "notistack";
 //blockchain
 import { ethers } from "ethers";
@@ -9,10 +9,8 @@ import { Dialog, DialogActions } from "@mui/material";
 import Button from "@mui/material/Button";
 //styles
 import styled from "styled-components";
-import { Colors } from "../../utils/Theme";
 import classes from "../../utils/classes";
 //components/utils/context
-import { MarketplaceContext } from "../../utils/MarketplaceContext";
 import { getError } from "../../utils/error";
 
 //environment
@@ -42,33 +40,11 @@ const DialogLoading = styled.div`
   font-family: "Oxanium";
 `;
 
-const DialogApproveButton = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border: none;
-  padding: 0.5rem 3rem;
-  font-weight: 500;
-  color: #ffffff;
-  max-width: 200px;
-  background: ${Colors.Primary};
-  border-radius: 50px;
-  margin: 0 auto;
-  text-decoration: none;
-  box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
-  cursor: pointer;
-  outline: none;
-  transition: 0.2s all;
-  :active {
-    transform: scale(0.98);
-    box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.5);
-  }
-`;
-
-const escrowContractAddress = escrowContract.address; //currently on rinkeby
-const ucdRinkebyContractAddress = ucdContract.address[environmentTest.chainId];
-const ucdContractAddress = ucdContract.address[environment.chainId];
+const escrowContractAddress = escrowContract.address[4]; //currently on rinkeby
+const ucdContractAddress =
+  process.env.NODE_ENV === "prod"
+    ? ucdContract.address[environment.chainId]
+    : ucdContract.address[environmentTest.chainId];
 const ucdContractABI = ucdContract.abi;
 
 let signer, provider;
@@ -88,19 +64,8 @@ const CheckContractApproval = (props) => {
   };
 
   //create contract
-  const { isOnMainnet, checkChain } = useContext(MarketplaceContext);
   async function createContract() {
-    await checkChain();
-    if (isOnMainnet) {
-      return new ethers.Contract(ucdContractAddress, ucdContractABI, signer);
-    }
-    if (!isOnMainnet) {
-      return new ethers.Contract(
-        ucdRinkebyContractAddress,
-        ucdContractABI,
-        signer
-      );
-    }
+    return new ethers.Contract(ucdContractAddress, ucdContractABI, signer);
   }
   //approve transfer
   //open contract dialog
@@ -111,9 +76,9 @@ const CheckContractApproval = (props) => {
       .approve(escrowContractAddress, ethers.constants.MaxUint256)
       .then(async (tx) => {
         setIsLoading(true);
+        setIsApproved(true);
         tx.wait().then(() => {
           setIsLoading(false);
-          setIsApproved(true);
           handleDialogClose();
           enqueueSnackbar("Permissions approved successfully", {
             variant: "success",

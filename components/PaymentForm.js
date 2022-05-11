@@ -17,9 +17,6 @@ import * as Yup from "yup";
 import classes from "../utils/classes";
 import { MarketplaceContext } from "../utils/MarketplaceContext";
 import { Store } from "../utils/Store";
-//environment
-import { environmentTest } from "../lib/environments/environment";
-import { environment } from "../lib/environments/environment.prod";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useSnackbar } from "notistack";
@@ -116,7 +113,7 @@ function PaymentForm() {
         shippingAddress,
         cartItems
       );
-      const { data } = await axios.post("/api/orders", {
+      await axios.post("/api/orders", {
         email,
         discordId,
         ethAddress,
@@ -139,11 +136,6 @@ function PaymentForm() {
   return (
     <Grid>
       <Paper elevation={0} sx={classes.paperStyle}>
-        <Grid align="center">
-          <Typography variant="caption" sx={classes.particularsCaption}>
-            Fill in your particulars
-          </Typography>
-        </Grid>
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -155,22 +147,22 @@ function PaymentForm() {
                 <ListItem>
                   <Field
                     as={TextField}
-                    name="email"
-                    label="Email"
+                    name="discordId"
+                    label="Discord Id"
                     fullWidth
-                    error={props.errors.email && props.touched.email}
-                    helperText={<ErrorMessage name="email" />}
+                    error={props.errors.discordId && props.touched.discordId}
+                    helperText={<ErrorMessage name="discordId" />}
                     required
                   />
                 </ListItem>
                 <ListItem>
                   <Field
                     as={TextField}
-                    name="discordId"
-                    label="Discord Id"
+                    name="email"
+                    label="Email"
                     fullWidth
-                    error={props.errors.discordId && props.touched.discordId}
-                    helperText={<ErrorMessage name="discordId" />}
+                    error={props.errors.email && props.touched.email}
+                    helperText={<ErrorMessage name="email" />}
                     required
                   />
                 </ListItem>
@@ -188,10 +180,10 @@ function PaymentForm() {
                     required
                   />
                 </ListItem>
-                <ListItem>
+                <ListItem sx={{ display: "flex", justifyContent: "center" }}>
                   <Button
                     type="submit"
-                    sx={classes.btnStyle}
+                    sx={classes.submitForm}
                     variant="contained"
                     color="primary"
                   >

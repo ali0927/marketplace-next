@@ -148,13 +148,14 @@ const classes = {
   //payment form
   paperStyle: {
     padding: "0 15px 40px 15px",
-    width: "250px",
+    width: "350px",
   },
   particularsTitle: {
     fontFamily: "Oxanium",
     fontSize: "24px",
     fontWeight: "600",
     color: "#ffffff",
+    textAlign: "center",
   },
   particularsCaption: {
     color: "#ffffff",
@@ -168,6 +169,17 @@ const classes = {
   particularsLastField: {
     color: "#ffffff",
   },
+  submitForm: {
+    background: "#F333CB",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    fontFamily: "Oxanium",
+    borderRadius: "50px",
+    padding: "5px 20px",
+    width: "60%",
+    textRransform: "unset",
+  },
   dialogApprovalButton: {
     display: "flex",
     alignItems: "center",
@@ -178,7 +190,7 @@ const classes = {
     fontWeight: "500",
     color: "#ffffff",
     maxWidth: "200px",
-    background: "#0097DA",
+    background: "#F333CB",
     borderRadius: "50px",
     margin: "0 auto",
     textDecoration: "none",
@@ -189,7 +201,6 @@ const classes = {
     fontFamily: "Oxanium",
 
     "&:active": {
-      background: "#0097DA",
       transform: "scale(0.98)",
       boxShadow: "3px 2px 22px 1px rgba(0, 0, 0, 0.5)",
     },
