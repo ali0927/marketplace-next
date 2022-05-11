@@ -62,7 +62,6 @@ handler.post(async (req, res) => {
       signature
     );
   } catch (error) {
-    console.log(signature);
     console.log("Signing fail");
     return res.status(400).json({
       success: false,

@@ -168,6 +168,7 @@ function PaymentForm() {
                 </ListItem>
                 <ListItem>
                   <Field
+                    sx={{ color: "white" }}
                     as={TextField}
                     name="shippingAddress"
                     label="Shipping Address"

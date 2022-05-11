@@ -1,5 +1,5 @@
 //react/next/packages
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import UULogo from "../public/images/uu/uu-logo.png";
@@ -8,6 +8,7 @@ import SSLogo from "../public/images/ss/ss-logo.png";
 import SSMain from "../public/images/ss/ss-main.png";
 //components
 import Layout from "../components/Layout";
+import HowToPurchase from "../components/Dialogs/HowToPurchase";
 import { MarketplaceContext } from "../utils/MarketplaceContext";
 import classes from "../utils/classes";
 //styling
@@ -87,6 +88,8 @@ const EnterButton = styled.button`
 export default function Home() {
   //context
   const { isOnMainnet } = useContext(MarketplaceContext);
+  //state
+  const [open, setOpen] = useState(true); //dialog how to purchase
   //route
   const router = useRouter();
   const accessUuMarketplace = () => {
@@ -119,6 +122,7 @@ export default function Home() {
                 </div>
               </Card>
             </Wrapper>
+            <HowToPurchase open={open} setOpen={setOpen} />
           </Container>
         ) : (
           <Box sx={classes.wrongNetwork}>

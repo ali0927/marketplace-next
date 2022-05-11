@@ -145,6 +145,13 @@ const classes = {
     display: "flex",
     justifyContent: "space-between",
   },
+  //how to purchase
+  dialogTitle: {
+    color: "#ffffff",
+    fontFamily: "Oxanium",
+    fontWeight: "600",
+    fontSize: "24px",
+  },
   //payment form
   paperStyle: {
     padding: "0 15px 40px 15px",
@@ -178,7 +185,7 @@ const classes = {
     borderRadius: "50px",
     padding: "5px 20px",
     width: "60%",
-    textRransform: "unset",
+    textTransform: "unset",
   },
   dialogApprovalButton: {
     display: "flex",
