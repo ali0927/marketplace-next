@@ -3,6 +3,7 @@ const data = {
   admin: [
     "0x9d95bcaa5b609fa97a7ec860bec115aa94f85ba9",
     "0x0902cb364e49101f4ab5d4ffde5035973e728d3f",
+    "0xe3342d6522ad72f65D6b23f19b17e3fb12161f90",
   ], //put in small letters
   products: [
     {
