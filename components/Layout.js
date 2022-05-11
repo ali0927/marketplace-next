@@ -14,7 +14,13 @@ import { MarketplaceContext } from "../utils/MarketplaceContext";
 import CheckContractApproval from "./Dialogs/CheckContractApproval";
 import ProceedWithPurchase from "./Dialogs/ProceedWithPurchase";
 //material ui
-import { Avatar, CssBaseline, Menu, ThemeProvider } from "@mui/material";
+import {
+  Avatar,
+  CssBaseline,
+  Menu,
+  ThemeProvider,
+  useMediaQuery,
+} from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import {
   AppBar,
@@ -32,7 +38,6 @@ import {
   Divider,
   ListItemText,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
@@ -43,7 +48,10 @@ import nex10Logo from "../public/images/logo/nex10-logo.png";
 import UcdCoin from "../public/images/uu/ucd-coin.png";
 import { Colors } from "../utils/Theme";
 import styled from "styled-components";
-
+const ImageBox = styled.div`
+  position: absolute;
+  top: 10px;
+`;
 const CartItem = styled.span`
   display: flex;
   justify-content: space-between;
@@ -186,7 +194,8 @@ export default function Layout({ title, description, children }) {
   const sidebarCloseHandler = () => {
     setSidebarVisible(false);
   };
-
+  //responsive cart menu
+  const isDesktop = useMediaQuery("(min-width:650px)");
   //toggle cart menu
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -234,15 +243,7 @@ export default function Layout({ title, description, children }) {
         <CssBaseline />
         <AppBar position="static" sx={classes.appbar}>
           <Toolbar sx={classes.toolbar}>
-            <Box display="flex" alignItems="center">
-              {/* <IconButton
-                edge="start"
-                aria-label="open drawer"
-                onClick={sidebarOpenHandler}
-                sx={classes.menuButton}
-              >
-                <MenuIcon sx={classes.navbarButton} />
-              </IconButton> */}
+            <ImageBox>
               <NextLink href="/" passHref>
                 <Link>
                   <Image
@@ -253,45 +254,16 @@ export default function Layout({ title, description, children }) {
                   />
                 </Link>
               </NextLink>
-            </Box>
-            {/* <Drawer
-              anchor="left"
-              open={sidebarVisible}
-              onClose={sidebarCloseHandler}
-            >
-              <List>
-                <ListItem>
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="space-between"
-                  >
-                    <Typography>Types</Typography>
-                    <IconButton
-                      aria-label="close"
-                      onClick={sidebarCloseHandler}
-                    >
-                      <CancelIcon />
-                    </IconButton>
-                  </Box>
-                </ListItem>
-                <Divider light />
-                {types.map((type) => (
-                  <NextLink key={type} href={`/search?type=${type}`}>
-                    <ListItem
-                      button
-                      component="a"
-                      onClick={sidebarCloseHandler}
-                    >
-                      <ListItemText primary={type}></ListItemText>
-                    </ListItem>
-                  </NextLink>
-                ))}
-              </List>
-                </Drawer> */}
+            </ImageBox>
             <div
-              style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                marginInline: "auto 0",
+              }}
             >
+              {/* Desktop Cart */}
               <div>
                 <Button
                   id="basic-button"
@@ -299,6 +271,7 @@ export default function Layout({ title, description, children }) {
                   aria-haspopup="true"
                   aria-expanded={open ? "true" : undefined}
                   onClick={handleClick}
+                  sx={isDesktop ? classes.visible : classes.hidden}
                 >
                   <Typography component="span">
                     {cart.cartItems.length > 0 ? (
@@ -317,80 +290,177 @@ export default function Layout({ title, description, children }) {
                     )}
                   </Typography>
                 </Button>
-                <Menu
-                  id="basic-menu"
-                  anchorEl={anchorEl}
-                  open={open}
-                  onClose={handleClose}
-                  MenuListProps={{
-                    "aria-labelledby": "basic-button",
-                  }}
-                >
-                  {cart.cartItems.length > 0 ? (
-                    <>
-                      <CartTitle>Your Cart</CartTitle>
-                      <MenuItem
-                        sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          padding: "0",
-                        }}
-                      >
-                        {cart.cartItems.map((product) => (
-                          <CartItem key={product._id}>
-                            <Image
-                              src={product.image}
-                              alt={product.name}
-                              height={60}
-                              width={60}
-                              style={{
-                                borderRadius: "10px",
-                                objectFit: "cover",
-                              }}
-                            />
 
-                            <CartItemDetail>
-                              <ProductTitle>
-                                <ProductBrand>{product.brand}</ProductBrand>
-                                <ProductType>{product.type}</ProductType>
-                              </ProductTitle>
+                {cart.cartItems.length > 0 ? (
+                  <Menu
+                    sx={isDesktop ? classes.visible : classes.hidden}
+                    id="basic-menu"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    MenuListProps={{
+                      "aria-labelledby": "basic-button",
+                    }}
+                  >
+                    <CartTitle>Your Cart</CartTitle>
+                    <MenuItem
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        padding: "0",
+                      }}
+                    >
+                      {cart.cartItems.map((product) => (
+                        <CartItem key={product._id}>
+                          <Image
+                            src={product.image}
+                            alt={product.name}
+                            height={60}
+                            width={60}
+                            style={{
+                              borderRadius: "10px",
+                              objectFit: "cover",
+                            }}
+                          />
 
-                              <ProductPricing>
-                                <Image
-                                  src={UcdCoin}
-                                  width="15"
-                                  height="15"
-                                  alt="ucdCoin"
-                                />
-                                <ProductPrice>{product.price}</ProductPrice>
-                                <ProductCurrency>
-                                  {product.currency}
-                                </ProductCurrency>
-                              </ProductPricing>
-                            </CartItemDetail>
+                          <CartItemDetail>
+                            <ProductTitle>
+                              <ProductBrand>{product.brand}</ProductBrand>
+                              <ProductType>{product.type}</ProductType>
+                            </ProductTitle>
 
-                            <CancelIcon
-                              style={{
-                                fontSize: 22,
-                                cursor: "pointer",
-                                color: "white",
-                              }}
-                              onClick={() => removeFromCartHandler(product)}
-                            />
-                          </CartItem>
-                        ))}
-                      </MenuItem>
-                      <PurchaseButton onClick={() => setOpenDialog("first")}>
-                        Purchase
-                      </PurchaseButton>
-                    </>
-                  ) : (
-                    <div style={{ background: "transparent" }}></div>
-                  )}
-                </Menu>
+                            <ProductPricing>
+                              <Image
+                                src={UcdCoin}
+                                width="15"
+                                height="15"
+                                alt="ucdCoin"
+                              />
+                              <ProductPrice>{product.price}</ProductPrice>
+                              <ProductCurrency>
+                                {product.currency}
+                              </ProductCurrency>
+                            </ProductPricing>
+                          </CartItemDetail>
+
+                          <CancelIcon
+                            style={{
+                              fontSize: 22,
+                              cursor: "pointer",
+                              color: "white",
+                            }}
+                            onClick={() => removeFromCartHandler(product)}
+                          />
+                        </CartItem>
+                      ))}
+                    </MenuItem>
+                    <PurchaseButton onClick={() => setOpenDialog("first")}>
+                      Purchase
+                    </PurchaseButton>
+                  </Menu>
+                ) : (
+                  <div style={{ background: "transparent" }}></div>
+                )}
               </div>
+              {/* Mobile Cart */}
+              <div>
+                <Button
+                  id="basic-button"
+                  aria-controls={open ? "basic-menu" : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? "true" : undefined}
+                  onClick={sidebarOpenHandler}
+                  sx={isDesktop ? classes.hidden : classes.visible}
+                >
+                  <Typography component="span">
+                    {cart.cartItems.length > 0 ? (
+                      <Badge
+                        color="secondary"
+                        badgeContent={cart.cartItems.length}
+                      >
+                        <Avatar sx={classes.avatar}>
+                          <ShoppingBagOutlinedIcon style={{ fontSize: 22 }} />
+                        </Avatar>
+                      </Badge>
+                    ) : (
+                      <Avatar sx={classes.avatar}>
+                        <ShoppingBagOutlinedIcon style={{ fontSize: 22 }} />
+                      </Avatar>
+                    )}
+                  </Typography>
+                </Button>
+                <Drawer
+                  anchor="right"
+                  open={sidebarVisible}
+                  onClose={sidebarCloseHandler}
+                  sx={isDesktop ? classes.hidden : classes.visible}
+                >
+                  <List>
+                    <ListItem>
+                      <CartTitle>Your Cart</CartTitle>
+                    </ListItem>
+                    <ListItem
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        padding: "0",
+                      }}
+                    >
+                      {cart.cartItems.map((product) => (
+                        <CartItem key={product._id}>
+                          <Image
+                            src={product.image}
+                            alt={product.name}
+                            height={60}
+                            width={60}
+                            style={{
+                              borderRadius: "10px",
+                              objectFit: "cover",
+                            }}
+                          />
+
+                          <CartItemDetail>
+                            <ProductTitle>
+                              <ProductBrand>{product.brand}</ProductBrand>
+                              <ProductType>{product.type}</ProductType>
+                            </ProductTitle>
+
+                            <ProductPricing>
+                              <Image
+                                src={UcdCoin}
+                                width="15"
+                                height="15"
+                                alt="ucdCoin"
+                              />
+                              <ProductPrice>{product.price}</ProductPrice>
+                              <ProductCurrency>
+                                {product.currency}
+                              </ProductCurrency>
+                            </ProductPricing>
+                          </CartItemDetail>
+
+                          <CancelIcon
+                            style={{
+                              fontSize: 22,
+                              cursor: "pointer",
+                              color: "white",
+                            }}
+                            onClick={() => removeFromCartHandler(product)}
+                          />
+                        </CartItem>
+                      ))}
+                    </ListItem>
+                    <PurchaseButton onClick={() => setOpenDialog("first")}>
+                      Purchase
+                    </PurchaseButton>
+                  </List>
+                </Drawer>
+              </div>
+
               <CheckContractApproval
                 openDialog={openDialog}
                 setOpenDialog={setOpenDialog}

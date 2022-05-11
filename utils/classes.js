@@ -50,6 +50,7 @@ const classes = {
   },
   toolbar: {
     justifyContent: "space-between",
+    position: "relative",
   },
   brand: {
     fontWeight: "bold",
@@ -100,21 +101,6 @@ const classes = {
     letterSpacing: "1.5px",
     textAlign: "center",
     fontFamily: "Oxanium",
-  },
-  marketplaceUUCard: {
-    height: "380px",
-    width: "480px",
-    border: "1px solid #152266",
-    background: "transparent",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
-    "&:hover": {
-      transform: "scale3d(1.05, 1.05, 1)",
-      border: "2px solid #F333CB",
-      cursor: "pointer",
-    },
   },
   marketplaceSSCard: {
     height: "380px",

@@ -12,7 +12,7 @@ import { MarketplaceContext } from "../utils/MarketplaceContext";
 import classes from "../utils/classes";
 //styling
 import { Box } from "@mui/system";
-import { Button, Card } from "@mui/material";
+import { Card } from "@mui/material";
 import styled from "styled-components";
 import { Colors, Devices } from "../utils/Theme";
 const Container = styled.div`
@@ -38,6 +38,22 @@ const ParentCard = styled.div`
     > button {
       display: flex;
     }
+  }
+`;
+const MarketplaceUUCard = styled.div`
+  height: 380px;
+  width: 480px;
+  border: 1px solid #152266;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  justify-content: center;
+  position: relative;
+  &:hover {
+    transform: scale3d(1.05, 1.05, 1);
+    border: 2px solid #f333cb;
+    cursor: pointer;
   }
 `;
 const EnterButton = styled.button`
@@ -85,12 +101,7 @@ export default function Home() {
           <Container>
             <Box sx={classes.marketplaceSelect}>Select Marketplace</Box>
             <Wrapper>
-              <Button
-                sx={classes.marketplaceUUCard}
-                onClick={accessUuMarketplace}
-                style={{ backgroundColor: "transparent" }}
-                disableRipple
-              >
+              <MarketplaceUUCard onClick={accessUuMarketplace}>
                 <ParentCard>
                   <Image src={UUMain} alt="UU Main" width={378} height={378} />
                   <Card sx={classes.logoImg}>
@@ -98,7 +109,7 @@ export default function Home() {
                   </Card>
                   <EnterButton>Enter</EnterButton>
                 </ParentCard>
-              </Button>
+              </MarketplaceUUCard>
               <Card sx={classes.marketplaceSSCard}>
                 <div>
                   <Image src={SSMain} alt="SS Main" width={378} height={378} />
