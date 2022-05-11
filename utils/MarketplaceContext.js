@@ -12,10 +12,14 @@ import shoContract from "../lib/contracts/MockSho.json";
 let signer, provider;
 
 //variables
+
 const ucdRinkebyContractAddress = ucdContract.address[environmentTest.chainId];
 const ucdContractAddress = ucdContract.address[environment.chainId];
 const ucdContractABI = ucdContract.abi;
-const shoContractAddress = shoContract.address; //to update (rinkeby)
+const shoContractAddress =
+process.env.NODE_ENV === "prod"
+? shoContract.address[environment.chainId_polygon]
+: shoContract.address[environmentTest.chainId_polygon]; //to update (rinkeby)
 const shoContractABI = shoContract.abi;
 
 export const MarketplaceContext = createContext();
@@ -46,7 +50,7 @@ export const MarketplaceProvider = ({ children }) => {
     checkChain();
     getAccount();
     getUCDBalance();
-    getSHOBalance();
+    // getSHOBalance();
     if (window.ethereum) {
       window.ethereum.on("chainChanged", () => {
         window.location.reload();
