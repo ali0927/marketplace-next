@@ -78,10 +78,33 @@ const AddToCart = styled.button`
   border: none;
   cursor: pointer;
 `;
+const RemoveFromCart = styled.button`
+  background-color: ${Colors.UUPrimary};
+  width: 100%;
+  text-align: center;
+  border-radius: 40px;
+  color: #ffffff;
+  font-size: 14px;
+  padding: 6px 10px;
+  font-family: 'Oxanium';
+  border: none;
+  cursor: pointer;
+`;
+const NoStock = styled.button`
+  background-color: ${Colors.Dialog};
+  width: 100%;
+  text-align: center;
+  border-radius: 40px;
+  color: #ffffff;
+  font-size: 15px;
+  padding: 6px 14px;
+  font-family: 'Oxanium';
+  border: none;
+  cursor: default;
+`;
 
 function ProductItem({ product }) {
   const { state, dispatch } = useContext(Store);
-  console.log(product);
 
   const addToCartHandler = async (product) => {
     const existItem = state.cart.cartItems.find((x) => x._id === product._id);
@@ -101,7 +124,11 @@ function ProductItem({ product }) {
 
   return (
     <Card sx={classes.nftCard}>
-      <CardActionArea disableRipple sx={{ position: 'relative' }}>
+      <CardActionArea
+        disableRipple
+        onClick={() => addToCartHandler(product)}
+        sx={{ position: 'relative' }}
+      >
         <Trapezium>
           <p>{product.brand}</p>
         </Trapezium>
@@ -125,14 +152,18 @@ function ProductItem({ product }) {
         </CardContent>
       </CardActionArea>
       <CardActions>
-        {state.cart.cartItems.some((x) => x._id === product._id) ? (
-          <AddToCart onClick={() => removeFromCartHandler(product)}>
-            Remove from cart
-          </AddToCart>
+        {product.countInStock > 0 ? (
+          state.cart.cartItems.some((x) => x._id === product._id) ? (
+            <RemoveFromCart onClick={() => removeFromCartHandler(product)}>
+              Remove from cart
+            </RemoveFromCart>
+          ) : (
+            <AddToCart onClick={() => addToCartHandler(product)}>
+              Buy Now
+            </AddToCart>
+          )
         ) : (
-          <AddToCart onClick={() => addToCartHandler(product)}>
-            Buy Now
-          </AddToCart>
+          <NoStock>No Stock</NoStock>
         )}
       </CardActions>
     </Card>

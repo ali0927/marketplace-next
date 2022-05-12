@@ -99,9 +99,13 @@ const FilterContainer = styled.div`
   }
 `;
 const FilterText = styled.div`
+  display: none;
   color: #ffffff;
   font-family: Oxanium;
   font-size: 12px;
+  @media ${Devices.MobileL} {
+    display: block;
+  }
 `;
 const FilterButton = styled.button`
   border: 2px solid ${Colors.bg};

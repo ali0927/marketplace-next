@@ -86,7 +86,6 @@ handler.put(async (req, res) => {
       },
       signature
     );
-    console.log('🚀 | handler.put | signingAddress', signingAddress);
   } catch (error) {
     console.log(error);
     return res.status(400).json({

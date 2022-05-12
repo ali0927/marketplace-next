@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 const orderSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
+    image: { type: String, required: true },
+    brand: { type: String, required: true },
     quantity: { type: Number, required: true },
     price: { type: Number, required: true },
     discordId: { type: String, required: true },

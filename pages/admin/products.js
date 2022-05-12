@@ -241,8 +241,10 @@ function AdminProducts() {
                                 <Button
                                   size="small"
                                   variant="contained"
-                                  color="secondary"
-                                  sx={{ marginBottom: '10px' }}
+                                  sx={{
+                                    marginBottom: '10px',
+                                    background: '#01579b',
+                                  }}
                                 >
                                   Edit
                                 </Button>

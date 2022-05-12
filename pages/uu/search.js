@@ -165,7 +165,7 @@ export default function Search(props) {
 
   return (
     <Layout title="Search">
-      <div style={{ width: '1200px' }}>
+      <div>
         {!isOnMainnet ? (
           <div>
             <HeaderContainer>

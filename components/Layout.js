@@ -37,6 +37,7 @@ import MenuItem from '@mui/material/MenuItem';
 import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import CancelIcon from '@mui/icons-material/Cancel';
+import TakeoutDiningOutlinedIcon from '@mui/icons-material/TakeoutDiningOutlined';
 import classes from '../utils/classes';
 //styling
 import nex10Logo from '../public/images/logo/nex10-logo.png';
@@ -199,7 +200,7 @@ export default function Layout({ title, description, children }) {
         main: '#0097DA',
       },
       secondary: {
-        main: '#208080',
+        main: '#F333CB',
       },
     },
     breakpoints: {
@@ -227,6 +228,7 @@ export default function Layout({ title, description, children }) {
   };
   //responsive cart menu
   const isDesktop = useMediaQuery('(min-width:650px)');
+  const isSmallMobile = useMediaQuery('(min-width:400px)');
   //toggle cart menu
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -253,6 +255,9 @@ export default function Layout({ title, description, children }) {
 
   const adminHandler = () => {
     router.push('/admin/products');
+  };
+  const inventoryHandler = () => {
+    router.push('/inventory');
   };
 
   //remove product from cart
@@ -283,7 +288,7 @@ export default function Layout({ title, description, children }) {
       </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <AppBar position="sticky" sx={classes.appbar}>
+        <AppBar position="fixed" sx={classes.appbar}>
           <Toolbar sx={classes.toolbar}>
             <ImageBox>
               <NextLink href="/" passHref>
@@ -305,6 +310,11 @@ export default function Layout({ title, description, children }) {
                 marginInline: 'auto 0',
               }}
             >
+              <Button onClick={inventoryHandler} fullWidth>
+                <Avatar sx={classes.avatar}>
+                  <TakeoutDiningOutlinedIcon style={{ fontSize: 22 }} />
+                </Avatar>
+              </Button>
               {/* Desktop Cart */}
               <div>
                 <Button
@@ -516,7 +526,7 @@ export default function Layout({ title, description, children }) {
               ) : (
                 ''
               )}
-              <div>
+              <div sx={isDesktop ? classes.visible : classes.hidden}>
                 {hasMetamask ? (
                   currentAccount ? (
                     <Button sx={classes.connectedMetamaskButton}>

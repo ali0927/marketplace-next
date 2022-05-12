@@ -126,6 +126,7 @@ function PaymentForm() {
       enqueueSnackbar('Purchase successfully made', {
         variant: 'success',
       });
+      window.location.reload(false);
     } catch (err) {
       setLoading(false);
       enqueueSnackbar(getError(err), { variant: 'error' });

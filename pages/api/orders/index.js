@@ -62,8 +62,6 @@ handler.post(async (req, res) => {
       signature
     );
   } catch (error) {
-    console.log(signature);
-    console.log('Signing fail');
     return res.status(400).json({
       success: false,
       data: error,
@@ -90,6 +88,8 @@ handler.post(async (req, res) => {
       let product = await Product.findOne({ _id: item });
       await Order.create({
         name: product.name,
+        brand: product.brand,
+        image: product.image,
         quantity: 1,
         price: product.price,
         discordId: discordId,
@@ -119,7 +119,6 @@ handler.post(async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
       error: 'Server error',

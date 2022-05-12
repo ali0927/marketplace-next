@@ -27,12 +27,15 @@ const classes = {
     minHeight: '80vh',
   },
   footer: {
-    marginTop: 3,
-    paddingBottom: 3,
+    marginTop: '100px',
+
     textAlign: 'center',
     color: '#ffffff',
     fontSize: '14px',
     fontFamily: 'Oxanium',
+    borderTop: '1px solid #30358C',
+    paddingTop: '10px',
+    paddingBottom: '10px',
   },
   section: {
     marginTop: 1,
@@ -43,6 +46,9 @@ const classes = {
   // header
   appbar: {
     backgroundColor: 'transparent',
+    top: 0,
+    height: '100px',
+    position: 'sticky',
     '& a': {
       color: '#ffffff',
       marginLeft: 1,
@@ -215,6 +221,12 @@ const classes = {
   //utils
   avatar: {
     backgroundColor: '#152266',
+  },
+  loading: {
+    position: 'absolute',
+    top: '30%',
+    right: '50%',
+    transform: 'translate(50%,-50%)',
   },
   wrongNetwork: {
     textAlign: 'center',
