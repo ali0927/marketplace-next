@@ -154,6 +154,34 @@ export default function Layout({ title, description, children }) {
           },
         },
       },
+      MuiFormControl: {
+        styleOverrides: {
+          root: {
+            borderRadius: "50px",
+          },
+        },
+      },
+      MuiInputLabel: {
+        styleOverrides: {
+          root: {
+            color: "#ffffff",
+            fontFamily: "Oxanium",
+            fontSize: "15px",
+          },
+        },
+      },
+      MuiOutlinedInput: {
+        styleOverrides: {
+          root: {
+            color: "#ffffff",
+            fontFamily: "Oxanium",
+            fontSize: "15px",
+            borderRadius: "50px",
+            background: "#152266",
+          },
+          input: { textAlign: "center" },
+        },
+      },
     },
     typography: {
       h1: {
@@ -239,6 +267,11 @@ export default function Layout({ title, description, children }) {
   const startPurchase = () => {
     setOpenDialog("first");
     setAnchorEl(null);
+  };
+
+  const startPurchaseMobile = () => {
+    setOpenDialog("first");
+    sidebarCloseHandler();
   };
 
   return (
@@ -464,7 +497,7 @@ export default function Layout({ title, description, children }) {
                         </CartItem>
                       ))}
                     </ListItem>
-                    <PurchaseButton onClick={() => setOpenDialog("first")}>
+                    <PurchaseButton onClick={() => startPurchaseMobile()}>
                       Purchase
                     </PurchaseButton>
                   </List>

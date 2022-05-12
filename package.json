@@ -12,7 +12,9 @@
     "@emotion/react": "^11.9.0",
     "@emotion/server": "^11.4.0",
     "@emotion/styled": "^11.8.1",
+    "@material-ui/styles": "^4.11.5",
     "@metamask/onboarding": "^1.0.1",
+    "@mui/base": "^5.0.0-alpha.80",
     "@mui/icons-material": "^5.6.2",
     "@mui/material": "^5.6.4",
     "@mui/styled-engine-sc": "^5.6.1",
@@ -41,6 +43,7 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
+    "babel-plugin-styled-components": "^2.0.7",
     "concurrently": "^7.1.0",
     "eslint": "8.14.0",
     "eslint-config-next": "12.1.6",

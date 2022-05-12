@@ -149,6 +149,7 @@ function PaymentForm() {
                     as={TextField}
                     name="discordId"
                     label="Discord Id"
+                    sx={{ textAlign: "center" }}
                     fullWidth
                     error={props.errors.discordId && props.touched.discordId}
                     helperText={<ErrorMessage name="discordId" />}
@@ -168,6 +169,7 @@ function PaymentForm() {
                 </ListItem>
                 <ListItem>
                   <Field
+                    sx={{ color: "white" }}
                     as={TextField}
                     name="shippingAddress"
                     label="Shipping Address"

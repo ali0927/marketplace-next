@@ -54,9 +54,9 @@ const CheckContractApproval = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const [isApproved, setIsApproved] = useState(false);
-  const handleDialogClose = () => {
+  const handleDialogClose = (extra = false) => {
     //if yes run this
-    if (isApproved) {
+    if (isApproved || extra === true) {
       props.setOpenDialog("second");
     } else {
       props.setOpenDialog(null);
@@ -76,10 +76,10 @@ const CheckContractApproval = (props) => {
       .approve(escrowContractAddress, ethers.constants.MaxUint256)
       .then(async (tx) => {
         setIsLoading(true);
-        setIsApproved(true);
-        tx.wait().then(() => {
+        tx.wait().then(async () => {
+          await setIsApproved(true);
           setIsLoading(false);
-          handleDialogClose();
+          handleDialogClose(true);
           enqueueSnackbar("Permissions approved successfully", {
             variant: "success",
           });
