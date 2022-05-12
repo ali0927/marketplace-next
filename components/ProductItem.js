@@ -1,5 +1,5 @@
 //react/next/packages
-import axios from "axios";
+import axios from 'axios';
 //material ui
 import {
   Card,
@@ -7,15 +7,15 @@ import {
   CardActions,
   CardContent,
   CardMedia,
-} from "@mui/material";
+} from '@mui/material';
 //styling
-import { Colors } from "../utils/Theme";
-import Image from "next/image";
-import { useContext } from "react";
-import { Store } from "../utils/Store";
-import classes from "../utils/classes";
-import UcdCoin from "../public/images/uu/ucd-coin.png";
-import styled from "styled-components";
+import { Colors } from '../utils/Theme';
+import Image from 'next/image';
+import { useContext } from 'react';
+import { Store } from '../utils/Store';
+import classes from '../utils/classes';
+import UcdCoin from '../public/images/uu/ucd-coin.png';
+import styled from 'styled-components';
 const Trapezium = styled.div`
   padding: 5px 8px;
   background: ${Colors.bg};
@@ -24,47 +24,47 @@ const Trapezium = styled.div`
   border-bottom-left-radius: 1em 2em;
   position: absolute;
   left: 50%;
-  top: -10%;
+  top: -8%;
   transform: translate(-50%, -50%);
   z-index: 10;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
   & p {
     margin-top: 55px;
     text-align: center;
   }
 `;
 const ProductName = styled.div`
-  color: "#ffffff";
-  font-size: "14px";
-  font-family: "Oxanium";
+  color: '#ffffff';
+  font-size: '14px';
+  font-family: 'Oxanium';
 `;
 const ProductPrice = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
 `;
 const ProductCost = styled.div`
   font-size: 16px;
   font-weight: 700;
   margin-inline: 5px;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
 `;
 const ProductCurrency = styled.div`
   font-size: 14px;
   align-self: end;
   color: #c4c4c4;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
 `;
 const ProductDetails = styled.div`
   display: flex;
   justify-content: space-between;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
 `;
 const RemainingProduct = styled.div`
   color: ${Colors.UUPrimary};
   font-size: 12px;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
 `;
 const AddToCart = styled.button`
   background-color: ${Colors.UUPrimary};
@@ -74,33 +74,34 @@ const AddToCart = styled.button`
   color: #ffffff;
   font-size: 15px;
   padding: 6px 14px;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
   border: none;
   cursor: pointer;
 `;
 
 function ProductItem({ product }) {
   const { state, dispatch } = useContext(Store);
+  console.log(product);
 
   const addToCartHandler = async (product) => {
     const existItem = state.cart.cartItems.find((x) => x._id === product._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
     const { data } = await axios.get(`/api/products/${product._id}`);
     if (data.countInStock < quantity) {
-      window.alert("Sorry. Product is out of stock");
+      window.alert('Sorry. Product is out of stock');
       return;
     }
-    dispatch({ type: "CART_ADD_ITEM", payload: { ...product, quantity } });
+    dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity } });
   };
   const removeFromCartHandler = async (product) => {
     const existItem = state.cart.cartItems.find((x) => x._id === product._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
-    dispatch({ type: "CART_REMOVE_ITEM", payload: { ...product, quantity } });
+    dispatch({ type: 'CART_REMOVE_ITEM', payload: { ...product, quantity } });
   };
 
   return (
     <Card sx={classes.nftCard}>
-      <CardActionArea disableRipple sx={{ position: "relative" }}>
+      <CardActionArea disableRipple sx={{ position: 'relative' }}>
         <Trapezium>
           <p>{product.brand}</p>
         </Trapezium>
@@ -109,7 +110,7 @@ function ProductItem({ product }) {
           image={product.image}
           title={product.name}
         ></CardMedia>
-        <CardContent sx={{ zIndex: "1" }}>
+        <CardContent sx={{ zIndex: '1' }}>
           <ProductDetails>
             <ProductName>{product.name}</ProductName>
             <ProductPrice>
@@ -119,7 +120,7 @@ function ProductItem({ product }) {
             </ProductPrice>
           </ProductDetails>
           <RemainingProduct>
-            {product.countInStock}/{product.originalCount}
+            {product.claimed}/{product.originalCount}
           </RemainingProduct>
         </CardContent>
       </CardActionArea>

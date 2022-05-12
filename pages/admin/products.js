@@ -1,10 +1,10 @@
 //react/next/packages
-import axios from "axios";
-import dynamic from "next/dynamic";
-import { useRouter } from "next/router";
-import NextLink from "next/link";
-import React, { useEffect, useReducer, useContext } from "react";
-import { useSnackbar } from "notistack";
+import axios from 'axios';
+import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
+import NextLink from 'next/link';
+import React, { useEffect, useReducer, useContext } from 'react';
+import { useSnackbar } from 'notistack';
 //material ui
 import {
   CircularProgress,
@@ -21,34 +21,34 @@ import {
   TableRow,
   TableCell,
   TableBody,
-} from "@mui/material";
-import classes from "../../utils/classes";
+} from '@mui/material';
+import classes from '../../utils/classes';
 //components
-import { getError } from "../../utils/error";
-import Layout from "../../components/Layout";
-import { MarketplaceContext } from "../../utils/MarketplaceContext";
+import { getError } from '../../utils/error';
+import Layout from '../../components/Layout';
+import { MarketplaceContext } from '../../utils/MarketplaceContext';
 
 function reducer(state, action) {
   switch (action.type) {
-    case "FETCH_REQUEST":
-      return { ...state, loading: true, error: "" };
-    case "FETCH_SUCCESS":
-      return { ...state, loading: false, products: action.payload, error: "" };
-    case "FETCH_FAIL":
+    case 'FETCH_REQUEST':
+      return { ...state, loading: true, error: '' };
+    case 'FETCH_SUCCESS':
+      return { ...state, loading: false, products: action.payload, error: '' };
+    case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
-    case "CREATE_REQUEST":
+    case 'CREATE_REQUEST':
       return { ...state, loadingCreate: true };
-    case "CREATE_SUCCESS":
+    case 'CREATE_SUCCESS':
       return { ...state, loadingCreate: false };
-    case "CREATE_FAIL":
+    case 'CREATE_FAIL':
       return { ...state, loadingCreate: false };
-    case "DELETE_REQUEST":
+    case 'DELETE_REQUEST':
       return { ...state, loadingDelete: true };
-    case "DELETE_SUCCESS":
+    case 'DELETE_SUCCESS':
       return { ...state, loadingDelete: false, successDelete: true };
-    case "DELETE_FAIL":
+    case 'DELETE_FAIL':
       return { ...state, loadingDelete: false };
-    case "DELETE_RESET":
+    case 'DELETE_RESET':
       return { ...state, loadingDelete: false, successDelete: false };
     default:
       state;
@@ -63,7 +63,7 @@ function AdminProducts() {
   ] = useReducer(reducer, {
     loading: true,
     products: [],
-    error: "",
+    error: '',
   });
 
   //retrieve variables
@@ -74,15 +74,15 @@ function AdminProducts() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        dispatch({ type: "FETCH_REQUEST" });
+        dispatch({ type: 'FETCH_REQUEST' });
         const { data } = await axios.get(`/api/admin/products`, {});
-        dispatch({ type: "FETCH_SUCCESS", payload: data });
+        dispatch({ type: 'FETCH_SUCCESS', payload: data });
       } catch (err) {
-        dispatch({ type: "FETCH_FAIL", payload: getError(err) });
+        dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
       }
     };
     if (successDelete) {
-      dispatch({ type: "DELETE_RESET" });
+      dispatch({ type: 'DELETE_RESET' });
     } else {
       fetchData();
     }
@@ -93,27 +93,27 @@ function AdminProducts() {
   const getDeleteSignature = async (productId, ethAddress) => {
     const msgParams = {
       domain: {
-        name: "Nex10 Marketplace",
-        version: "1",
-        chainId: process.env.NODE_ENV === "prod" ? 1 : 4,
+        name: 'Nex10 Marketplace',
+        version: '1',
+        chainId: process.env.NODE_ENV === 'prod' ? 1 : 4,
       },
       message: {
         productId: productId,
       },
-      primaryType: "Product",
+      primaryType: 'Product',
       types: {
         EIP712Domain: [
-          { name: "name", type: "string" },
-          { name: "version", type: "string" },
-          { name: "chainId", type: "uint256" },
+          { name: 'name', type: 'string' },
+          { name: 'version', type: 'string' },
+          { name: 'chainId', type: 'uint256' },
         ],
-        Product: [{ name: "productId", type: "string" }],
+        Product: [{ name: 'productId', type: 'string' }],
       },
     };
     try {
       const from = ethAddress;
       const sign = await ethereum.request({
-        method: "eth_signTypedData_v4",
+        method: 'eth_signTypedData_v4',
         params: [from, JSON.stringify(msgParams)],
       });
       return sign;
@@ -123,30 +123,30 @@ function AdminProducts() {
   };
 
   const createHandler = async () => {
-    if (!window.confirm("Are you sure?")) {
+    if (!window.confirm('Are you sure?')) {
       return;
     }
     try {
-      dispatch({ type: "CREATE_REQUEST" });
+      dispatch({ type: 'CREATE_REQUEST' });
       const { data } = await axios.post(`/api/admin/products`, {});
 
-      dispatch({ type: "CREATE_SUCCESS" });
-      enqueueSnackbar("Product created successfully", { variant: "success" });
+      dispatch({ type: 'CREATE_SUCCESS' });
+      enqueueSnackbar('Product created successfully', { variant: 'success' });
       router.push(`/admin/product/${data.product._id}`);
     } catch (err) {
-      dispatch({ type: "CREATE_FAIL" });
-      enqueueSnackbar(getError(err), { variant: "error" });
+      dispatch({ type: 'CREATE_FAIL' });
+      enqueueSnackbar(getError(err), { variant: 'error' });
     }
   };
 
   const deleteHandler = async (productId) => {
-    if (!window.confirm("Are you sure?")) {
+    if (!window.confirm('Are you sure?')) {
       return;
     }
     try {
       closeSnackbar();
       let signature = await getDeleteSignature(productId, ethAddress);
-      dispatch({ type: "DELETE_REQUEST" });
+      dispatch({ type: 'DELETE_REQUEST' });
       await axios.delete(`/api/admin/products/${productId}`, {
         data: {
           productId,
@@ -154,12 +154,12 @@ function AdminProducts() {
           signature,
         },
       });
-      enqueueSnackbar("Admin verified", { variant: "success" });
-      dispatch({ type: "DELETE_SUCCESS" });
-      enqueueSnackbar("Product deleted successfully", { variant: "success" });
+      enqueueSnackbar('Admin verified', { variant: 'success' });
+      dispatch({ type: 'DELETE_SUCCESS' });
+      enqueueSnackbar('Product deleted successfully', { variant: 'success' });
     } catch (err) {
-      dispatch({ type: "DELETE_FAIL" });
-      enqueueSnackbar(getError(err), { variant: "error" });
+      dispatch({ type: 'DELETE_FAIL' });
+      enqueueSnackbar(getError(err), { variant: 'error' });
     }
   };
 
@@ -242,11 +242,11 @@ function AdminProducts() {
                                   size="small"
                                   variant="contained"
                                   color="secondary"
-                                  sx={{ marginBottom: "10px" }}
+                                  sx={{ marginBottom: '10px' }}
                                 >
                                   Edit
                                 </Button>
-                              </NextLink>{" "}
+                              </NextLink>{' '}
                               <Button
                                 onClick={() => deleteHandler(product._id)}
                                 size="small"

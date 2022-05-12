@@ -160,27 +160,27 @@ export default function Layout({ title, description, children }) {
           },
         },
       },
-      MuiInputLabel: {
-        styleOverrides: {
-          root: {
-            color: '#ffffff',
-            fontFamily: 'Oxanium',
-            fontSize: '15px',
-          },
-        },
-      },
-      MuiOutlinedInput: {
-        styleOverrides: {
-          root: {
-            color: '#ffffff',
-            fontFamily: 'Oxanium',
-            fontSize: '15px',
-            borderRadius: '50px',
-            background: '#152266',
-          },
-          input: { textAlign: 'center' },
-        },
-      },
+      // MuiInputLabel: {
+      //   styleOverrides: {
+      //     root: {
+      //       color: '#ffffff',
+      //       fontFamily: 'Oxanium',
+      //       fontSize: '15px',
+      //     },
+      //   },
+      // },
+      // MuiOutlinedInput: {
+      //   styleOverrides: {
+      //     root: {
+      //       color: '#ffffff',
+      //       fontFamily: 'Oxanium',
+      //       fontSize: '15px',
+      //       borderRadius: '50px',
+      //       background: '#152266',
+      //     },
+      //     input: { textAlign: 'center' },
+      //   },
+      // },
     },
     typography: {
       h1: {

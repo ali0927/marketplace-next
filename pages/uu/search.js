@@ -1,25 +1,25 @@
 //react/next
-import { useContext, useState, useEffect } from "react";
-import axios from "axios";
-import { useRouter } from "next/router";
+import { useContext, useState, useEffect } from 'react';
+import axios from 'axios';
+import { useRouter } from 'next/router';
 //image
-import Image from "next/image";
-import UcdCoin from "../../public/images/uu/ucd-coin.png";
-import UcdRoundLogo from "../../public/images/uu/uu-round-logo.png";
+import Image from 'next/image';
+import UcdCoin from '../../public/images/uu/ucd-coin.png';
+import UcdRoundLogo from '../../public/images/uu/uu-round-logo.png';
 //style
-import styled from "styled-components";
-import { Colors, Devices } from "../../utils/Theme";
-import { Grid } from "@mui/material";
-import { Box } from "@mui/system";
-import classes from "../../utils/classes";
+import styled from 'styled-components';
+import { Colors, Devices } from '../../utils/Theme';
+import { Grid } from '@mui/material';
+import { Box } from '@mui/system';
+import classes from '../../utils/classes';
 //components
-import Layout from "../../components/Layout";
+import Layout from '../../components/Layout';
 // import CheckContractApproval from "../components/CheckContractApproval";
-import { MarketplaceContext } from "../../utils/MarketplaceContext";
-import db from "../../utils/db";
-import Product from "../../models/Product.model";
-import { Store } from "../../utils/Store";
-import ProductItem from "../../components/ProductItem";
+import { MarketplaceContext } from '../../utils/MarketplaceContext';
+import db from '../../utils/db';
+import Product from '../../models/Product.model';
+import { Store } from '../../utils/Store';
+import ProductItem from '../../components/ProductItem';
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -41,7 +41,7 @@ const HeaderMarketplace = styled.div`
 const HeaderText = styled.div`
   font-size: 38px;
   font-weight: 600;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
 `;
 const WalletGeneralInfo = styled.div`
   display: flex;
@@ -69,15 +69,15 @@ const WalletBalance = styled.div`
 const WalletText = styled.span`
   font-size: 12px;
   margin-right: 30px;
-  color: "#c4c4c4";
+  color: '#c4c4c4';
   font-weight: 400;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
 `;
 const WalletAmount = styled.div`
   margin-left: auto;
   display: flex;
   align-items: center;
-  font-family: "Oxanium", > img {
+  font-family: 'Oxanium', > img {
     margin-right: 2px;
   }
 `;
@@ -106,7 +106,7 @@ const FilterButton = styled.button`
   padding: 10px 20px;
   border-radius: 3em;
   background-color: ${(props) => {
-    return props.active ? "#152266" : "transparent";
+    return props.active ? '#152266' : 'transparent';
   }};
   color: #ffffff;
   cursor: pointer;
@@ -134,13 +134,13 @@ export default function Search(props) {
   const router = useRouter();
   const queryUrl = router.query.type;
   const allFilter = () => {
-    router.push("/uu/marketplace");
+    router.push('/uu/marketplace');
   };
   const whitelistFilter = () => {
-    router.push("/uu/search?type=Whitelist");
+    router.push('/uu/search?type=Whitelist');
   };
   const raffleFilter = () => {
-    router.push("/uu/search?type=Raffle");
+    router.push('/uu/search?type=Raffle');
   };
 
   const handleLoading = () => {
@@ -152,25 +152,25 @@ export default function Search(props) {
     const quantity = existItem ? existItem.quantity + 1 : 1;
     const { data } = await axios.get(`/api/products/${product._id}`);
     if (data.countInStock < quantity) {
-      window.alert("Sorry. Product is out of stock");
+      window.alert('Sorry. Product is out of stock');
       return;
     }
-    dispatch({ type: "CART_ADD_ITEM", payload: { ...product, quantity } });
+    dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity } });
   };
 
   useEffect(() => {
-    window.addEventListener("load", handleLoading);
-    return () => window.removeEventListener("load", handleLoading);
+    window.addEventListener('load', handleLoading);
+    return () => window.removeEventListener('load', handleLoading);
   }, [getUCDBalance]);
 
   return (
     <Layout title="Search">
-      <div style={{ width: "1200px" }}>
+      <div style={{ width: '1200px' }}>
         {!isOnMainnet ? (
           <div>
             <HeaderContainer>
               <HeaderMarketplace>
-                <HeaderText style={{ color: "white" }}>Marketplace</HeaderText>
+                <HeaderText style={{ color: 'white' }}>Marketplace</HeaderText>
                 <Image
                   src={UcdRoundLogo}
                   alt="UcdRoundLogo"
@@ -180,8 +180,8 @@ export default function Search(props) {
               </HeaderMarketplace>
               <WalletGeneralInfo>
                 <WalletBalance>
-                  <WalletText style={{ color: "#c4c4c4" }}>
-                    In your wallet
+                  <WalletText style={{ color: '#c4c4c4' }}>
+                    In your NEX wallet
                   </WalletText>
                   <WalletAmount>
                     <WalletUULogo>
@@ -202,13 +202,13 @@ export default function Search(props) {
               <FilterButton onClick={allFilter}>All</FilterButton>
               <FilterButton
                 onClick={whitelistFilter}
-                active={queryUrl === "Whitelist"}
+                active={queryUrl === 'Whitelist'}
               >
                 Whitelist
               </FilterButton>
               <FilterButton
                 onClick={raffleFilter}
-                active={queryUrl === "Raffle"}
+                active={queryUrl === 'Raffle'}
               >
                 NFT Raffle
               </FilterButton>
@@ -242,9 +242,9 @@ export default function Search(props) {
 
 export async function getServerSideProps({ query }) {
   await db.connect();
-  const type = query.type || "";
-  const typeFilter = type && type !== "all" ? { type } : {};
-  const types = await Product.find().distinct("type");
+  const type = query.type || '';
+  const typeFilter = type && type !== 'all' ? { type } : {};
+  const types = await Product.find().distinct('type');
   const productDocs = await Product.find({
     ...typeFilter,
   }).lean();

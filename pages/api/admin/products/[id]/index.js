@@ -1,9 +1,9 @@
-import nc from "next-connect";
-import Product from "../../../../../models/Product.model";
-import Admin from "../../../../../models/Admin.model";
-import db from "../../../../../utils/db";
-import { ethers } from "ethers";
-import { onError } from "../../../../../utils/error";
+import nc from 'next-connect';
+import Product from '../../../../../models/Product.model';
+import Admin from '../../../../../models/Admin.model';
+import db from '../../../../../utils/db';
+import { ethers } from 'ethers';
+import { onError } from '../../../../../utils/error';
 
 const handler = nc({
   onError,
@@ -29,6 +29,7 @@ handler.put(async (req, res) => {
     price,
     originalCount,
     countInStock,
+    claimed,
     ethAddress,
     signature,
   } = req.body;
@@ -41,28 +42,29 @@ handler.put(async (req, res) => {
   } catch (error) {
     return res.status(400).json({
       success: false,
-      data: "Invalid Address",
+      data: 'Invalid Address',
     });
   }
 
   // Initialize Domain
   const domain = {
-    name: "Nex10 Marketplace",
-    version: "1",
-    chainId: process.env.NODE_ENV === "prod" ? 1 : 4,
+    name: 'Nex10 Marketplace',
+    version: '1',
+    chainId: process.env.NODE_ENV === 'prod' ? 1 : 4,
   };
 
   // The named list of all type definitions
   const types = {
     Product: [
-      { name: "name", type: "string" },
-      { name: "slug", type: "string" },
-      { name: "type", type: "string" },
-      { name: "brand", type: "string" },
-      { name: "currency", type: "string" },
-      { name: "image", type: "string" },
-      { name: "originalCount", type: "uint256" },
-      { name: "countInStock", type: "uint256" },
+      { name: 'name', type: 'string' },
+      { name: 'slug', type: 'string' },
+      { name: 'type', type: 'string' },
+      { name: 'brand', type: 'string' },
+      { name: 'currency', type: 'string' },
+      { name: 'image', type: 'string' },
+      { name: 'originalCount', type: 'uint256' },
+      { name: 'countInStock', type: 'uint256' },
+      { name: 'claimed', type: 'uint256' },
     ],
   };
 
@@ -80,10 +82,11 @@ handler.put(async (req, res) => {
         price: price,
         originalCount: originalCount,
         countInStock: countInStock,
+        claimed: claimed,
       },
       signature
     );
-    console.log("🚀 | handler.put | signingAddress", signingAddress);
+    console.log('🚀 | handler.put | signingAddress', signingAddress);
   } catch (error) {
     console.log(error);
     return res.status(400).json({
@@ -99,7 +102,7 @@ handler.put(async (req, res) => {
   ) {
     return res.status(400).json({
       success: false,
-      data: "Invalid Signature",
+      data: 'Invalid Signature',
     });
   }
 
@@ -108,13 +111,13 @@ handler.put(async (req, res) => {
   try {
     isAdmin = await Admin.findOne({ address: wallet });
   } catch (err) {
-    console.log("🚀 | handler.delete | err", err);
+    console.log('🚀 | handler.delete | err', err);
   }
   if (isAdmin) {
-    res.send({ message: "Admin verified" });
+    res.send({ message: 'Admin verified' });
   } else {
     await db.disconnect();
-    res.status(404).send({ message: "You are not a verified admin" });
+    res.status(404).send({ message: 'You are not a verified admin' });
   }
 
   //update product
@@ -129,12 +132,13 @@ handler.put(async (req, res) => {
     product.price = req.body.price;
     product.originalCount = req.body.originalCount;
     product.countInStock = req.body.countInStock;
+    product.claimed = req.body.claimed;
     await product.save();
     await db.disconnect();
-    res.send({ message: "Product Updated Successfully" });
+    res.send({ message: 'Product Updated Successfully' });
   } else {
     await db.disconnect();
-    res.status(404).send({ message: "Product Not Found" });
+    res.status(404).send({ message: 'Product Not Found' });
   }
 });
 
@@ -152,20 +156,20 @@ handler.delete(async (req, res) => {
   } catch (error) {
     return res.status(400).json({
       success: false,
-      data: "Invalid Address",
+      data: 'Invalid Address',
     });
   }
 
   // Initialize Domain
   const domain = {
-    name: "Nex10 Marketplace",
-    version: "1",
-    chainId: process.env.NODE_ENV === "prod" ? 1 : 4,
+    name: 'Nex10 Marketplace',
+    version: '1',
+    chainId: process.env.NODE_ENV === 'prod' ? 1 : 4,
   };
 
   // The named list of all type definitions
   const types = {
-    Product: [{ name: "productId", type: "string" }],
+    Product: [{ name: 'productId', type: 'string' }],
   };
 
   try {
@@ -191,7 +195,7 @@ handler.delete(async (req, res) => {
   ) {
     return res.status(400).json({
       success: false,
-      data: "Invalid Signature",
+      data: 'Invalid Signature',
     });
   }
 
@@ -200,13 +204,13 @@ handler.delete(async (req, res) => {
   try {
     isAdmin = await Admin.findOne({ address: wallet });
   } catch (err) {
-    console.log("🚀 | handler.delete | err", err);
+    console.log('🚀 | handler.delete | err', err);
   }
   if (isAdmin) {
-    res.send({ message: "Admin verified" });
+    res.send({ message: 'Admin verified' });
   } else {
     await db.disconnect();
-    res.status(404).send({ message: "You are not a verified admin" });
+    res.status(404).send({ message: 'You are not a verified admin' });
   }
 
   //Delete product
@@ -214,10 +218,10 @@ handler.delete(async (req, res) => {
   if (product) {
     await product.remove();
     await db.disconnect();
-    res.send({ message: "Product Deleted" });
+    res.send({ message: 'Product Deleted' });
   } else {
     await db.disconnect();
-    res.status(404).send({ message: "Product Not Found" });
+    res.status(404).send({ message: 'Product Not Found' });
   }
 });
 

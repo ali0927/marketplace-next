@@ -1,24 +1,24 @@
 //react/next
-import { useContext, useState, useEffect } from "react";
-import axios from "axios";
-import { useRouter } from "next/router";
+import { useContext, useState, useEffect } from 'react';
+import axios from 'axios';
+import { useRouter } from 'next/router';
 //image
-import Image from "next/image";
-import UcdCoin from "../../public/images/uu/ucd-coin.png";
-import UcdRoundLogo from "../../public/images/uu/uu-round-logo.png";
+import Image from 'next/image';
+import UcdCoin from '../../public/images/uu/ucd-coin.png';
+import UcdRoundLogo from '../../public/images/uu/uu-round-logo.png';
 //style
-import styled from "styled-components";
-import { Colors, Devices } from "../../utils/Theme";
-import { Grid } from "@mui/material";
-import { Box } from "@mui/system";
-import classes from "../../utils/classes";
+import styled from 'styled-components';
+import { Colors, Devices } from '../../utils/Theme';
+import { Grid } from '@mui/material';
+import { Box } from '@mui/system';
+import classes from '../../utils/classes';
 //components
-import Layout from "../../components/Layout";
-import { MarketplaceContext } from "../../utils/MarketplaceContext";
-import db from "../../utils/db";
-import Product from "../../models/Product.model";
-import { Store } from "../../utils/Store";
-import ProductItem from "../../components/ProductItem";
+import Layout from '../../components/Layout';
+import { MarketplaceContext } from '../../utils/MarketplaceContext';
+import db from '../../utils/db';
+import Product from '../../models/Product.model';
+import { Store } from '../../utils/Store';
+import ProductItem from '../../components/ProductItem';
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -40,7 +40,7 @@ const HeaderMarketplace = styled.div`
 const HeaderText = styled.div`
   font-size: 38px;
   font-weight: 600;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
 `;
 const WalletGeneralInfo = styled.div`
   display: flex;
@@ -70,15 +70,15 @@ flex-direction: row;
 const WalletText = styled.span`
   font-size: 12px;
   margin-right: 30px;
-  color: "#c4c4c4";
+  color: '#c4c4c4';
   font-weight: 400;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
 `;
 const WalletAmount = styled.div`
   margin-left: auto;
   display: flex;
   align-items: center;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
   > img {
     margin-right: 2px;
   }
@@ -112,7 +112,7 @@ const FilterButton = styled.button`
   font-size: 14px;
   text-align: center;
   color: #ffffff;
-  background-color: ${(props) => (props.color ? props.color : "transparent")};
+  background-color: ${(props) => (props.color ? props.color : 'transparent')};
   :hover {
     background-color: ${Colors.bg};
   }
@@ -134,13 +134,13 @@ export default function Home(props) {
   //filter
   const router = useRouter();
   const allFilter = () => {
-    router.push("/uu/marketplace");
+    router.push('/uu/marketplace');
   };
   const whitelistFilter = () => {
-    router.push("/uu/search?type=Whitelist");
+    router.push('/uu/search?type=Whitelist');
   };
   const raffleFilter = () => {
-    router.push("/uu/search?type=Raffle");
+    router.push('/uu/search?type=Raffle');
   };
 
   //loading
@@ -154,16 +154,16 @@ export default function Home(props) {
     const quantity = existItem ? existItem.quantity + 1 : 1;
     const { data } = await axios.get(`/api/products/${product._id}`);
     if (data.countInStock < quantity) {
-      window.alert("Sorry. Product is out of stock");
+      window.alert('Sorry. Product is out of stock');
       return;
     }
-    dispatch({ type: "CART_ADD_ITEM", payload: { ...product, quantity } });
+    dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity } });
   };
 
   //get UCD balance
   useEffect(() => {
-    window.addEventListener("load", handleLoading);
-    return () => window.removeEventListener("load", handleLoading);
+    window.addEventListener('load', handleLoading);
+    return () => window.removeEventListener('load', handleLoading);
   }, [getUCDBalance]);
   return (
     <Layout>
@@ -172,7 +172,7 @@ export default function Home(props) {
           <div>
             <HeaderContainer>
               <HeaderMarketplace>
-                <HeaderText style={{ color: "white" }}>Marketplace</HeaderText>
+                <HeaderText style={{ color: 'white' }}>Marketplace</HeaderText>
                 <Image
                   src={UcdRoundLogo}
                   alt="UcdRoundLogo"
@@ -182,8 +182,8 @@ export default function Home(props) {
               </HeaderMarketplace>
               <WalletGeneralInfo>
                 <WalletBalance>
-                  <WalletText style={{ color: "#c4c4c4" }}>
-                    In your wallet
+                  <WalletText style={{ color: '#c4c4c4' }}>
+                    In your NEX wallet
                   </WalletText>
                   <WalletAmount>
                     <WalletUULogo>
@@ -201,7 +201,7 @@ export default function Home(props) {
             </HeaderContainer>
             <FilterContainer>
               <FilterText>Filter By:</FilterText>
-              <FilterButton color={"#152266"} onClick={allFilter}>
+              <FilterButton color={'#152266'} onClick={allFilter}>
                 All
               </FilterButton>
               <FilterButton onClick={whitelistFilter}>Whitelist</FilterButton>
@@ -237,9 +237,9 @@ export default function Home(props) {
 //server side props (filter function)
 export async function getServerSideProps({ query }) {
   await db.connect();
-  const type = query.type || "";
-  const typeFilter = type && type !== "all" ? { type } : {};
-  const types = await Product.find().distinct("type");
+  const type = query.type || '';
+  const typeFilter = type && type !== 'all' ? { type } : {};
+  const types = await Product.find().distinct('type');
   const productDocs = await Product.find({
     ...typeFilter,
   }).lean();

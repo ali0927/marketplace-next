@@ -1,7 +1,7 @@
-import nc from "next-connect";
-import Product from "../../../../models/Product.model";
-import db from "../../../../utils/db";
-import { onError } from "../../../../utils/error";
+import nc from 'next-connect';
+import Product from '../../../../models/Product.model';
+import db from '../../../../utils/db';
+import { onError } from '../../../../utils/error';
 
 const handler = nc({
   onError,
@@ -19,19 +19,21 @@ handler.get(async (req, res) => {
 handler.post(async (req, res) => {
   await db.connect();
   const newProduct = new Product({
-    name: "sample name",
-    slug: "type-brand-" + Math.random(),
-    type: "Raffle/Whitelist",
-    brand: "e.g. Uninterested Unicorns",
-    currency: "UCD/SHO",
-    image: "/images/shirt1.jpg",
+    name: 'sample name',
+    slug: 'type-brand-' + Math.random(),
+    type: 'Raffle/Whitelist',
+    brand: 'e.g. Uninterested Unicorns',
+    currency: 'UCD/SHO',
+    image: '/images/shirt1.jpg',
     price: 0,
+    originalCount: 0,
     countInStock: 0,
+    claimed: 0,
   });
 
   const product = await newProduct.save();
   await db.disconnect();
-  res.send({ message: "Product Created", product });
+  res.send({ message: 'Product Created', product });
 });
 
 export default handler;
