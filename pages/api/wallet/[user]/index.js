@@ -1,6 +1,6 @@
-import nc from "next-connect";
-import Wallet from "../../../../models/Wallet.model";
-import db from "../../../../utils/db";
+import Wallet from '../../../../models/Wallet.model';
+import db from '../../../../utils/db';
+import nc from 'next-connect';
 
 const handler = nc();
 //users to get all products

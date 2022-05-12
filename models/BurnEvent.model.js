@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const burnEventSchema = new mongoose.Schema(
   {
     nonce: { type: Number, required: true },
@@ -13,5 +13,5 @@ const burnEventSchema = new mongoose.Schema(
 );
 
 const BurnEvent =
-  mongoose.models.BurnEvent || mongoose.model("BurnEvent", burnEventSchema);
+  mongoose.models.BurnEvent || mongoose.model('BurnEvent', burnEventSchema);
 module.exports = BurnEvent;
