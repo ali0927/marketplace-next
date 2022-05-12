@@ -11,8 +11,6 @@ import { Store } from "../utils/Store";
 import data from "../utils/data";
 import { getError } from "../utils/error";
 import { MarketplaceContext } from "../utils/MarketplaceContext";
-import CheckContractApproval from "./Dialogs/CheckContractApproval";
-import ProceedWithPurchase from "./Dialogs/ProceedWithPurchase";
 //material ui
 import {
   Avatar,
@@ -45,6 +43,7 @@ import nex10Logo from "../public/images/logo/nex10-logo.png";
 import UcdCoin from "../public/images/uu/ucd-coin.png";
 import { Colors } from "../utils/Theme";
 import styled from "styled-components";
+import PurchaseDialog from "./Dialogs/PurchaseDialog";
 const ImageBox = styled.div`
   position: absolute;
   top: 10px;
@@ -154,6 +153,34 @@ export default function Layout({ title, description, children }) {
           },
         },
       },
+      MuiFormControl: {
+        styleOverrides: {
+          root: {
+            borderRadius: "50px",
+          },
+        },
+      },
+      MuiInputLabel: {
+        styleOverrides: {
+          root: {
+            color: "#ffffff",
+            fontFamily: "Oxanium",
+            fontSize: "15px",
+          },
+        },
+      },
+      MuiOutlinedInput: {
+        styleOverrides: {
+          root: {
+            color: "#ffffff",
+            fontFamily: "Oxanium",
+            fontSize: "15px",
+            borderRadius: "50px",
+            background: "#152266",
+          },
+          input: { textAlign: "center" },
+        },
+      },
     },
     typography: {
       h1: {
@@ -188,7 +215,7 @@ export default function Layout({ title, description, children }) {
   //state
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [types, setTypes] = useState([]);
-  const [openDialog, setOpenDialog] = useState(""); //dialog authentication
+  const [showPurchase, setShowPurchase] = useState(""); //dialog authentication
   const [anchorEl, setAnchorEl] = useState(null); //cart menu
 
   //togle sidebar
@@ -237,8 +264,13 @@ export default function Layout({ title, description, children }) {
 
   //start purchase process
   const startPurchase = () => {
-    setOpenDialog("first");
+    setShowPurchase(true);
     setAnchorEl(null);
+  };
+
+  const startPurchaseMobile = () => {
+    setShowPurchase(true);
+    sidebarCloseHandler();
   };
 
   return (
@@ -251,7 +283,7 @@ export default function Layout({ title, description, children }) {
       </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <AppBar position="static" sx={classes.appbar}>
+        <AppBar position="sticky" sx={classes.appbar}>
           <Toolbar sx={classes.toolbar}>
             <ImageBox>
               <NextLink href="/" passHref>
@@ -464,22 +496,17 @@ export default function Layout({ title, description, children }) {
                         </CartItem>
                       ))}
                     </ListItem>
-                    <PurchaseButton onClick={() => setOpenDialog("first")}>
+                    <PurchaseButton onClick={() => startPurchaseMobile()}>
                       Purchase
                     </PurchaseButton>
                   </List>
                 </Drawer>
               </div>
 
-              <CheckContractApproval
-                openDialog={openDialog}
-                setOpenDialog={setOpenDialog}
+              <PurchaseDialog
+                showPurchase={showPurchase}
+                setShowPurchase={setShowPurchase}
               />
-              <ProceedWithPurchase
-                openDialog={openDialog}
-                setOpenDialog={setOpenDialog}
-              />
-
               {data.admin.includes(currentAccount) ? (
                 <Button onClick={adminHandler} fullWidth>
                   <Avatar sx={classes.avatar}>
