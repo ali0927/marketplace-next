@@ -8,19 +8,19 @@ import {
   List,
   ListItem,
   CircularProgress,
-} from "@mui/material";
+} from '@mui/material';
 //formik
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import { useContext, useState } from "react";
-import * as Yup from "yup";
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { useContext, useState } from 'react';
+import * as Yup from 'yup';
 //styles
-import classes from "../utils/classes";
-import { MarketplaceContext } from "../utils/MarketplaceContext";
-import { Store } from "../utils/Store";
-import axios from "axios";
-import Cookies from "js-cookie";
-import { useSnackbar } from "notistack";
-import { getError } from "../utils/error";
+import classes from '../utils/classes';
+import { MarketplaceContext } from '../utils/MarketplaceContext';
+import { Store } from '../utils/Store';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import { useSnackbar } from 'notistack';
+import { getError } from '../utils/error';
 
 function PaymentForm() {
   //state
@@ -37,15 +37,15 @@ function PaymentForm() {
 
   //form validation
   const validationSchema = Yup.object().shape({
-    discordId: Yup.string().min(3, "It's too short").required("Required"),
-    email: Yup.string().email("Enter valid email").required("Required"),
+    discordId: Yup.string().min(3, "It's too short").required('Required'),
+    email: Yup.string().email('Enter valid email').required('Required'),
   });
 
   const initialValues = {
-    email: "",
-    discordId: "",
+    email: '',
+    discordId: '',
     ethAddress: currentAccount,
-    shippingAddress: "",
+    shippingAddress: '',
     cartItems: cartItems.map((x) => x._id),
   };
 
@@ -59,9 +59,9 @@ function PaymentForm() {
   ) => {
     const msgParams = {
       domain: {
-        name: "Nex10 Marketplace",
-        version: "1",
-        chainId: process.env.NODE_ENV === "prod" ? 1 : 4,
+        name: 'Nex10 Marketplace',
+        version: '1',
+        chainId: process.env.NODE_ENV === 'prod' ? 1 : 4,
       },
       message: {
         email: email,
@@ -69,25 +69,25 @@ function PaymentForm() {
         shippingAddress: shippingAddress,
         cartItems: cartItems,
       },
-      primaryType: "Purchase",
+      primaryType: 'Purchase',
       types: {
         EIP712Domain: [
-          { name: "name", type: "string" },
-          { name: "version", type: "string" },
-          { name: "chainId", type: "uint256" },
+          { name: 'name', type: 'string' },
+          { name: 'version', type: 'string' },
+          { name: 'chainId', type: 'uint256' },
         ],
         Purchase: [
-          { name: "email", type: "string" },
-          { name: "discordId", type: "string" },
-          { name: "shippingAddress", type: "string" },
-          { name: "cartItems", type: "string[]" },
+          { name: 'email', type: 'string' },
+          { name: 'discordId', type: 'string' },
+          { name: 'shippingAddress', type: 'string' },
+          { name: 'cartItems', type: 'string[]' },
         ],
       },
     };
     try {
       const from = ethAddress;
       const sign = await ethereum.request({
-        method: "eth_signTypedData_v4",
+        method: 'eth_signTypedData_v4',
         params: [from, JSON.stringify(msgParams)],
       });
       return sign;
@@ -113,7 +113,7 @@ function PaymentForm() {
         shippingAddress,
         cartItems
       );
-      await axios.post("/api/orders", {
+      await axios.post('/api/orders', {
         email,
         discordId,
         ethAddress,
@@ -121,15 +121,15 @@ function PaymentForm() {
         cartItems,
         signature,
       });
-      dispatch({ type: "CART_CLEAR" });
-      Cookies.remove("cartItems");
+      dispatch({ type: 'CART_CLEAR' });
+      Cookies.remove('cartItems');
       setLoading(false);
-      enqueueSnackbar("Purchase successfully made", {
-        variant: "success",
+      enqueueSnackbar('Purchase successfully made', {
+        variant: 'success',
       });
     } catch (err) {
       setLoading(false);
-      enqueueSnackbar(getError(err), { variant: "error" });
+      enqueueSnackbar(getError(err), { variant: 'error' });
     }
   };
 
@@ -153,6 +153,7 @@ function PaymentForm() {
                     error={props.errors.discordId && props.touched.discordId}
                     helperText={<ErrorMessage name="discordId" />}
                     required
+                    sx={{ bckground: '#152266', zIndex: '2' }}
                   />
                 </ListItem>
                 <ListItem>
@@ -180,13 +181,8 @@ function PaymentForm() {
                     required
                   />
                 </ListItem>
-                <ListItem sx={{ display: "flex", justifyContent: "center" }}>
-                  <Button
-                    type="submit"
-                    sx={classes.submitForm}
-                    variant="contained"
-                    color="primary"
-                  >
+                <ListItem sx={{ display: 'flex', justifyContent: 'center' }}>
+                  <Button type="submit" sx={classes.submitForm} disableRipple>
                     Submit
                   </Button>
                 </ListItem>

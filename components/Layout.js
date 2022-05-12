@@ -1,16 +1,16 @@
 //react/next/packages
-import Head from "next/head";
-import React, { useContext, useEffect, useState } from "react";
-import NextLink from "next/link";
-import { useRouter } from "next/router";
-import { useSnackbar } from "notistack";
-import axios from "axios";
-import Image from "next/image";
+import Head from 'next/head';
+import React, { useContext, useEffect, useState } from 'react';
+import NextLink from 'next/link';
+import { useRouter } from 'next/router';
+import { useSnackbar } from 'notistack';
+import axios from 'axios';
+import Image from 'next/image';
 //components
-import { Store } from "../utils/Store";
-import data from "../utils/data";
-import { getError } from "../utils/error";
-import { MarketplaceContext } from "../utils/MarketplaceContext";
+import { Store } from '../utils/Store';
+import data from '../utils/data';
+import { getError } from '../utils/error';
+import { MarketplaceContext } from '../utils/MarketplaceContext';
 //material ui
 import {
   Avatar,
@@ -18,8 +18,8 @@ import {
   Menu,
   ThemeProvider,
   useMediaQuery,
-} from "@mui/material";
-import { createTheme } from "@mui/material/styles";
+} from '@mui/material';
+import { createTheme } from '@mui/material/styles';
 import {
   AppBar,
   Toolbar,
@@ -32,18 +32,18 @@ import {
   Drawer,
   List,
   ListItem,
-} from "@mui/material";
-import MenuItem from "@mui/material/MenuItem";
-import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
-import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
-import CancelIcon from "@mui/icons-material/Cancel";
-import classes from "../utils/classes";
+} from '@mui/material';
+import MenuItem from '@mui/material/MenuItem';
+import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import CancelIcon from '@mui/icons-material/Cancel';
+import classes from '../utils/classes';
 //styling
-import nex10Logo from "../public/images/logo/nex10-logo.png";
-import UcdCoin from "../public/images/uu/ucd-coin.png";
-import { Colors } from "../utils/Theme";
-import styled from "styled-components";
-import PurchaseDialog from "./Dialogs/PurchaseDialog";
+import nex10Logo from '../public/images/logo/nex10-logo.png';
+import UcdCoin from '../public/images/uu/ucd-coin.png';
+import { Colors } from '../utils/Theme';
+import styled from 'styled-components';
+import PurchaseDialog from './Dialogs/PurchaseDialog';
 const ImageBox = styled.div`
   position: absolute;
   top: 10px;
@@ -93,14 +93,14 @@ const ProductPricing = styled.div`
 const ProductPrice = styled.span`
   font-size: 17px;
   color: #ffffff;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
   font-weight: 700;
   margin-left: 5px;
 `;
 const ProductCurrency = styled.span`
   font-size: 12px;
   color: #ffffff;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
   margin-left: 3px;
 `;
 const PurchaseButton = styled.button`
@@ -111,7 +111,7 @@ const PurchaseButton = styled.button`
   border: none;
   padding: 0.5rem 1.5rem;
   font-weight: 500;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
   color: #ffffff;
   width: 90%;
   background: ${Colors.UUPrimary};
@@ -141,65 +141,65 @@ export default function Layout({ title, description, children }) {
       MuiPaper: {
         styleOverrides: {
           root: {
-            background: "#30358C",
-            padding: "24px",
+            background: '#30358C',
+            padding: '24px',
           },
         },
       },
       MuiTableContainer: {
         styleOverrides: {
           root: {
-            overflowX: "hidden",
+            overflowX: 'hidden',
           },
         },
       },
       MuiFormControl: {
         styleOverrides: {
           root: {
-            borderRadius: "50px",
+            borderRadius: '50px',
           },
         },
       },
       MuiInputLabel: {
         styleOverrides: {
           root: {
-            color: "#ffffff",
-            fontFamily: "Oxanium",
-            fontSize: "15px",
+            color: '#ffffff',
+            fontFamily: 'Oxanium',
+            fontSize: '15px',
           },
         },
       },
       MuiOutlinedInput: {
         styleOverrides: {
           root: {
-            color: "#ffffff",
-            fontFamily: "Oxanium",
-            fontSize: "15px",
-            borderRadius: "50px",
-            background: "#152266",
+            color: '#ffffff',
+            fontFamily: 'Oxanium',
+            fontSize: '15px',
+            borderRadius: '50px',
+            background: '#152266',
           },
-          input: { textAlign: "center" },
+          input: { textAlign: 'center' },
         },
       },
     },
     typography: {
       h1: {
-        fontSize: "1.6rem",
+        fontSize: '1.6rem',
         fontWeight: 400,
-        margin: "1rem 0",
+        margin: '1rem 0',
       },
       h2: {
-        fontSize: "1.4rem",
+        fontSize: '1.4rem',
         fontWeight: 400,
-        margin: "1rem 0",
+        margin: '1rem 0',
       },
     },
     palette: {
       primary: {
-        main: "#0097DA",
+        main: '#0097DA',
       },
       secondary: {
-        main: "#208080",
+        main: '#208080',
       },
     },
     breakpoints: {
@@ -215,7 +215,7 @@ export default function Layout({ title, description, children }) {
   //state
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [types, setTypes] = useState([]);
-  const [showPurchase, setShowPurchase] = useState(""); //dialog authentication
+  const [showPurchase, setShowPurchase] = useState(''); //dialog authentication
   const [anchorEl, setAnchorEl] = useState(null); //cart menu
 
   //togle sidebar
@@ -226,7 +226,7 @@ export default function Layout({ title, description, children }) {
     setSidebarVisible(false);
   };
   //responsive cart menu
-  const isDesktop = useMediaQuery("(min-width:650px)");
+  const isDesktop = useMediaQuery('(min-width:650px)');
   //toggle cart menu
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -243,7 +243,7 @@ export default function Layout({ title, description, children }) {
       const { data } = await axios.get(`/api/products/types`);
       setTypes(data);
     } catch (err) {
-      enqueueSnackbar(getError(err), { variant: "error" });
+      enqueueSnackbar(getError(err), { variant: 'error' });
     }
   };
 
@@ -252,14 +252,14 @@ export default function Layout({ title, description, children }) {
   }, []);
 
   const adminHandler = () => {
-    router.push("/admin/products");
+    router.push('/admin/products');
   };
 
   //remove product from cart
   const removeFromCartHandler = async (product) => {
     const existItem = cart.cartItems.find((x) => x._id === product._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
-    dispatch({ type: "CART_REMOVE_ITEM", payload: { ...product, quantity } });
+    dispatch({ type: 'CART_REMOVE_ITEM', payload: { ...product, quantity } });
   };
 
   //start purchase process
@@ -277,7 +277,7 @@ export default function Layout({ title, description, children }) {
     <>
       <Head>
         <title>
-          {title ? `${title} - Next10 Marketplace` : "Next10 Marketplace"}
+          {title ? `${title} - Next10 Marketplace` : 'Next10 Marketplace'}
         </title>
         {description && <meta name="description" content={description}></meta>}
       </Head>
@@ -299,19 +299,19 @@ export default function Layout({ title, description, children }) {
             </ImageBox>
             <div
               style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                alignItems: "center",
-                marginInline: "auto 0",
+                display: 'flex',
+                justifyContent: 'flex-end',
+                alignItems: 'center',
+                marginInline: 'auto 0',
               }}
             >
               {/* Desktop Cart */}
               <div>
                 <Button
                   id="basic-button"
-                  aria-controls={open ? "basic-menu" : undefined}
+                  aria-controls={open ? 'basic-menu' : undefined}
                   aria-haspopup="true"
-                  aria-expanded={open ? "true" : undefined}
+                  aria-expanded={open ? 'true' : undefined}
                   onClick={handleClick}
                   sx={isDesktop ? classes.visible : classes.hidden}
                 >
@@ -341,17 +341,17 @@ export default function Layout({ title, description, children }) {
                     open={open}
                     onClose={handleClose}
                     MenuListProps={{
-                      "aria-labelledby": "basic-button",
+                      'aria-labelledby': 'basic-button',
                     }}
                   >
                     <CartTitle>Your Cart</CartTitle>
                     <MenuItem
                       sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        padding: "0",
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        padding: '0',
                       }}
                     >
                       {cart.cartItems.map((product) => (
@@ -362,8 +362,8 @@ export default function Layout({ title, description, children }) {
                             height={60}
                             width={60}
                             style={{
-                              borderRadius: "10px",
-                              objectFit: "cover",
+                              borderRadius: '10px',
+                              objectFit: 'cover',
                             }}
                           />
 
@@ -390,8 +390,8 @@ export default function Layout({ title, description, children }) {
                           <CancelIcon
                             style={{
                               fontSize: 22,
-                              cursor: "pointer",
-                              color: "white",
+                              cursor: 'pointer',
+                              color: 'white',
                             }}
                             onClick={() => removeFromCartHandler(product)}
                           />
@@ -403,16 +403,16 @@ export default function Layout({ title, description, children }) {
                     </PurchaseButton>
                   </Menu>
                 ) : (
-                  <div style={{ background: "transparent" }}></div>
+                  <div style={{ background: 'transparent' }}></div>
                 )}
               </div>
               {/* Mobile Cart */}
               <div>
                 <Button
                   id="basic-button"
-                  aria-controls={open ? "basic-menu" : undefined}
+                  aria-controls={open ? 'basic-menu' : undefined}
                   aria-haspopup="true"
-                  aria-expanded={open ? "true" : undefined}
+                  aria-expanded={open ? 'true' : undefined}
                   onClick={sidebarOpenHandler}
                   sx={isDesktop ? classes.hidden : classes.visible}
                 >
@@ -445,11 +445,11 @@ export default function Layout({ title, description, children }) {
                     </ListItem>
                     <ListItem
                       sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        padding: "0",
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        padding: '0',
                       }}
                     >
                       {cart.cartItems.map((product) => (
@@ -460,8 +460,8 @@ export default function Layout({ title, description, children }) {
                             height={60}
                             width={60}
                             style={{
-                              borderRadius: "10px",
-                              objectFit: "cover",
+                              borderRadius: '10px',
+                              objectFit: 'cover',
                             }}
                           />
 
@@ -488,8 +488,8 @@ export default function Layout({ title, description, children }) {
                           <CancelIcon
                             style={{
                               fontSize: 22,
-                              cursor: "pointer",
-                              color: "white",
+                              cursor: 'pointer',
+                              color: 'white',
                             }}
                             onClick={() => removeFromCartHandler(product)}
                           />
@@ -514,7 +514,7 @@ export default function Layout({ title, description, children }) {
                   </Avatar>
                 </Button>
               ) : (
-                ""
+                ''
               )}
               <div>
                 {hasMetamask ? (

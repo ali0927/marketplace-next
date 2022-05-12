@@ -1,31 +1,31 @@
 //react/next/packages
-import { useState, useEffect } from "react";
-import { useSnackbar } from "notistack";
+import { useState, useEffect } from 'react';
+import { useSnackbar } from 'notistack';
 //blockchain
-import { ethers } from "ethers";
-import MetaMaskOnboarding from "@metamask/onboarding";
+import { ethers } from 'ethers';
+import MetaMaskOnboarding from '@metamask/onboarding';
 //material ui
-import { Dialog, DialogActions } from "@mui/material";
-import Button from "@mui/material/Button";
+import { Dialog, DialogActions } from '@mui/material';
+import Button from '@mui/material/Button';
 //styles
-import styled from "styled-components";
-import classes from "../../utils/classes";
-import { Colors } from "../../utils/Theme";
+import styled from 'styled-components';
+import classes from '../../utils/classes';
+import { Colors } from '../../utils/Theme';
 //components/utils/context
-import { getError } from "../../utils/error";
+import { getError } from '../../utils/error';
 //environment
-import { environmentTest } from "../../lib/environments/environment";
-import { environment } from "../../lib/environments/environment.prod";
+import { environmentTest } from '../../lib/environments/environment';
+import { environment } from '../../lib/environments/environment.prod';
 //contracts
-import escrowContract from "../../lib/contracts/EscrowWallet.json";
-import ucdContract from "../../lib/contracts/UniCandy.json";
-import Particulars from "./Particulars";
-import PaymentForm from "../PaymentForm";
+import escrowContract from '../../lib/contracts/EscrowWallet.json';
+import ucdContract from '../../lib/contracts/UniCandy.json';
+import Particulars from './Particulars';
+import PaymentForm from '../PaymentForm';
 
 const DialogText = styled.div`
   line-height: 150%;
   font-size: 17px;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
   font-weight: 700;
   margin-top: 1em;
   margin-bottom: 1em;
@@ -39,7 +39,7 @@ const DialogLoading = styled.div`
   gap: 0.5rem;
   justify-content: center;
   color: #fff;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
 `;
 const DialogButton = styled.div`
   display: flex;
@@ -50,7 +50,7 @@ const DialogButton = styled.div`
   padding: 0.7rem 1.5rem;
   font-weight: 500;
   font-size: 13px;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
   color: #ffffff;
   max-width: 200px;
   background: ${Colors.bg};
@@ -69,7 +69,7 @@ const DialogButton = styled.div`
 
 const escrowContractAddress = escrowContract.address[4]; //currently on rinkeby
 const ucdContractAddress =
-  process.env.NODE_ENV === "prod"
+  process.env.NODE_ENV === 'prod'
     ? ucdContract.address[environment.chainId]
     : ucdContract.address[environmentTest.chainId];
 const ucdContractABI = ucdContract.abi;
@@ -115,14 +115,14 @@ function PurchaseDialog(props) {
           await setIsApproved(true);
           setIsLoading(false);
           handleDialogClose(true);
-          enqueueSnackbar("Permissions approved successfully", {
-            variant: "success",
+          enqueueSnackbar('Permissions approved successfully', {
+            variant: 'success',
           });
         });
       })
       .catch((err) => {
         setIsLoading(false);
-        enqueueSnackbar(getError(err), { variant: "error" });
+        enqueueSnackbar(getError(err), { variant: 'error' });
       });
   }
 
@@ -182,7 +182,7 @@ function PurchaseDialog(props) {
             </Particulars>
 
             <DialogButton onClick={handleProceedDialogClose}>
-              No, Let Me Think Again{" "}
+              No, Let Me Think Again{' '}
             </DialogButton>
           </DialogActions>
         </Dialog>
