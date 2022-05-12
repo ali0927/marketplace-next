@@ -523,10 +523,13 @@ export default function Layout({ title, description, children }) {
                 </Drawer>
               </div>
 
+              {showPurchase &&
               <PurchaseDialog
                 showPurchase={showPurchase}
                 setShowPurchase={setShowPurchase}
               />
+              }
+             
               {data.admin.includes(currentAccount) ? (
                 <Button onClick={adminHandler} fullWidth>
                   <Avatar sx={classes.avatar}>

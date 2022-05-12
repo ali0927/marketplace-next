@@ -6,11 +6,15 @@ const handler = nc();
 //users to get all products
 handler.get(async (req, res) => {
   await db.connect();
-  const wallet = await Wallet.findOne({
-    address: req.query.user,
-  });
-  await db.disconnect();
-  res.send(wallet);
+  try {
+    const wallet = await Wallet.findOne({
+      address: req.query.user,
+    });
+    await db.disconnect();
+    res.send(wallet);
+  } catch {
+    res.send({});
+  }
 });
 
 export default handler;

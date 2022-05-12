@@ -44,7 +44,7 @@ const BootstrapDialogTitle = (props) => {
   );
 };
 
-export default function Particulars({ children }) {
+export default function Particulars({ title, children }) {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -74,7 +74,7 @@ export default function Particulars({ children }) {
           onClose={handleClose}
           sx={classes.particularsTitle}
         >
-          Fill in your details.
+          {title || "Fill in your details."}
         </BootstrapDialogTitle>
         <DialogContent dividers>{children}</DialogContent>
       </BootstrapDialog>
