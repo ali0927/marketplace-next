@@ -10,7 +10,6 @@ handler.get(async (req, res) => {
     const wallet = await Wallet.findOne({
       address: req.query.user,
     });
-    console.log('wallet:', req.query.user)
     const token = await wallet.balances.find(
       (token) => token.token_address === req.query.token
     );

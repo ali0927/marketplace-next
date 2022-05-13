@@ -136,12 +136,6 @@ function PurchaseDialog(props) {
     setProceedPurchase(false);
   };
 
-  const getNex10Balance = async () => {
-    const user = currentAccount.toLowerCase();
-    const nex10balance = await axios.get(`/api/wallet/${user}/${ucdContractAddress}`);
-    setNex10Balance(nex10balance.data.balance);
-  }
-
   //approve transfer
   async function setApproval() {
     const ucdContract = new ethers.Contract(ucdContractAddress, ucdContractABI, signer);
@@ -163,6 +157,15 @@ function PurchaseDialog(props) {
   }
 
   const checkAllowance = async () => {
+    const user = currentAccount.toLowerCase();
+    const nex10balance = await axios.get(`/api/wallet/${user}/${ucdContractAddress}`);
+    await setNex10Balance(nex10balance.data.balance);
+
+    if (nex10balance.data.balance >= amount) {
+      setDialogStatus(DIALOG_STATUS.FUNDADDED);
+      return;
+    }
+
     const ucdContract = new ethers.Contract(ucdContractAddress, ucdContractABI, signer);
     setDialogStatus(DIALOG_STATUS.LOADING);
     setDepositAmount(amount);
@@ -208,7 +211,6 @@ function PurchaseDialog(props) {
       provider = new ethers.providers.Web3Provider(window.ethereum);
       signer = provider.getSigner();
       checkAllowance();
-      getNex10Balance();
     }
   }, []);
 
