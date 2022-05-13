@@ -1,6 +1,7 @@
 //react/next/packages
 
 import { Colors, Devices } from '../utils/Theme';
+import { useContext, useEffect, useState } from 'react';
 
 import { Box } from '@mui/system';
 import { Card } from '@mui/material';
@@ -14,7 +15,6 @@ import UULogo from '../public/images/uu/uu-logo.png';
 import UUMain from '../public/images/uu/uu-main.png';
 import classes from '../utils/classes';
 import styled from 'styled-components';
-import { useContext } from 'react';
 import { useRouter } from 'next/router';
 
 const Container = styled.div`

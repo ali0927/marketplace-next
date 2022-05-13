@@ -1,36 +1,26 @@
 //react/next/packages
-import { useState, useEffect, useContext } from 'react';
-import { useSnackbar } from 'notistack';
-//blockchain
-import { ethers } from 'ethers';
-import MetaMaskOnboarding from '@metamask/onboarding';
-//material ui
+
 import { Dialog, DialogActions } from '@mui/material';
-import Button from '@mui/material/Button';
+import { useContext, useEffect, useState } from 'react';
+
 import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
-//styles
-import styled from 'styled-components';
-import classes from '../../utils/classes';
+import Button from '@mui/material/Button';
 import { Colors } from '../../utils/Theme';
-//components/utils/context
-import { getError } from '../../utils/error';
-//environment
-import { environmentTest } from '../../lib/environments/environment';
-import { environment } from '../../lib/environments/environment.prod';
-//contracts
-import escrowContract from '../../lib/contracts/EscrowWallet.json';
-import ucdContract from '../../lib/contracts/UniCandy.json';
-// import Particulars from "./Particulars";
+import { MarketplaceContext } from '../../utils/MarketplaceContext';
+import MetaMaskOnboarding from '@metamask/onboarding';
 import PaymentForm from '../PaymentForm';
-
-import { MarketplaceContext } from '../../utils/MarketplaceContext';
+import RemoveIcon from '@mui/icons-material/Remove';
 import { Store } from '../../utils/Store';
 import axios from 'axios';
-
-import { MarketplaceContext } from '../../utils/MarketplaceContext';
-import { Store } from '../../utils/Store';
-import axios from 'axios';
+import classes from '../../utils/classes';
+import { environment } from '../../lib/environments/environment.prod';
+import { environmentTest } from '../../lib/environments/environment';
+import escrowContract from '../../lib/contracts/EscrowWallet.json';
+import { ethers } from 'ethers';
+import { getError } from '../../utils/error';
+import styled from 'styled-components';
+import ucdContract from '../../lib/contracts/UniCandy.json';
+import { useSnackbar } from 'notistack';
 
 const DialogText = styled.div`
   line-height: 150%;
@@ -204,64 +194,6 @@ function PurchaseDialog(props) {
   };
 
   const depositFund = async () => {
-    const escrowContract = new ethers.Contract(
-      escrowContractAddress,
-      escrowContractABI,
-      signer
-    );
-    setDialogStatus(DIALOG_STATUS.LOADING);
-    await escrowContract
-      .burnToken(ucdContractAddress, ethers.utils.parseEther(amount.toString()))
-      .then(async (tx) => {
-        tx.wait().then(async () => {
-          setDialogStatus(DIALOG_STATUS.FUNDADDED);
-          enqueueSnackbar('Burned successfully', {
-            variant: 'success',
-          });
-        });
-      })
-      .catch((err) => {
-        setDialogStatus(DIALOG_STATUS.NONE);
-        enqueueSnackbar(getError(err), { variant: 'error' });
-      });
-  };
-
-  const checkAllowance = async () => {
-    const user = currentAccount.toLowerCase();
-    const nex10balance = await axios.get(
-      `/api/wallet/${user}/${ucdContractAddress}`
-    );
-    await setNex10Balance(nex10balance.data.balance);
-
-    if (nex10balance.data.balance >= amount) {
-      setDialogStatus(DIALOG_STATUS.FUNDADDED);
-      return;
-    }
-
-    const ucdContract = new ethers.Contract(
-      ucdContractAddress,
-      ucdContractABI,
-      signer
-    );
-    setDialogStatus(DIALOG_STATUS.LOADING);
-    setDepositAmount(amount);
-    await ucdContract
-      .allowance(currentAccount, escrowContractAddress)
-      .then(async (val) => {
-        const allowance = parseFloat(ethers.utils.formatEther(val));
-        if (allowance >= amount) {
-          setDialogStatus(DIALOG_STATUS.CONFIRMPURCHASE);
-        } else {
-          setDialogStatus(DIALOG_STATUS.APPROVE);
-        }
-      })
-      .catch((err) => {
-        setDialogStatus(DIALOG_STATUS.NONE);
-        enqueueSnackbar(getError(err), { variant: 'error' });
-      });
-  };
-
-  const deposiFund = async () => {
     const escrowContract = new ethers.Contract(
       escrowContractAddress,
       escrowContractABI,
