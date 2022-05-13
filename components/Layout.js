@@ -163,41 +163,6 @@ export default function Layout({ title, description, children }) {
           },
         },
       },
-      // MuiFormControl: {
-      //   styleOverrides: {
-      //     root: {
-      //       borderRadius: '50px',
-      //     },
-      //   },
-      // },
-      // MuiList: {
-      //   styleOverrides: {
-      //     root: {
-      //       paddingInline: '20px',
-      //     },
-      //   },
-      // },
-      // MuiInputLabel: {
-      //   styleOverrides: {
-      //     root: {
-      //       color: '#ffffff',
-      //       fontFamily: 'Oxanium',
-      //       fontSize: '15px',
-      //     },
-      //   },
-      // },
-      //   MuiOutlinedInput: {
-      //     styleOverrides: {
-      //       root: {
-      //         color: '#ffffff',
-      //         fontFamily: 'Oxanium',
-      //         fontSize: '15px',
-      //         borderRadius: '50px',
-      //         background: '#152266',
-      //       },
-      //       input: { textAlign: 'center' },
-      //     },
-      //   },
     },
     typography: {
       h1: {
@@ -223,7 +188,8 @@ export default function Layout({ title, description, children }) {
       values: {
         xs: 0,
         sm: 600,
-        md: 900,
+        // md: 900,
+        md: 1060,
         lg: 1200,
         xl: 1536,
       },
@@ -271,7 +237,7 @@ export default function Layout({ title, description, children }) {
 
   useEffect(() => {
     const handleScroll = () => {
-      const show = window.scrollY > 0;
+      const show = window.scrollY > 20;
       if (show) {
         setNavBackground('appBarSolid');
       } else {

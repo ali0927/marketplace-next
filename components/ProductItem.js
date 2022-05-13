@@ -21,12 +21,6 @@ import { useContext } from 'react';
 
 //styling
 
-
-
-
-
-
-
 const Trapezium = styled.div`
   padding: 6px 13px;
   background: ${Colors.bg};
@@ -35,15 +29,16 @@ const Trapezium = styled.div`
   border-bottom-left-radius: 1em 2em;
   position: absolute;
   left: 50%;
-  top: -11%;
+  top: 0%;
   transform: translate(-50%, -50%);
+  text-align: center;
   z-index: 10;
   font-family: 'Oxanium';
   @media ${Devices.Tablet} {
     top: -15%;
   }
   @media ${Devices.TabletL} {
-    top: -11%;
+    top: -1%;
   }
   & p {
     margin-top: 55px;

@@ -20,18 +20,14 @@ import classes from '../../utils/classes';
 import db from '../../utils/db';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
-
-//image
-
-//style
-
-//components
-
-// import CheckContractApproval from "../components/CheckContractApproval";
+import ucdContract from '../../lib/contracts/UniCandy.json';
+import { environment } from '../../lib/environments/environment.prod';
+import { environmentTest } from '../../lib/environments/environment';
 
 const Wrapper = styled.div`
   margin-top: 150px;
 `;
+
 const HeaderContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -60,12 +56,13 @@ const WalletGeneralInfo = styled.div`
   align-items: center;
   @media ${Devices.MobileL} {
     justify-content: center;
-    flex-direction: column;
   }
 `;
 const WalletBalance = styled.div`
-display: flex;
-flex-direction: row;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   background: #152266;
   border-radius: 20px;
   padding: 10px 15px;
@@ -75,19 +72,16 @@ flex-direction: row;
   font-family: "Oxanium",
   display: flex;
   letter-spacing: 1px;
-  margin-left: auto;
-  align-items: center;
+  margin-left: 15px;
   color: #fff;
 `;
 const WalletText = styled.span`
   font-size: 12px;
-  margin-right: 30px;
   color: '#c4c4c4';
   font-weight: 400;
   font-family: 'Oxanium';
 `;
 const WalletAmount = styled.div`
-  margin-left: auto;
   display: flex;
   align-items: center;
   font-family: 'Oxanium';
@@ -97,6 +91,8 @@ const WalletAmount = styled.div`
 `;
 const WalletUULogo = styled.div`
   margin-right: 10px;
+  margin-bottom: 5px;
+  display: flex;
 `;
 const FilterContainer = styled.div`
   margin-top: 20px;
@@ -123,28 +119,33 @@ const FilterButton = styled.button`
   border: 2px solid ${Colors.bg};
   padding: 10px 20px;
   border-radius: 3em;
-  background-color: ${(props) => {
-    return props.active ? '#152266' : 'transparent';
-  }};
-  color: #ffffff;
   cursor: pointer;
   font-family: Oxanium;
   font-size: 14px;
   text-align: center;
+  color: #ffffff;
+  background-color: ${(props) => (props.color ? props.color : 'transparent')};
   :hover {
     background-color: ${Colors.bg};
   }
-  &:active {
+  &.active {
     background-color: ${Colors.bg};
   }
 `;
 
+const ucdContractAddress =
+  process.env.NODE_ENV === 'prod'
+    ? ucdContract.address[environment.chainId].toLowerCase()
+    : ucdContract.address[environmentTest.chainId].toLowerCase();
+
 export default function Search(props) {
   //state
   const [isLoading, setIsLoading] = useState(true);
+  const [nex10Balance, setNex10Balance] = useState(0);
+  const [showCharge, setShowCharge] = useState(false);
 
   const { products } = props;
-  const { isOnMainnet, ucdWalletBalance, getUCDBalance } =
+  const { isOnMainnet, ucdWalletBalance, getUCDBalance, currentAccount } =
     useContext(MarketplaceContext);
   const { state, dispatch } = useContext(Store);
 
@@ -165,6 +166,14 @@ export default function Search(props) {
     setIsLoading(false);
   };
 
+  const getNex10balance = async () => {
+    const user = currentAccount.toLowerCase();
+    const nex10balance = await axios.get(
+      `/api/wallet/${user}/${ucdContractAddress}`
+    );
+    setNex10Balance(nex10balance.data.balance);
+  };
+
   const addToCartHandler = async (product) => {
     const existItem = state.cart.cartItems.find((x) => x._id === product._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
@@ -177,9 +186,8 @@ export default function Search(props) {
   };
 
   useEffect(() => {
-    window.addEventListener('load', handleLoading);
-    return () => window.removeEventListener('load', handleLoading);
-  }, [getUCDBalance]);
+    getNex10balance();
+  }, [currentAccount, showCharge]);
 
   return (
     <Layout title="Search">
@@ -210,7 +218,7 @@ export default function Search(props) {
                         alt="ucdCoin"
                       />
                     </WalletUULogo>
-                    {ucdWalletBalance} UCD
+                    <span>{nex10Balance} UCD</span>
                   </WalletAmount>
                 </WalletBalance>
                 <WalletBalance
