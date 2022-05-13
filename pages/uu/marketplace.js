@@ -232,6 +232,19 @@ export default function Home(props) {
                       {ucdWalletBalance} UCD
                     </WalletAmount>
                   </WalletBalance>
+                  <WalletBalance
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => setShowCharge(true)}
+                  >
+                    <AccountBalanceWalletOutlinedIcon
+                      style={{
+                        fontSize: 22,
+                        cursor: 'pointer',
+                        color: 'white',
+                      }}
+                    />
+                    <span>Charge</span>
+                  </WalletBalance>
                 </WalletGeneralInfo>
               </HeaderContainer>
               <FilterContainer>
@@ -257,6 +270,12 @@ export default function Home(props) {
                   </Grid>
                 ))}
               </Grid>
+              {showCharge && (
+                <ChargeDialog
+                  showCharge={showCharge}
+                  setShowCharge={setShowCharge}
+                />
+              )}
             </div>
           ) : (
             <Box sx={classes.wrongNetwork}>

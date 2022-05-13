@@ -1,25 +1,33 @@
 //react/next
-import { useContext, useState, useEffect } from 'react';
-import axios from 'axios';
-import { useRouter } from 'next/router';
-//image
+
+import { Colors, Devices } from '../../utils/Theme';
+import { useContext, useEffect, useState } from 'react';
+
+import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
+import { Box } from '@mui/system';
+import ChargeDialog from '../../components/Dialogs/ChargeDialog';
+import { Grid } from '@mui/material';
 import Image from 'next/image';
+import Layout from '../../components/Layout';
+import { MarketplaceContext } from '../../utils/MarketplaceContext';
+import Product from '../../models/Product.model';
+import ProductItem from '../../components/ProductItem';
+import { Store } from '../../utils/Store';
 import UcdCoin from '../../public/images/uu/ucd-coin.png';
 import UcdRoundLogo from '../../public/images/uu/uu-round-logo.png';
-//style
-import styled from 'styled-components';
-import { Colors, Devices } from '../../utils/Theme';
-import { Grid } from '@mui/material';
-import { Box } from '@mui/system';
+import axios from 'axios';
 import classes from '../../utils/classes';
-//components
-import Layout from '../../components/Layout';
-// import CheckContractApproval from "../components/CheckContractApproval";
-import { MarketplaceContext } from '../../utils/MarketplaceContext';
 import db from '../../utils/db';
-import Product from '../../models/Product.model';
-import { Store } from '../../utils/Store';
-import ProductItem from '../../components/ProductItem';
+import styled from 'styled-components';
+import { useRouter } from 'next/router';
+
+//image
+
+//style
+
+//components
+
+// import CheckContractApproval from "../components/CheckContractApproval";
 
 const Wrapper = styled.div`
   margin-top: 150px;
@@ -205,6 +213,19 @@ export default function Search(props) {
                     {ucdWalletBalance} UCD
                   </WalletAmount>
                 </WalletBalance>
+                <WalletBalance
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => setShowCharge(true)}
+                >
+                  <AccountBalanceWalletOutlinedIcon
+                    style={{
+                      fontSize: 22,
+                      cursor: 'pointer',
+                      color: 'white',
+                    }}
+                  />
+                  <span>Charge</span>
+                </WalletBalance>
               </WalletGeneralInfo>
             </HeaderContainer>
             <FilterContainer>
@@ -238,6 +259,13 @@ export default function Search(props) {
                 </Grid>
               ))}
             </Grid>
+
+            {showCharge && (
+              <ChargeDialog
+                showCharge={showCharge}
+                setShowCharge={setShowCharge}
+              />
+            )}
           </div>
         ) : (
           <Box sx={classes.wrongNetwork}>
