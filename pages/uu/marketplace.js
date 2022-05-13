@@ -14,11 +14,18 @@ import { Box } from "@mui/system";
 import classes from "../../utils/classes";
 //components
 import Layout from "../../components/Layout";
+import ChargeDialog from '../../components/Dialogs/ChargeDialog';
 import { MarketplaceContext } from "../../utils/MarketplaceContext";
 import db from "../../utils/db";
 import Product from "../../models/Product.model";
 import { Store } from "../../utils/Store";
 import ProductItem from "../../components/ProductItem";
+import ucdContract from "../../lib/contracts/UniCandy.json";
+//environment
+import { environmentTest } from "../../lib/environments/environment";
+import { environment } from "../../lib/environments/environment.prod";
+
+import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -48,12 +55,13 @@ const WalletGeneralInfo = styled.div`
   align-items: center;
   @media ${Devices.MobileL} {
     justify-content: center;
-    flex-direction: column;
   }
 `;
 const WalletBalance = styled.div`
-display: flex;
-flex-direction: row;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   background: #152266;
   border-radius: 20px;
   padding: 10px 15px;
@@ -63,13 +71,11 @@ flex-direction: row;
   font-family: "Oxanium",
   display: flex;
   letter-spacing: 1px;
-  margin-left: auto;
-  align-items: center;
+  margin-left: 15px;
   color: #fff;
 `;
 const WalletText = styled.span`
   font-size: 12px;
-  margin-right: 30px;
   color: "#c4c4c4";
   font-weight: 400;
   font-family: "Oxanium";
@@ -121,14 +127,20 @@ const FilterButton = styled.button`
   }
 `;
 
+const ucdContractAddress =
+  process.env.NODE_ENV === "prod"
+    ? ucdContract.address[environment.chainId].toLowerCase()
+    : ucdContract.address[environmentTest.chainId].toLowerCase();
+
 export default function Home(props) {
   const { products } = props;
   //state
   const [isLoading, setIsLoading] = useState(true);
+  const [nex10Balance, setNex10Balance] = useState(0);
+  const [showCharge, setShowCharge] = useState(false);
 
   //context
-  const { isOnMainnet, ucdWalletBalance, getUCDBalance } =
-    useContext(MarketplaceContext);
+  const { isOnMainnet, ucdWalletBalance, getUCDBalance, currentAccount } = useContext(MarketplaceContext);
   const { state, dispatch } = useContext(Store);
 
   //filter
@@ -160,11 +172,22 @@ export default function Home(props) {
     dispatch({ type: "CART_ADD_ITEM", payload: { ...product, quantity } });
   };
 
+  const getNex10balance = async () => {
+    const user = currentAccount.toLowerCase();
+    const nex10balance = await axios.get(`/api/wallet/${user}/${ucdContractAddress}`);
+    setNex10Balance(nex10balance.data.balance);
+  }
+
+  useEffect(() => {
+    getNex10balance();
+  }, [currentAccount, showCharge]);
+
   //get UCD balance
   useEffect(() => {
     window.addEventListener("load", handleLoading);
     return () => window.removeEventListener("load", handleLoading);
   }, [getUCDBalance]);
+
   return (
     <Layout>
       <div>
@@ -182,7 +205,7 @@ export default function Home(props) {
               </HeaderMarketplace>
               <WalletGeneralInfo>
                 <WalletBalance>
-                  <WalletText style={{ color: "#c4c4c4" }}>
+                  <WalletText>
                     In your wallet
                   </WalletText>
                   <WalletAmount>
@@ -194,8 +217,21 @@ export default function Home(props) {
                         alt="ucdCoin"
                       />
                     </WalletUULogo>
-                    {ucdWalletBalance} UCD
+                    {nex10Balance} UCD
                   </WalletAmount>
+                </WalletBalance>
+                <WalletBalance 
+                  style={{cursor:'pointer'}}
+                  onClick={() => setShowCharge(true)}
+                >
+                  <AccountBalanceWalletOutlinedIcon
+                    style={{
+                      fontSize: 22,
+                      cursor: 'pointer',
+                      color: 'white',
+                    }}
+                  />
+                  <span>Charge</span>
                 </WalletBalance>
               </WalletGeneralInfo>
             </HeaderContainer>
@@ -222,6 +258,13 @@ export default function Home(props) {
                 </Grid>
               ))}
             </Grid>
+
+            {showCharge &&
+              <ChargeDialog
+                showCharge={showCharge}
+                setShowCharge={setShowCharge}
+              />
+            }
           </div>
         ) : (
           <Box sx={classes.wrongNetwork}>

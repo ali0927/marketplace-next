@@ -21,8 +21,6 @@ import { environment } from "../../lib/environments/environment.prod";
 //contracts
 import escrowContract from "../../lib/contracts/EscrowWallet.json";
 import ucdContract from "../../lib/contracts/UniCandy.json";
-import Particulars from "./Particulars";
-import PaymentForm from "../PaymentForm";
 
 import { MarketplaceContext } from "../../utils/MarketplaceContext";
 import { Store } from "../../utils/Store";
@@ -108,40 +106,29 @@ const DIALOG_STATUS = {
 
 let signer, provider;
 
-function PurchaseDialog(props) {
+function ChargeDialog(props) {
   //state
-  //   const [showPurchase, setShowPurchase] = useState(""); //first dialog (user to approve purchase)
-  const [proceedPurchase, setProceedPurchase] = useState(false); //second dialog (detect if funds in escrow walet is sufficient)
   const { enqueueSnackbar } = useSnackbar();
-  const [dialogStatus, setDialogStatus] = useState(DIALOG_STATUS.INIT);
+  const [dialogStatus, setDialogStatus] = useState(DIALOG_STATUS.APPROVE);
   const [depositAmount, setDepositAmount] = useState(0);
+  const [approvedAmount, setApprovedAmount] = useState(0);
   const [nex10Balance, setNex10Balance] = useState(0);
 
   //context
-  const { state, dispatch } = useContext(Store);
-  const { cart } = state;
-  const { hasMetamask, currentAccount, connectWallet } = useContext(MarketplaceContext);
-
-  const amount = cart.cartItems.reduce((total, item) => {
-    return total + item.price;       
-  }, 0);
+  const { currentAccount, ucdWalletBalance } = useContext(MarketplaceContext);
 
   //user approves contract to access #UCD in wallet
   const handleDialogClose = () => {
-    props.setShowPurchase(null);
-  };
-
-  //user to proceed with purchase
-  const handleProceedDialogClose = () => {
-    setProceedPurchase(false);
+    props.setShowCharge(null);
   };
 
   //approve transfer
   async function setApproval() {
     const ucdContract = new ethers.Contract(ucdContractAddress, ucdContractABI, signer);
     setDialogStatus(DIALOG_STATUS.LOADING);
+    console.log(ucdContract)
     await ucdContract
-      .approve(escrowContractAddress, ethers.utils.parseEther(amount.toString()))
+      .approve(escrowContractAddress, ethers.utils.parseEther(approvedAmount.toString()))
       .then(async (tx) => {
         tx.wait().then(async () => {
           setDialogStatus(DIALOG_STATUS.APPROVED);
@@ -151,37 +138,7 @@ function PurchaseDialog(props) {
         });
       })
       .catch((err) => {
-        setDialogStatus(DIALOG_STATUS.NONE);
-        enqueueSnackbar(getError(err), { variant: "error" });
-      });
-  }
-
-  const checkAllowance = async () => {
-    const user = currentAccount.toLowerCase();
-    const nex10balance = await axios.get(`/api/wallet/${user}/${ucdContractAddress}`);
-    await setNex10Balance(nex10balance.data.balance);
-
-    if (nex10balance.data.balance >= amount) {
-      setDialogStatus(DIALOG_STATUS.FUNDADDED);
-      return;
-    }
-
-    const ucdContract = new ethers.Contract(ucdContractAddress, ucdContractABI, signer);
-    setDialogStatus(DIALOG_STATUS.LOADING);
-    setDepositAmount(amount);
-    await ucdContract
-      .allowance(currentAccount, escrowContractAddress)
-      .then(async (val) => {
-        const allowance = parseFloat(ethers.utils.formatEther(val));
-        if (allowance >= amount) {
-          setDialogStatus(DIALOG_STATUS.CONFIRMPURCHASE);
-        }
-        else {
-          setDialogStatus(DIALOG_STATUS.APPROVE);
-        }
-      })
-      .catch((err) => {
-        setDialogStatus(DIALOG_STATUS.NONE);
+        handleDialogClose();
         enqueueSnackbar(getError(err), { variant: "error" });
       });
   }
@@ -190,7 +147,7 @@ function PurchaseDialog(props) {
     const escrowContract = new ethers.Contract(escrowContractAddress, escrowContractABI, signer);
     setDialogStatus(DIALOG_STATUS.LOADING);
     await escrowContract
-      .burnToken(ucdContractAddress, ethers.utils.parseEther(amount.toString()))
+      .burnToken(ucdContractAddress, ethers.utils.parseEther(depositAmount.toString()))
       .then(async (tx) => {
         tx.wait().then(async () => {
           setDialogStatus(DIALOG_STATUS.FUNDADDED);
@@ -206,11 +163,17 @@ function PurchaseDialog(props) {
 
   }
 
+  const getNex10Balance = async () => {
+    const user = currentAccount.toLowerCase();
+    const nex10balance = await axios.get(`/api/wallet/${user}/${ucdContractAddress}`);
+    await setNex10Balance(nex10balance.data.balance);
+  }
+
   useEffect(() => {
     if (MetaMaskOnboarding.isMetaMaskInstalled()) {
       provider = new ethers.providers.Web3Provider(window.ethereum);
       signer = provider.getSigner();
-      checkAllowance();
+      getNex10Balance();
     }
   }, []);
 
@@ -232,6 +195,44 @@ function PurchaseDialog(props) {
             wallet before you can spend you $UCD.
           </DialogText>
 
+          <DialogField>
+            <span>In your wallet</span>
+            <span>{ucdWalletBalance} UCD</span>
+          </DialogField>
+
+          <DialogField>
+            <span>Your NEX wallet</span>
+            <span>{`${nex10Balance} UCD`}</span>
+          </DialogField>
+
+          <DialogField>
+            <DialogIconBox>
+              {approvedAmount > 0 &&
+                <RemoveIcon
+                  style={{
+                    fontSize: 22,
+                    cursor: 'pointer',
+                    color: 'white',
+                  }}
+                  onClick={() => setApprovedAmount(approvedAmount - 1)}
+                />
+              }
+            </DialogIconBox>
+            <span>{approvedAmount} UCD</span>
+            <DialogIconBox>
+              {approvedAmount < parseFloat(ucdWalletBalance.replaceAll(',', '')) &&
+                <AddIcon
+                  style={{
+                    fontSize: 22,
+                    cursor: 'pointer',
+                    color: 'white',
+                  }}
+                  onClick={() => setApprovedAmount(approvedAmount + 1)}
+                />
+              }
+            </DialogIconBox>
+          </DialogField>
+
           <DialogActions sx={classes.approveContract}>
             <Button
               autoFocus
@@ -241,6 +242,9 @@ function PurchaseDialog(props) {
             >
               Approve
             </Button>
+            <DialogButton onClick={handleDialogClose}>
+              Cancel
+            </DialogButton>
           </DialogActions>
         </>
       }
@@ -253,34 +257,11 @@ function PurchaseDialog(props) {
           <Button
             autoFocus
             disableRipple
-            onClick={() => setDialogStatus(DIALOG_STATUS.CONFIRMPURCHASE)}
+            onClick={() => setDialogStatus(DIALOG_STATUS.DEPOSITFUND)}
             sx={classes.dialogApprovalButton}
           >
             Continue
           </Button>
-        </DialogActions>
-      </>
-      }
-
-      {dialogStatus === DIALOG_STATUS.CONFIRMPURCHASE && 
-      <>
-        <DialogText>Ready to proceed with your purchase(s)?</DialogText>
-
-        <DialogActions sx={classes.approveContract}>
-          {/* <Particulars>
-            <PaymentForm />
-          </Particulars> */}
-          <Button
-            autoFocus
-            onClick={() => setDialogStatus(DIALOG_STATUS.DEPOSITFUND)}
-            sx={classes.dialogApprovalButton}
-          >
-            Absolutely, Yes!
-          </Button>
-
-          <DialogButton onClick={handleDialogClose}>
-            No, Let Me Think Again{" "}
-          </DialogButton>
         </DialogActions>
       </>
       }
@@ -291,7 +272,7 @@ function PurchaseDialog(props) {
 
         <DialogField>
           <span>Approved amount</span>
-          <span>{amount} UCD</span>
+          <span>{approvedAmount} UCD</span>
         </DialogField>
 
         <DialogField>
@@ -315,7 +296,7 @@ function PurchaseDialog(props) {
           </DialogIconBox>
           <span>{depositAmount} UCD</span>
           <DialogIconBox>
-            {depositAmount < amount &&
+            {depositAmount < approvedAmount &&
               <AddIcon
                 style={{
                   fontSize: 22,
@@ -351,21 +332,16 @@ function PurchaseDialog(props) {
           <Button
             autoFocus
             disableRipple
-            onClick={() => setDialogStatus(DIALOG_STATUS.FILLDETAIL)}
+            onClick={handleDialogClose}
             sx={classes.dialogApprovalButton}
           >
-            Continue
+            OK
           </Button>
         </DialogActions>
-      </>
-      }
-      {dialogStatus === DIALOG_STATUS.FILLDETAIL &&
-      <>
-        <PaymentForm />
       </>
       }
     </Dialog>
   );
 }
 
-export default PurchaseDialog;
+export default ChargeDialog;
