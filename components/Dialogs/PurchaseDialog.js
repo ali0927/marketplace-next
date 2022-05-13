@@ -343,7 +343,7 @@ function PurchaseDialog(props) {
           <DialogActions sx={classes.approveContract}>
             <Button
               autoFocus
-              onClick={deposiFund}
+              onClick={depositFund}
               sx={classes.dialogApprovalButton}
             >
               Confirm
