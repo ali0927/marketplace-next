@@ -23,10 +23,16 @@ import {
   TableBody,
 } from '@mui/material';
 import classes from '../../utils/classes';
+//styles
+import styled from 'styled-components';
 //components
 import { getError } from '../../utils/error';
 import Layout from '../../components/Layout';
 import { MarketplaceContext } from '../../utils/MarketplaceContext';
+
+const Wrapper = styled.div`
+  margin-top: 150px;
+`;
 
 function reducer(state, action) {
   switch (action.type) {
@@ -164,112 +170,114 @@ function AdminProducts() {
   };
 
   return (
-    <Layout title="Products">
-      <Grid container spacing={1}>
-        <Grid item md={3} xs={12}>
-          <Card sx={classes.section}>
-            <List>
-              <NextLink href="/admin/products" passHref>
-                <ListItem selected button component="a">
-                  <ListItemText primary="Products"></ListItemText>
+    <Wrapper>
+      <Layout title="Products">
+        <Grid container spacing={1}>
+          <Grid item md={3} xs={12}>
+            <Card sx={classes.section}>
+              <List>
+                <NextLink href="/admin/products" passHref>
+                  <ListItem selected button component="a">
+                    <ListItemText primary="Products"></ListItemText>
+                  </ListItem>
+                </NextLink>
+              </List>
+            </Card>
+          </Grid>
+          <Grid item md={9} xs={12}>
+            <Card sx={classes.section}>
+              <List>
+                <ListItem>
+                  <Grid container alignItems="center">
+                    <Grid item xs={6}>
+                      <Typography component="h1" variant="h1">
+                        Products
+                      </Typography>
+                      {loadingDelete && <CircularProgress />}
+                    </Grid>
+                    <Grid align="right" item xs={6}>
+                      <Button
+                        onClick={createHandler}
+                        color="primary"
+                        variant="contained"
+                      >
+                        Create
+                      </Button>
+                      {loadingCreate && <CircularProgress />}
+                    </Grid>
+                  </Grid>
                 </ListItem>
-              </NextLink>
-            </List>
-          </Card>
-        </Grid>
-        <Grid item md={9} xs={12}>
-          <Card sx={classes.section}>
-            <List>
-              <ListItem>
-                <Grid container alignItems="center">
-                  <Grid item xs={6}>
-                    <Typography component="h1" variant="h1">
-                      Products
-                    </Typography>
-                    {loadingDelete && <CircularProgress />}
-                  </Grid>
-                  <Grid align="right" item xs={6}>
-                    <Button
-                      onClick={createHandler}
-                      color="primary"
-                      variant="contained"
-                    >
-                      Create
-                    </Button>
-                    {loadingCreate && <CircularProgress />}
-                  </Grid>
-                </Grid>
-              </ListItem>
 
-              <ListItem>
-                {loading ? (
-                  <CircularProgress />
-                ) : error ? (
-                  <Typography sx={classes.error}>{error}</Typography>
-                ) : (
-                  <TableContainer>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>ID</TableCell>
-                          <TableCell>NAME</TableCell>
-                          <TableCell>TYPE</TableCell>
-                          <TableCell>PRICE</TableCell>
-                          <TableCell>BRAND</TableCell>
-                          <TableCell>ORIGINAL COUNT</TableCell>
-                          <TableCell>COUNT</TableCell>
-                          <TableCell>ACTIONS</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {products.map((product) => (
-                          <TableRow key={product._id}>
-                            <TableCell>
-                              {product._id.substring(20, 24)}
-                            </TableCell>
-                            <TableCell>{product.name}</TableCell>
-                            <TableCell>{product.type}</TableCell>
-                            <TableCell>{product.price}</TableCell>
-                            <TableCell>{product.brand}</TableCell>
-                            <TableCell>{product.originalCount}</TableCell>
-                            <TableCell>{product.countInStock}</TableCell>
-                            <TableCell>
-                              <NextLink
-                                href={`/admin/product/${product._id}`}
-                                passHref
-                              >
+                <ListItem>
+                  {loading ? (
+                    <CircularProgress />
+                  ) : error ? (
+                    <Typography sx={classes.error}>{error}</Typography>
+                  ) : (
+                    <TableContainer>
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>ID</TableCell>
+                            <TableCell>NAME</TableCell>
+                            <TableCell>TYPE</TableCell>
+                            <TableCell>PRICE</TableCell>
+                            <TableCell>BRAND</TableCell>
+                            <TableCell>ORIGINAL COUNT</TableCell>
+                            <TableCell>COUNT</TableCell>
+                            <TableCell>ACTIONS</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {products.map((product) => (
+                            <TableRow key={product._id}>
+                              <TableCell>
+                                {product._id.substring(20, 24)}
+                              </TableCell>
+                              <TableCell>{product.name}</TableCell>
+                              <TableCell>{product.type}</TableCell>
+                              <TableCell>{product.price}</TableCell>
+                              <TableCell>{product.brand}</TableCell>
+                              <TableCell>{product.originalCount}</TableCell>
+                              <TableCell>{product.countInStock}</TableCell>
+                              <TableCell>
+                                <NextLink
+                                  href={`/admin/product/${product._id}`}
+                                  passHref
+                                >
+                                  <Button
+                                    size="small"
+                                    variant="contained"
+                                    sx={{
+                                      marginBottom: '10px',
+                                      background: '#01579b',
+                                    }}
+                                  >
+                                    Edit
+                                  </Button>
+                                </NextLink>{' '}
                                 <Button
+                                  onClick={() => deleteHandler(product._id)}
                                   size="small"
                                   variant="contained"
-                                  sx={{
-                                    marginBottom: '10px',
-                                    background: '#01579b',
-                                  }}
+                                  color="error"
                                 >
-                                  Edit
+                                  Delete
                                 </Button>
-                              </NextLink>{' '}
-                              <Button
-                                onClick={() => deleteHandler(product._id)}
-                                size="small"
-                                variant="contained"
-                                color="error"
-                              >
-                                Delete
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                )}
-              </ListItem>
-            </List>
-          </Card>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  )}
+                </ListItem>
+              </List>
+            </Card>
+          </Grid>
         </Grid>
-      </Grid>
-    </Layout>
+      </Layout>
+    </Wrapper>
   );
 }
 

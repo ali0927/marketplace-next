@@ -18,12 +18,18 @@ import {
   TextField,
   CircularProgress,
 } from '@mui/material';
+//styling
+import styled from 'styled-components';
 //components
 import { getError } from '../../../utils/error';
 import Layout from '../../../components/Layout';
 import Form from '../../../components/Form';
 import classes from '../../../utils/classes';
 import { MarketplaceContext } from '../../../utils/MarketplaceContext';
+
+const Wrapper = styled.div`
+  margin-top: 150px;
+`;
 
 function reducer(state, action) {
   switch (action.type) {
@@ -91,7 +97,6 @@ function ProductEdit({ params }) {
         setValue('price', data.price);
         setValue('originalCount', data.originalCount);
         setValue('countInStock', data.countInStock);
-        setValue('claimed', data.claimed);
       } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
       }
@@ -131,8 +136,7 @@ function ProductEdit({ params }) {
     image,
     price,
     originalCount,
-    countInStock,
-    claimed
+    countInStock
   ) => {
     const msgParams = {
       domain: {
@@ -150,7 +154,6 @@ function ProductEdit({ params }) {
         price: price,
         originalCount: originalCount,
         countInStock: countInStock,
-        claimed: claimed,
       },
       primaryType: 'Product',
       types: {
@@ -168,7 +171,6 @@ function ProductEdit({ params }) {
           { name: 'image', type: 'string' },
           { name: 'originalCount', type: 'uint256' },
           { name: 'countInStock', type: 'uint256' },
-          { name: 'claimed', type: 'uint256' },
         ],
       },
     };
@@ -194,7 +196,6 @@ function ProductEdit({ params }) {
     price,
     originalCount,
     countInStock,
-    claimed,
   }) => {
     closeSnackbar();
     try {
@@ -208,7 +209,6 @@ function ProductEdit({ params }) {
         price,
         originalCount,
         countInStock,
-        claimed,
         ethAddress
       );
       dispatch({ type: 'UPDATE_REQUEST' });
@@ -222,7 +222,6 @@ function ProductEdit({ params }) {
         price,
         originalCount,
         countInStock,
-        claimed,
         ethAddress,
         signature,
       });
@@ -236,287 +235,272 @@ function ProductEdit({ params }) {
   };
 
   return (
-    <Layout title={`Edit Product ${productId}`}>
-      <Grid container spacing={1}>
-        <Grid item md={3} xs={12}>
-          <Card sx={classes.section}>
-            <List>
-              <NextLink href="/admin/products" passHref>
-                <ListItem selected button component="a">
-                  <ListItemText primary="Products"></ListItemText>
+    <Wrapper>
+      <Layout title={`Edit Product ${productId}`}>
+        <Grid container spacing={1}>
+          <Grid item md={3} xs={12}>
+            <Card sx={classes.section}>
+              <List>
+                <NextLink href="/admin/products" passHref>
+                  <ListItem selected button component="a">
+                    <ListItemText primary="Products"></ListItemText>
+                  </ListItem>
+                </NextLink>
+              </List>
+            </Card>
+          </Grid>
+          <Grid item md={9} xs={12}>
+            <Card sx={classes.section}>
+              <List>
+                <ListItem>
+                  <Typography component="h1" variant="h1">
+                    Edit Product {productId}
+                  </Typography>
                 </ListItem>
-              </NextLink>
-            </List>
-          </Card>
+                <ListItem>
+                  {loading && <CircularProgress></CircularProgress>}
+                  {error && (
+                    <Typography className={classes.error}>{error}</Typography>
+                  )}
+                </ListItem>
+                <ListItem>
+                  <Form
+                    onSubmit={handleSubmit(submitHandler)}
+                    className={classes.form}
+                  >
+                    <List>
+                      <ListItem>
+                        <Controller
+                          name="name"
+                          control={control}
+                          defaultValue=""
+                          rules={{
+                            required: true,
+                          }}
+                          render={({ field }) => (
+                            <TextField
+                              variant="outlined"
+                              fullWidth
+                              id="name"
+                              label="Name"
+                              error={Boolean(errors.name)}
+                              helperText={errors.name ? 'Name is required' : ''}
+                              {...field}
+                            ></TextField>
+                          )}
+                        ></Controller>
+                      </ListItem>
+                      <ListItem>
+                        <Controller
+                          name="slug"
+                          control={control}
+                          defaultValue=""
+                          rules={{
+                            required: true,
+                          }}
+                          render={({ field }) => (
+                            <TextField
+                              variant="outlined"
+                              fullWidth
+                              id="slug"
+                              label="Slug"
+                              error={Boolean(errors.slug)}
+                              helperText={errors.slug ? 'Slug is required' : ''}
+                              {...field}
+                            ></TextField>
+                          )}
+                        ></Controller>
+                      </ListItem>
+                      <ListItem>
+                        <Controller
+                          name="type"
+                          control={control}
+                          defaultValue=""
+                          rules={{
+                            required: true,
+                          }}
+                          render={({ field }) => (
+                            <TextField
+                              variant="outlined"
+                              fullWidth
+                              id="type"
+                              label="Type"
+                              error={Boolean(errors.type)}
+                              helperText={errors.type ? 'Type is required' : ''}
+                              {...field}
+                            ></TextField>
+                          )}
+                        ></Controller>
+                      </ListItem>
+                      <ListItem>
+                        <Controller
+                          name="brand"
+                          control={control}
+                          defaultValue=""
+                          rules={{
+                            required: true,
+                          }}
+                          render={({ field }) => (
+                            <TextField
+                              variant="outlined"
+                              fullWidth
+                              id="brand"
+                              label="Brand"
+                              error={Boolean(errors.brand)}
+                              helperText={
+                                errors.brand ? 'Brand is required' : ''
+                              }
+                              {...field}
+                            ></TextField>
+                          )}
+                        ></Controller>
+                      </ListItem>
+                      <ListItem>
+                        <Controller
+                          name="currency"
+                          control={control}
+                          defaultValue=""
+                          rules={{
+                            required: true,
+                          }}
+                          render={({ field }) => (
+                            <TextField
+                              variant="outlined"
+                              fullWidth
+                              id="currency"
+                              label="Token"
+                              error={Boolean(errors.currency)}
+                              helperText={
+                                errors.currency ? 'Token is required' : ''
+                              }
+                              {...field}
+                            ></TextField>
+                          )}
+                        ></Controller>
+                      </ListItem>
+                      <ListItem>
+                        <Controller
+                          name="image"
+                          control={control}
+                          defaultValue=""
+                          rules={{
+                            required: true,
+                          }}
+                          render={({ field }) => (
+                            <TextField
+                              variant="outlined"
+                              fullWidth
+                              id="image"
+                              label="Image"
+                              error={Boolean(errors.image)}
+                              helperText={
+                                errors.image ? 'Image is required' : ''
+                              }
+                              {...field}
+                            ></TextField>
+                          )}
+                        ></Controller>
+                      </ListItem>
+                      <ListItem>
+                        <Button variant="contained" component="label">
+                          Upload File
+                          <input type="file" onChange={uploadHandler} hidden />
+                        </Button>
+                        {loadingUpload && <CircularProgress />}
+                      </ListItem>
+                      <ListItem>
+                        <Controller
+                          name="price"
+                          control={control}
+                          defaultValue=""
+                          rules={{
+                            required: true,
+                          }}
+                          render={({ field }) => (
+                            <TextField
+                              variant="outlined"
+                              fullWidth
+                              id="price"
+                              label="Price"
+                              error={Boolean(errors.price)}
+                              helperText={
+                                errors.price ? 'Price is required' : ''
+                              }
+                              {...field}
+                            ></TextField>
+                          )}
+                        ></Controller>
+                      </ListItem>
+                      <ListItem>
+                        <Controller
+                          name="originalCount"
+                          control={control}
+                          defaultValue=""
+                          rules={{
+                            required: true,
+                          }}
+                          render={({ field }) => (
+                            <TextField
+                              variant="outlined"
+                              fullWidth
+                              id="originalCount"
+                              label="Original Count"
+                              error={Boolean(errors.originalCount)}
+                              helperText={
+                                errors.originalCount
+                                  ? 'Original Count is required'
+                                  : ''
+                              }
+                              {...field}
+                            ></TextField>
+                          )}
+                        ></Controller>
+                      </ListItem>
+                      <ListItem>
+                        <Controller
+                          name="countInStock"
+                          control={control}
+                          defaultValue=""
+                          rules={{
+                            required: true,
+                          }}
+                          render={({ field }) => (
+                            <TextField
+                              variant="outlined"
+                              fullWidth
+                              id="countInStock"
+                              label="Count in stock"
+                              error={Boolean(errors.countInStock)}
+                              helperText={
+                                errors.countInStock
+                                  ? 'Count in stock is required'
+                                  : ''
+                              }
+                              {...field}
+                            ></TextField>
+                          )}
+                        ></Controller>
+                      </ListItem>
+                      <ListItem>
+                        <Button
+                          variant="contained"
+                          type="submit"
+                          fullWidth
+                          color="primary"
+                        >
+                          Update
+                        </Button>
+                        {loadingUpdate && <CircularProgress />}
+                      </ListItem>
+                    </List>
+                  </Form>
+                </ListItem>
+              </List>
+            </Card>
+          </Grid>
         </Grid>
-        <Grid item md={9} xs={12}>
-          <Card sx={classes.section}>
-            <List>
-              <ListItem>
-                <Typography component="h1" variant="h1">
-                  Edit Product {productId}
-                </Typography>
-              </ListItem>
-              <ListItem>
-                {loading && <CircularProgress></CircularProgress>}
-                {error && (
-                  <Typography className={classes.error}>{error}</Typography>
-                )}
-              </ListItem>
-              <ListItem>
-                <Form
-                  onSubmit={handleSubmit(submitHandler)}
-                  className={classes.form}
-                >
-                  <List>
-                    <ListItem>
-                      <Controller
-                        name="name"
-                        control={control}
-                        defaultValue=""
-                        rules={{
-                          required: true,
-                        }}
-                        render={({ field }) => (
-                          <TextField
-                            variant="outlined"
-                            fullWidth
-                            id="name"
-                            label="Name"
-                            error={Boolean(errors.name)}
-                            helperText={errors.name ? 'Name is required' : ''}
-                            {...field}
-                          ></TextField>
-                        )}
-                      ></Controller>
-                    </ListItem>
-                    <ListItem>
-                      <Controller
-                        name="slug"
-                        control={control}
-                        defaultValue=""
-                        rules={{
-                          required: true,
-                        }}
-                        render={({ field }) => (
-                          <TextField
-                            variant="outlined"
-                            fullWidth
-                            id="slug"
-                            label="Slug"
-                            error={Boolean(errors.slug)}
-                            helperText={errors.slug ? 'Slug is required' : ''}
-                            {...field}
-                          ></TextField>
-                        )}
-                      ></Controller>
-                    </ListItem>
-                    <ListItem>
-                      <Controller
-                        name="type"
-                        control={control}
-                        defaultValue=""
-                        rules={{
-                          required: true,
-                        }}
-                        render={({ field }) => (
-                          <TextField
-                            variant="outlined"
-                            fullWidth
-                            id="type"
-                            label="Type"
-                            error={Boolean(errors.type)}
-                            helperText={errors.type ? 'Type is required' : ''}
-                            {...field}
-                          ></TextField>
-                        )}
-                      ></Controller>
-                    </ListItem>
-                    <ListItem>
-                      <Controller
-                        name="brand"
-                        control={control}
-                        defaultValue=""
-                        rules={{
-                          required: true,
-                        }}
-                        render={({ field }) => (
-                          <TextField
-                            variant="outlined"
-                            fullWidth
-                            id="brand"
-                            label="Brand"
-                            error={Boolean(errors.brand)}
-                            helperText={errors.brand ? 'Brand is required' : ''}
-                            {...field}
-                          ></TextField>
-                        )}
-                      ></Controller>
-                    </ListItem>
-                    <ListItem>
-                      <Controller
-                        name="currency"
-                        control={control}
-                        defaultValue=""
-                        rules={{
-                          required: true,
-                        }}
-                        render={({ field }) => (
-                          <TextField
-                            variant="outlined"
-                            fullWidth
-                            id="currency"
-                            label="Token"
-                            error={Boolean(errors.currency)}
-                            helperText={
-                              errors.currency ? 'Token is required' : ''
-                            }
-                            {...field}
-                          ></TextField>
-                        )}
-                      ></Controller>
-                    </ListItem>
-                    <ListItem>
-                      <Controller
-                        name="image"
-                        control={control}
-                        defaultValue=""
-                        rules={{
-                          required: true,
-                        }}
-                        render={({ field }) => (
-                          <TextField
-                            variant="outlined"
-                            fullWidth
-                            id="image"
-                            label="Image"
-                            error={Boolean(errors.image)}
-                            helperText={errors.image ? 'Image is required' : ''}
-                            {...field}
-                          ></TextField>
-                        )}
-                      ></Controller>
-                    </ListItem>
-                    <ListItem>
-                      <Button variant="contained" component="label">
-                        Upload File
-                        <input type="file" onChange={uploadHandler} hidden />
-                      </Button>
-                      {loadingUpload && <CircularProgress />}
-                    </ListItem>
-                    <ListItem>
-                      <Controller
-                        name="price"
-                        control={control}
-                        defaultValue=""
-                        rules={{
-                          required: true,
-                        }}
-                        render={({ field }) => (
-                          <TextField
-                            variant="outlined"
-                            fullWidth
-                            id="price"
-                            label="Price"
-                            error={Boolean(errors.price)}
-                            helperText={errors.price ? 'Price is required' : ''}
-                            {...field}
-                          ></TextField>
-                        )}
-                      ></Controller>
-                    </ListItem>
-                    <ListItem>
-                      <Controller
-                        name="originalCount"
-                        control={control}
-                        defaultValue=""
-                        rules={{
-                          required: true,
-                        }}
-                        render={({ field }) => (
-                          <TextField
-                            variant="outlined"
-                            fullWidth
-                            id="originalCount"
-                            label="Original Count"
-                            error={Boolean(errors.originalCount)}
-                            helperText={
-                              errors.originalCount
-                                ? 'Original Count is required'
-                                : ''
-                            }
-                            {...field}
-                          ></TextField>
-                        )}
-                      ></Controller>
-                    </ListItem>
-                    <ListItem>
-                      <Controller
-                        name="countInStock"
-                        control={control}
-                        defaultValue=""
-                        rules={{
-                          required: true,
-                        }}
-                        render={({ field }) => (
-                          <TextField
-                            variant="outlined"
-                            fullWidth
-                            id="countInStock"
-                            label="Count in stock"
-                            error={Boolean(errors.countInStock)}
-                            helperText={
-                              errors.countInStock
-                                ? 'Count in stock is required'
-                                : ''
-                            }
-                            {...field}
-                          ></TextField>
-                        )}
-                      ></Controller>
-                    </ListItem>
-                    <ListItem>
-                      <Controller
-                        name="claimed"
-                        control={control}
-                        defaultValue=""
-                        rules={{
-                          required: true,
-                        }}
-                        render={({ field }) => (
-                          <TextField
-                            variant="outlined"
-                            fullWidth
-                            id="claimed"
-                            label="Claimed"
-                            error={Boolean(errors.claimed)}
-                            helperText={
-                              errors.claimed ? 'Claimed is required' : ''
-                            }
-                            {...field}
-                          ></TextField>
-                        )}
-                      ></Controller>
-                    </ListItem>
-                    <ListItem>
-                      <Button
-                        variant="contained"
-                        type="submit"
-                        fullWidth
-                        color="primary"
-                      >
-                        Update
-                      </Button>
-                      {loadingUpdate && <CircularProgress />}
-                    </ListItem>
-                  </List>
-                </Form>
-              </ListItem>
-            </List>
-          </Card>
-        </Grid>
-      </Grid>
-    </Layout>
+      </Layout>
+    </Wrapper>
   );
 }
 

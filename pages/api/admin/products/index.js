@@ -28,7 +28,6 @@ handler.post(async (req, res) => {
     price: 0,
     originalCount: 0,
     countInStock: 0,
-    claimed: 0,
   });
 
   const product = await newProduct.save();

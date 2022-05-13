@@ -11,7 +11,6 @@ const productSchema = new mongoose.Schema(
     price: { type: Number, required: true },
     originalCount: { type: Number, required: true, default: 0 },
     countInStock: { type: Number, required: true, default: 0 },
-    claimed: { type: Number, required: true, default: 0 },
   },
   {
     timestamps: true,

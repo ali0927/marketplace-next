@@ -22,7 +22,7 @@ const Container = styled.div`
   gap: 2rem;
 `;
 const ContainerWrapper = styled.div`
-  margin-top: 90px;
+  margin-top: 150px;
 `;
 const Wrapper = styled.div`
   display: flex;

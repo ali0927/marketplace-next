@@ -9,7 +9,7 @@ import {
   CardMedia,
 } from '@mui/material';
 //styling
-import { Colors } from '../utils/Theme';
+import { Colors, Devices } from '../utils/Theme';
 import Image from 'next/image';
 import { useContext } from 'react';
 import { Store } from '../utils/Store';
@@ -17,17 +17,23 @@ import classes from '../utils/classes';
 import UcdCoin from '../public/images/uu/ucd-coin.png';
 import styled from 'styled-components';
 const Trapezium = styled.div`
-  padding: 5px 8px;
+  padding: 6px 13px;
   background: ${Colors.bg};
   border-top: none;
   border-bottom-right-radius: 1em 2em;
   border-bottom-left-radius: 1em 2em;
   position: absolute;
   left: 50%;
-  top: -8%;
+  top: -11%;
   transform: translate(-50%, -50%);
   z-index: 10;
   font-family: 'Oxanium';
+  @media ${Devices.Tablet} {
+    top: -15%;
+  }
+  @media ${Devices.TabletL} {
+    top: -11%;
+  }
   & p {
     margin-top: 55px;
     text-align: center;
@@ -147,7 +153,8 @@ function ProductItem({ product }) {
             </ProductPrice>
           </ProductDetails>
           <RemainingProduct>
-            {product.claimed}/{product.originalCount}
+            {product.originalCount - product.countInStock}/
+            {product.originalCount}
           </RemainingProduct>
         </CardContent>
       </CardActionArea>

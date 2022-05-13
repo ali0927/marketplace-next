@@ -29,7 +29,6 @@ handler.put(async (req, res) => {
     price,
     originalCount,
     countInStock,
-    claimed,
     ethAddress,
     signature,
   } = req.body;
@@ -64,7 +63,6 @@ handler.put(async (req, res) => {
       { name: 'image', type: 'string' },
       { name: 'originalCount', type: 'uint256' },
       { name: 'countInStock', type: 'uint256' },
-      { name: 'claimed', type: 'uint256' },
     ],
   };
 
@@ -82,7 +80,6 @@ handler.put(async (req, res) => {
         price: price,
         originalCount: originalCount,
         countInStock: countInStock,
-        claimed: claimed,
       },
       signature
     );
@@ -131,7 +128,6 @@ handler.put(async (req, res) => {
     product.price = req.body.price;
     product.originalCount = req.body.originalCount;
     product.countInStock = req.body.countInStock;
-    product.claimed = req.body.claimed;
     await product.save();
     await db.disconnect();
     res.send({ message: 'Product Updated Successfully' });

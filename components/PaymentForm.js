@@ -7,13 +7,14 @@ import {
   List,
   ListItem,
   CircularProgress,
+  Dialog,
+  useMediaQuery,
 } from '@mui/material';
 //formik
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { useContext, useState } from 'react';
 import * as Yup from 'yup';
 //styles
-import styled from 'styled-components';
 import classes from '../utils/classes';
 import { MarketplaceContext } from '../utils/MarketplaceContext';
 import { Store } from '../utils/Store';
@@ -22,16 +23,15 @@ import Cookies from 'js-cookie';
 import { useSnackbar } from 'notistack';
 import { getError } from '../utils/error';
 
-const Title = styled.div`
-font-family: 'Oxanium',
-color: "#ffffff",
-font-weight: 600,
-font-size: 20px,
-`;
-
-function PaymentForm() {
+function PaymentForm(props) {
   //state
   const [loading, setLoading] = useState(false);
+  const isTablet = useMediaQuery('(min-width:550px)');
+
+  //close dialog
+  const handleDialogClose = () => {
+    props.setDialogStatus(null);
+  };
 
   //retrieve variables
   const { closeSnackbar, enqueueSnackbar } = useSnackbar();
@@ -144,85 +144,95 @@ function PaymentForm() {
   };
 
   return (
-    <Grid>
-      <Paper elevation={0} sx={classes.paperStyle}>
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={onSubmit}
+    <Dialog
+      open={props.dialogStatus}
+      onClose={handleDialogClose}
+      aria-labelledby="dialog-title"
+      aria-describedby="dialog-description"
+    >
+      <Grid>
+        <Paper
+          elevation={0}
+          sx={isTablet ? classes.paperStyleDesktop : classes.paperStyleMobile}
         >
-          {(props) => (
-            <Form noValidate>
-              <List>
-                <ListItem
-                  sx={{
-                    color: '#ffffff',
-                    fontFamily: 'Oxanium',
-                    fontWeight: '600',
-                    fontSize: '20px',
-                    marginBottom: '20px',
-                  }}
-                >
-                  Fill in your details
-                </ListItem>
-                <ListItem
-                  sx={{
-                    padding: '0px',
-                    marginBottom: '20px',
-                  }}
-                >
-                  <Field
-                    as={TextField}
-                    name="discordId"
-                    label="Discord Id"
-                    fullWidth
-                    error={props.errors.discordId && props.touched.discordId}
-                    helperText={<ErrorMessage name="discordId" />}
-                    required
-                    sx={{ bckground: '#152266', zIndex: '2', width: '100%' }}
-                  />
-                </ListItem>
-                <ListItem sx={{ padding: '0px', marginBottom: '20px' }}>
-                  <Field
-                    as={TextField}
-                    name="email"
-                    label="Email"
-                    fullWidth
-                    error={props.errors.email && props.touched.email}
-                    helperText={<ErrorMessage name="email" />}
-                    required
-                  />
-                </ListItem>
-                <ListItem sx={{ padding: '0px', marginBottom: '20px' }}>
-                  <Field
-                    as={TextField}
-                    name="shippingAddress"
-                    label="Shipping Address"
-                    fullWidth
-                    error={
-                      props.errors.shippingAddress &&
-                      props.touched.shippingAddress
-                    }
-                    helperText={<ErrorMessage name="shippingAddress" />}
-                    required
-                  />
-                </ListItem>
-                <ListItem sx={{ display: 'flex', justifyContent: 'center' }}>
-                  <Button type="submit" sx={classes.submitForm} disableRipple>
-                    Submit
-                  </Button>
-                </ListItem>
-                {loading && (
-                  <ListItem>
-                    <CircularProgress />
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={onSubmit}
+          >
+            {(props) => (
+              <Form noValidate>
+                <List>
+                  <ListItem
+                    sx={{
+                      color: '#ffffff',
+                      fontFamily: 'Oxanium',
+                      fontWeight: '600',
+                      fontSize: '20px',
+                      marginBottom: '20px',
+                    }}
+                  >
+                    Fill in your details
                   </ListItem>
-                )}
-              </List>
-            </Form>
-          )}
-        </Formik>
-      </Paper>
-    </Grid>
+                  <ListItem
+                    sx={{
+                      padding: '0px',
+                      marginBottom: '20px',
+                    }}
+                  >
+                    <Field
+                      as={TextField}
+                      name="discordId"
+                      label="Discord Id"
+                      fullWidth
+                      error={props.errors.discordId && props.touched.discordId}
+                      helperText={<ErrorMessage name="discordId" />}
+                      required
+                      sx={{ bckground: '#152266', zIndex: '2', width: '100%' }}
+                    />
+                  </ListItem>
+                  <ListItem sx={{ padding: '0px', marginBottom: '20px' }}>
+                    <Field
+                      as={TextField}
+                      name="email"
+                      label="Email"
+                      fullWidth
+                      error={props.errors.email && props.touched.email}
+                      helperText={<ErrorMessage name="email" />}
+                      required
+                    />
+                  </ListItem>
+                  <ListItem sx={{ padding: '0px', marginBottom: '20px' }}>
+                    <Field
+                      as={TextField}
+                      name="shippingAddress"
+                      label="Shipping Address"
+                      fullWidth
+                      error={
+                        props.errors.shippingAddress &&
+                        props.touched.shippingAddress
+                      }
+                      helperText={<ErrorMessage name="shippingAddress" />}
+                      required
+                    />
+                  </ListItem>
+                  <ListItem sx={{ display: 'flex', justifyContent: 'center' }}>
+                    <Button type="submit" sx={classes.submitForm} disableRipple>
+                      Submit
+                    </Button>
+                  </ListItem>
+                  {loading && (
+                    <ListItem>
+                      <CircularProgress />
+                    </ListItem>
+                  )}
+                </List>
+              </Form>
+            )}
+          </Formik>
+        </Paper>
+      </Grid>
+    </Dialog>
   );
 }
 

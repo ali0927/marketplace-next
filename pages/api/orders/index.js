@@ -106,7 +106,6 @@ handler.post(async (req, res) => {
         });
       } else {
         product.countInStock -= 1;
-        product.claimed += 1;
         await product.save();
       }
     }

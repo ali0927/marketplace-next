@@ -188,7 +188,7 @@ function Inventory() {
   const { currentAccount } = useContext(MarketplaceContext);
 
   //reducer
-  const [{ loading, error, orders }, dispatch] = useReducer(reducer, {
+  const [{ loading, orders }, dispatch] = useReducer(reducer, {
     loading: true,
     orders: [],
     error: '',

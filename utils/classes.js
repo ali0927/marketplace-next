@@ -26,15 +26,13 @@ const classes = {
     minHeight: '80vh',
   },
   footer: {
-    marginTop: '100px',
-
     textAlign: 'center',
     color: '#ffffff',
     fontSize: '14px',
     fontFamily: 'Oxanium',
     borderTop: '1px solid #30358C',
-    paddingTop: '10px',
-    paddingBottom: '10px',
+    paddingTop: '30px',
+    paddingBottom: '30px',
   },
   section: {
     marginTop: 1,
@@ -149,7 +147,7 @@ const classes = {
   //nftCard
   nftCard: {
     backgroundColor: '#152266',
-    padding: '20px 25px',
+    padding: '30px 15px',
     color: '#ffffff',
   },
   nftCardText: {
@@ -157,9 +155,13 @@ const classes = {
     justifyContent: 'space-between',
   },
   //payment form
-  paperStyle: {
+  paperStyleDesktop: {
     padding: '0 15px 40px 15px',
-    width: '350px',
+    width: '500px',
+  },
+  paperStyleMobile: {
+    padding: '0 15px 40px 15px',
+    width: '300px',
   },
   particularsTitle: {
     fontFamily: 'Oxanium',

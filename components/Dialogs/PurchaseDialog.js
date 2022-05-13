@@ -215,6 +215,11 @@ function PurchaseDialog(props) {
       });
   };
 
+  //open payment form
+  const handlePayment = () => {
+    setDialogStatus(DIALOG_STATUS.FILLDETAIL);
+  };
+
   useEffect(() => {
     if (MetaMaskOnboarding.isMetaMaskInstalled()) {
       provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -276,9 +281,6 @@ function PurchaseDialog(props) {
           <DialogText>Ready to proceed with your purchase(s)?</DialogText>
 
           <DialogActions sx={classes.approveContract}>
-            {/* <Particulars>
-            <PaymentForm />
-          </Particulars> */}
             <Button
               autoFocus
               onClick={() => setDialogStatus(DIALOG_STATUS.DEPOSITFUND)}
@@ -358,7 +360,7 @@ function PurchaseDialog(props) {
             <Button
               autoFocus
               disableRipple
-              onClick={() => setDialogStatus(DIALOG_STATUS.FILLDETAIL)}
+              onClick={handlePayment}
               sx={classes.dialogApprovalButton}
             >
               Continue
@@ -368,7 +370,10 @@ function PurchaseDialog(props) {
       )}
       {dialogStatus === DIALOG_STATUS.FILLDETAIL && (
         <>
-          <PaymentForm />
+          <PaymentForm
+            dialogStatus={dialogStatus}
+            setDialogStatus={setDialogStatus}
+          />
         </>
       )}
     </Dialog>
