@@ -16,8 +16,7 @@ handler.get(async (req, res) => {
     if (token) {
       await db.disconnect();
       res.send(token);
-    }
-    else {
+    } else {
       res.send({
         token_address: req.query.token,
         balance: 0,

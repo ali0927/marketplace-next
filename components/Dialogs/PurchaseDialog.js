@@ -1,37 +1,41 @@
 //react/next/packages
-import { useState, useEffect, useContext } from "react";
-import { useSnackbar } from "notistack";
+import { useState, useEffect, useContext } from 'react';
+import { useSnackbar } from 'notistack';
 //blockchain
-import { ethers } from "ethers";
-import MetaMaskOnboarding from "@metamask/onboarding";
+import { ethers } from 'ethers';
+import MetaMaskOnboarding from '@metamask/onboarding';
 //material ui
-import { Dialog, DialogActions } from "@mui/material";
-import Button from "@mui/material/Button";
+import { Dialog, DialogActions } from '@mui/material';
+import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 //styles
-import styled from "styled-components";
-import classes from "../../utils/classes";
-import { Colors } from "../../utils/Theme";
+import styled from 'styled-components';
+import classes from '../../utils/classes';
+import { Colors } from '../../utils/Theme';
 //components/utils/context
-import { getError } from "../../utils/error";
+import { getError } from '../../utils/error';
 //environment
-import { environmentTest } from "../../lib/environments/environment";
-import { environment } from "../../lib/environments/environment.prod";
+import { environmentTest } from '../../lib/environments/environment';
+import { environment } from '../../lib/environments/environment.prod';
 //contracts
-import escrowContract from "../../lib/contracts/EscrowWallet.json";
-import ucdContract from "../../lib/contracts/UniCandy.json";
-import Particulars from "./Particulars";
-import PaymentForm from "../PaymentForm";
+import escrowContract from '../../lib/contracts/EscrowWallet.json';
+import ucdContract from '../../lib/contracts/UniCandy.json';
+// import Particulars from "./Particulars";
+import PaymentForm from '../PaymentForm';
 
-import { MarketplaceContext } from "../../utils/MarketplaceContext";
-import { Store } from "../../utils/Store";
-import axios from "axios";
+import { MarketplaceContext } from '../../utils/MarketplaceContext';
+import { Store } from '../../utils/Store';
+import axios from 'axios';
+
+import { MarketplaceContext } from '../../utils/MarketplaceContext';
+import { Store } from '../../utils/Store';
+import axios from 'axios';
 
 const DialogText = styled.div`
   line-height: 150%;
   font-size: 17px;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
   font-weight: 700;
   margin-top: 1em;
   margin-bottom: 1em;
@@ -45,7 +49,7 @@ const DialogLoading = styled.div`
   gap: 0.5rem;
   justify-content: center;
   color: #fff;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
 `;
 const DialogButton = styled.div`
   display: flex;
@@ -56,7 +60,7 @@ const DialogButton = styled.div`
   padding: 0.7rem 1.5rem;
   font-weight: 500;
   font-size: 13px;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
   color: #ffffff;
   max-width: 200px;
   background: ${Colors.bg};
@@ -77,7 +81,7 @@ const DialogField = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #C4C4C4;
+  color: #c4c4c4;
   border-radius: 50px;
   padding: 8px 20px;
   margin-bottom: 1em;
@@ -90,21 +94,21 @@ const DialogIconBox = styled.div`
 const escrowContractAddress = escrowContract.address[4]; //currently on rinkeby
 const escrowContractABI = escrowContract.abi;
 const ucdContractAddress =
-  process.env.NODE_ENV === "prod"
+  process.env.NODE_ENV === 'prod'
     ? ucdContract.address[environment.chainId].toLowerCase()
     : ucdContract.address[environmentTest.chainId].toLowerCase();
 const ucdContractABI = ucdContract.abi;
 const DIALOG_STATUS = {
-  NONE: "None",
-  APPROVE: "Approve",
-  APPROVED: "Approved",
-  CONFIRMPURCHASE: "ConfirmPurchase",
-  DEPOSITFUND: "DeposiFund",
-  FUNDADDED: "FundAdded",
-  FILLDETAIL: "FillDetail",
-  SUBMITTED: "Submitted",
-  LOADING: "Loading"
-}
+  NONE: 'None',
+  APPROVE: 'Approve',
+  APPROVED: 'Approved',
+  CONFIRMPURCHASE: 'ConfirmPurchase',
+  DEPOSITFUND: 'DeposiFund',
+  FUNDADDED: 'FundAdded',
+  FILLDETAIL: 'FillDetail',
+  SUBMITTED: 'Submitted',
+  LOADING: 'Loading',
+};
 
 let signer, provider;
 
@@ -120,10 +124,11 @@ function PurchaseDialog(props) {
   //context
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
-  const { hasMetamask, currentAccount, connectWallet } = useContext(MarketplaceContext);
+  const { hasMetamask, currentAccount, connectWallet } =
+    useContext(MarketplaceContext);
 
   const amount = cart.cartItems.reduce((total, item) => {
-    return total + item.price;       
+    return total + item.price;
   }, 0);
 
   //user approves contract to access #UCD in wallet
@@ -138,27 +143,36 @@ function PurchaseDialog(props) {
 
   //approve transfer
   async function setApproval() {
-    const ucdContract = new ethers.Contract(ucdContractAddress, ucdContractABI, signer);
+    const ucdContract = new ethers.Contract(
+      ucdContractAddress,
+      ucdContractABI,
+      signer
+    );
     setDialogStatus(DIALOG_STATUS.LOADING);
     await ucdContract
-      .approve(escrowContractAddress, ethers.utils.parseEther(amount.toString()))
+      .approve(
+        escrowContractAddress,
+        ethers.utils.parseEther(amount.toString())
+      )
       .then(async (tx) => {
         tx.wait().then(async () => {
           setDialogStatus(DIALOG_STATUS.APPROVED);
-          enqueueSnackbar("Permissions approved successfully", {
-            variant: "success",
+          enqueueSnackbar('Permissions approved successfully', {
+            variant: 'success',
           });
         });
       })
       .catch((err) => {
         setDialogStatus(DIALOG_STATUS.NONE);
-        enqueueSnackbar(getError(err), { variant: "error" });
+        enqueueSnackbar(getError(err), { variant: 'error' });
       });
   }
 
   const checkAllowance = async () => {
     const user = currentAccount.toLowerCase();
-    const nex10balance = await axios.get(`/api/wallet/${user}/${ucdContractAddress}`);
+    const nex10balance = await axios.get(
+      `/api/wallet/${user}/${ucdContractAddress}`
+    );
     await setNex10Balance(nex10balance.data.balance);
 
     if (nex10balance.data.balance >= amount) {
@@ -166,7 +180,11 @@ function PurchaseDialog(props) {
       return;
     }
 
-    const ucdContract = new ethers.Contract(ucdContractAddress, ucdContractABI, signer);
+    const ucdContract = new ethers.Contract(
+      ucdContractAddress,
+      ucdContractABI,
+      signer
+    );
     setDialogStatus(DIALOG_STATUS.LOADING);
     setDepositAmount(amount);
     await ucdContract
@@ -175,36 +193,101 @@ function PurchaseDialog(props) {
         const allowance = parseFloat(ethers.utils.formatEther(val));
         if (allowance >= amount) {
           setDialogStatus(DIALOG_STATUS.CONFIRMPURCHASE);
-        }
-        else {
+        } else {
           setDialogStatus(DIALOG_STATUS.APPROVE);
         }
       })
       .catch((err) => {
         setDialogStatus(DIALOG_STATUS.NONE);
-        enqueueSnackbar(getError(err), { variant: "error" });
+        enqueueSnackbar(getError(err), { variant: 'error' });
       });
-  }
+  };
 
   const depositFund = async () => {
-    const escrowContract = new ethers.Contract(escrowContractAddress, escrowContractABI, signer);
+    const escrowContract = new ethers.Contract(
+      escrowContractAddress,
+      escrowContractABI,
+      signer
+    );
     setDialogStatus(DIALOG_STATUS.LOADING);
     await escrowContract
       .burnToken(ucdContractAddress, ethers.utils.parseEther(amount.toString()))
       .then(async (tx) => {
         tx.wait().then(async () => {
           setDialogStatus(DIALOG_STATUS.FUNDADDED);
-          enqueueSnackbar("Burned successfully", {
-            variant: "success",
+          enqueueSnackbar('Burned successfully', {
+            variant: 'success',
           });
         });
       })
       .catch((err) => {
         setDialogStatus(DIALOG_STATUS.NONE);
-        enqueueSnackbar(getError(err), { variant: "error" });
+        enqueueSnackbar(getError(err), { variant: 'error' });
       });
+  };
 
-  }
+  const checkAllowance = async () => {
+    const user = currentAccount.toLowerCase();
+    const nex10balance = await axios.get(
+      `/api/wallet/${user}/${ucdContractAddress}`
+    );
+    await setNex10Balance(nex10balance.data.balance);
+
+    if (nex10balance.data.balance >= amount) {
+      setDialogStatus(DIALOG_STATUS.FUNDADDED);
+      return;
+    }
+
+    const ucdContract = new ethers.Contract(
+      ucdContractAddress,
+      ucdContractABI,
+      signer
+    );
+    setDialogStatus(DIALOG_STATUS.LOADING);
+    setDepositAmount(amount);
+    await ucdContract
+      .allowance(currentAccount, escrowContractAddress)
+      .then(async (val) => {
+        const allowance = parseFloat(ethers.utils.formatEther(val));
+        if (allowance >= amount) {
+          setDialogStatus(DIALOG_STATUS.CONFIRMPURCHASE);
+        } else {
+          setDialogStatus(DIALOG_STATUS.APPROVE);
+        }
+      })
+      .catch((err) => {
+        setDialogStatus(DIALOG_STATUS.NONE);
+        enqueueSnackbar(getError(err), { variant: 'error' });
+      });
+  };
+
+  const deposiFund = async () => {
+    const escrowContract = new ethers.Contract(
+      escrowContractAddress,
+      escrowContractABI,
+      signer
+    );
+    setDialogStatus(DIALOG_STATUS.LOADING);
+    await escrowContract
+      .burnToken(ucdContractAddress, ethers.utils.parseEther(amount.toString()))
+      .then(async (tx) => {
+        tx.wait().then(async () => {
+          setDialogStatus(DIALOG_STATUS.FUNDADDED);
+          enqueueSnackbar('Burned successfully', {
+            variant: 'success',
+          });
+        });
+      })
+      .catch((err) => {
+        setDialogStatus(DIALOG_STATUS.NONE);
+        enqueueSnackbar(getError(err), { variant: 'error' });
+      });
+  };
+
+  //open payment form
+  const handlePayment = () => {
+    setDialogStatus(DIALOG_STATUS.FILLDETAIL);
+  };
 
   useEffect(() => {
     if (MetaMaskOnboarding.isMetaMaskInstalled()) {
@@ -221,11 +304,11 @@ function PurchaseDialog(props) {
       aria-labelledby="dialog-title"
       aria-describedby="dialog-description"
     >
-      {dialogStatus === DIALOG_STATUS.LOADING &&
+      {dialogStatus === DIALOG_STATUS.LOADING && (
         <DialogLoading>Loading Permissions...</DialogLoading>
-      }
+      )}
 
-      {dialogStatus === DIALOG_STATUS.APPROVE &&
+      {dialogStatus === DIALOG_STATUS.APPROVE && (
         <>
           <DialogText>
             Please allow our marketplace contract to access the $UCD in your
@@ -243,127 +326,125 @@ function PurchaseDialog(props) {
             </Button>
           </DialogActions>
         </>
-      }
+      )}
 
-      {dialogStatus === DIALOG_STATUS.APPROVED && 
-      <>
-        <DialogText>Approved successfully!</DialogText>
+      {dialogStatus === DIALOG_STATUS.APPROVED && (
+        <>
+          <DialogText>Approved successfully!</DialogText>
 
-        <DialogActions sx={classes.approveContract}>
-          <Button
-            autoFocus
-            disableRipple
-            onClick={() => setDialogStatus(DIALOG_STATUS.CONFIRMPURCHASE)}
-            sx={classes.dialogApprovalButton}
-          >
-            Continue
-          </Button>
-        </DialogActions>
-      </>
-      }
+          <DialogActions sx={classes.approveContract}>
+            <Button
+              autoFocus
+              disableRipple
+              onClick={() => setDialogStatus(DIALOG_STATUS.CONFIRMPURCHASE)}
+              sx={classes.dialogApprovalButton}
+            >
+              Continue
+            </Button>
+          </DialogActions>
+        </>
+      )}
 
-      {dialogStatus === DIALOG_STATUS.CONFIRMPURCHASE && 
-      <>
-        <DialogText>Ready to proceed with your purchase(s)?</DialogText>
+      {dialogStatus === DIALOG_STATUS.CONFIRMPURCHASE && (
+        <>
+          <DialogText>Ready to proceed with your purchase(s)?</DialogText>
 
-        <DialogActions sx={classes.approveContract}>
-          {/* <Particulars>
-            <PaymentForm />
-          </Particulars> */}
-          <Button
-            autoFocus
-            onClick={() => setDialogStatus(DIALOG_STATUS.DEPOSITFUND)}
-            sx={classes.dialogApprovalButton}
-          >
-            Absolutely, Yes!
-          </Button>
+          <DialogActions sx={classes.approveContract}>
+            <Button
+              autoFocus
+              onClick={() => setDialogStatus(DIALOG_STATUS.DEPOSITFUND)}
+              sx={classes.dialogApprovalButton}
+            >
+              Absolutely, Yes!
+            </Button>
 
-          <DialogButton onClick={handleDialogClose}>
-            No, Let Me Think Again{" "}
-          </DialogButton>
-        </DialogActions>
-      </>
-      }
+            <DialogButton onClick={handleDialogClose}>
+              No, Let Me Think Again{' '}
+            </DialogButton>
+          </DialogActions>
+        </>
+      )}
 
-      {dialogStatus === DIALOG_STATUS.DEPOSITFUND &&
-      <>
-        <DialogText>Deposit fund to your NEX wallet.</DialogText>
+      {dialogStatus === DIALOG_STATUS.DEPOSITFUND && (
+        <>
+          <DialogText>Deposit fund to your NEX wallet.</DialogText>
 
-        <DialogField>
-          <span>Approved amount</span>
-          <span>{amount} UCD</span>
-        </DialogField>
+          <DialogField>
+            <span>Approved amount</span>
+            <span>{amount} UCD</span>
+          </DialogField>
 
-        <DialogField>
-          <span>Your NEX wallet</span>
-          <span>{`${nex10Balance} UCD`}</span>
-        </DialogField>
+          <DialogField>
+            <span>Your NEX wallet</span>
+            <span>{`${nex10Balance} UCD`}</span>
+          </DialogField>
 
-        <DialogText>Amount to add</DialogText>
-        <DialogField>
-          <DialogIconBox>
-            {depositAmount > 0 &&
-              <RemoveIcon
-                style={{
-                  fontSize: 22,
-                  cursor: 'pointer',
-                  color: 'white',
-                }}
-                onClick={() => setDepositAmount(depositAmount - 1)}
-              />
-            }
-          </DialogIconBox>
-          <span>{depositAmount} UCD</span>
-          <DialogIconBox>
-            {depositAmount < amount &&
-              <AddIcon
-                style={{
-                  fontSize: 22,
-                  cursor: 'pointer',
-                  color: 'white',
-                }}
-                onClick={() => setDepositAmount(depositAmount + 1)}
-              />
-            }
-          </DialogIconBox>
-        </DialogField>
+          <DialogText>Amount to add</DialogText>
+          <DialogField>
+            <DialogIconBox>
+              {depositAmount > 0 && (
+                <RemoveIcon
+                  style={{
+                    fontSize: 22,
+                    cursor: 'pointer',
+                    color: 'white',
+                  }}
+                  onClick={() => setDepositAmount(depositAmount - 1)}
+                />
+              )}
+            </DialogIconBox>
+            <span>{depositAmount} UCD</span>
+            <DialogIconBox>
+              {depositAmount < amount && (
+                <AddIcon
+                  style={{
+                    fontSize: 22,
+                    cursor: 'pointer',
+                    color: 'white',
+                  }}
+                  onClick={() => setDepositAmount(depositAmount + 1)}
+                />
+              )}
+            </DialogIconBox>
+          </DialogField>
 
-        <DialogActions sx={classes.approveContract}>
-          <Button
-            autoFocus
-            onClick={depositFund}
-            sx={classes.dialogApprovalButton}
-          >
-            Confirm
-          </Button>
-          <DialogButton onClick={handleDialogClose}>
-            Cancel
-          </DialogButton>
-        </DialogActions>
-      </>
-      }
+          <DialogActions sx={classes.approveContract}>
+            <Button
+              autoFocus
+              onClick={deposiFund}
+              sx={classes.dialogApprovalButton}
+            >
+              Confirm
+            </Button>
+            <DialogButton onClick={handleDialogClose}>Cancel</DialogButton>
+          </DialogActions>
+        </>
+      )}
 
-      {dialogStatus === DIALOG_STATUS.FUNDADDED && 
-      <>
-        <DialogText>Fund added successfully!</DialogText>
+      {dialogStatus === DIALOG_STATUS.FUNDADDED && (
+        <>
+          <DialogText>Fund added successfully!</DialogText>
 
-        <DialogActions sx={classes.approveContract}>
-          <Button
-            autoFocus
-            disableRipple
-            onClick={() => setDialogStatus(DIALOG_STATUS.FILLDETAIL)}
-            sx={classes.dialogApprovalButton}
-          >
-            Continue
-          </Button>
-        </DialogActions>
-      </>
-      }
-      {dialogStatus === DIALOG_STATUS.FILLDETAIL &&
-      <>
-        <PaymentForm />
-      </>
-      }
+          <DialogActions sx={classes.approveContract}>
+            <Button
+              autoFocus
+              disableRipple
+              onClick={handlePayment}
+              sx={classes.dialogApprovalButton}
+            >
+              Continue
+            </Button>
+          </DialogActions>
+        </>
+      )}
+      {dialogStatus === DIALOG_STATUS.FILLDETAIL && (
+        <>
+          <PaymentForm
+            dialogStatus={dialogStatus}
+            setDialogStatus={setDialogStatus}
+          />
+        </>
+      )}
     </Dialog>
   );
 }

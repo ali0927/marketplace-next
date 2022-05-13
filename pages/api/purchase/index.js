@@ -1,9 +1,9 @@
-import { ethers } from "ethers";
-import nc from "next-connect";
-import { onError } from "../../../utils/error";
-import Order from "../../../models/Order.model";
-import Product from "../../../models/Product.model";
-import db from "../../../utils/db";
+import Order from '../../../models/Order.model';
+import Product from '../../../models/Product.model';
+import db from '../../../utils/db';
+import { ethers } from 'ethers';
+import nc from 'next-connect';
+import { onError } from '../../../utils/error';
 
 const handler = nc({
   onError,
@@ -28,24 +28,24 @@ handler.post(async (req, res) => {
   } catch (error) {
     return res.status(400).json({
       success: false,
-      data: "Invalid Address",
+      data: 'Invalid Address',
     });
   }
 
   // Initialize Domain
   const domain = {
-    name: "Nex10 Marketplace",
-    version: "1",
-    chainId: process.env.NODE_ENV === "prod" ? 1 : 4,
+    name: 'Nex10 Marketplace',
+    version: '1',
+    chainId: process.env.NODE_ENV === 'prod' ? 1 : 4,
   };
 
   // The named list of all type definitions
   const types = {
     Purchase: [
-      { name: "email", type: "string" },
-      { name: "discordId", type: "string" },
-      { name: "shippingAddress", type: "string" },
-      { name: "cartItems", type: "string[]" },
+      { name: 'email', type: 'string' },
+      { name: 'discordId', type: 'string' },
+      { name: 'shippingAddress', type: 'string' },
+      { name: 'cartItems', type: 'string[]' },
     ],
   };
 
@@ -62,7 +62,6 @@ handler.post(async (req, res) => {
       signature
     );
   } catch (error) {
-    console.log("Signing fail");
     return res.status(400).json({
       success: false,
       data: error,
@@ -76,7 +75,7 @@ handler.post(async (req, res) => {
   ) {
     return res.status(400).json({
       success: false,
-      data: "Invalid Signature",
+      data: 'Invalid Signature',
     });
   }
 
@@ -102,15 +101,14 @@ handler.post(async (req, res) => {
     return res.status(200).json({
       success: true,
       data: {
-        message: "Your purchase has been made",
+        message: 'Your purchase has been made',
         result: true,
       },
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
-      error: "Server error",
+      error: 'Server error',
     });
   }
   await db.disconnect();

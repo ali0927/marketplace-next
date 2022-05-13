@@ -1,16 +1,18 @@
-import { createGlobalStyle } from "styled-components";
-import { StoreProvider } from "../utils/Store";
-import { MarketplaceProvider } from "../utils/MarketplaceContext";
-import { SnackbarProvider } from "notistack";
-import { CacheProvider } from "@emotion/react";
-import createEmotionCache from "../utils/createEmotionCache";
-import Head from "next/head";
+import { createGlobalStyle } from 'styled-components';
+import { StoreProvider } from '../utils/Store';
+import { MarketplaceProvider } from '../utils/MarketplaceContext';
+import { SnackbarProvider } from 'notistack';
+import { CacheProvider } from '@emotion/react';
+import createEmotionCache from '../utils/createEmotionCache';
+import Head from 'next/head';
 
 const GlobalStyle = createGlobalStyle`
   html,
   body {
     font-family: 'Oxanium', cursive;
     background-image: url("/images/bg/background-1.png");
+    background-repeat: no-repeat;
+    background-size: cover;
     overflow-x: hidden;
   }
 
@@ -53,14 +55,45 @@ const GlobalStyle = createGlobalStyle`
   .css-1im6ja8-MuiToolbar-root {
     padding: 30px 40px 20px;
   }
+
+  /* Cart Desktop */
+  .MuiList-root.MuiList-padding.MuiMenu-list.css-1ari148-MuiList-root-MuiMenu-list {
+    padding: 0px
+  }
   /* Grid Container */
   .css-yfyvtz-MuiContainer-root {
     display: flex;
     justify-content: center;
   }
+  
+
+  /* Payment Details Form */  
+  .MuiOutlinedInput-root.MuiInputBase-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl {
+    border-radius: 50px;
+    color: #ffffff;
+    background: #152266;
+  }
+  .MuiOutlinedInput-input.MuiInputBase-input {
+    text-align: center;
+  }
+  .MuiInputLabel-root.MuiInputLabel-formControl.MuiInputLabel-animated.MuiInputLabel-outlined.MuiFormLabel-root.MuiFormLabel-colorPrimary.Mui-required {
+    color: #ffffff;
+  }
   /* NFT Card */
-  .MuiCardContent-root {
-    padding: 16px 0px 0px 0px;
+  .css-1iyusmy-MuiCardContent-root, .MuiCardActions-root.MuiCardActions-spacing.css-1t6e9jv-MuiCardActions-root {
+    padding: 0px
+  }
+
+  /* Admin Product Edit */
+  .MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation1.MuiCard-root.css-p5io6o-MuiPaper-root-MuiCard-root {
+    background-color: #30358C;
+    color: #ffffff;
+  }
+  .MuiInputLabel-root.MuiInputLabel-formControl.MuiInputLabel-animated.MuiInputLabel-shrink.MuiInputLabel-outlined.MuiFormLabel-root.MuiFormLabel-colorPrimary.MuiFormLabel-filled.css-i6mjds-MuiFormLabel-root-MuiInputLabel-root,
+  .MuiTableCell-root.MuiTableCell-head.MuiTableCell-sizeMedium.css-1ygcj2i-MuiTableCell-root,
+  .MuiTableCell-root.MuiTableCell-body.MuiTableCell-sizeMedium.css-1ex1afd-MuiTableCell-root
+   {
+    color: #ffffff;
   }
 `;
 
@@ -82,7 +115,7 @@ function MyApp(props) {
       </Head>
       <CacheProvider value={emotionCache}>
         <SnackbarProvider
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         >
           <MarketplaceProvider>
             <StoreProvider>

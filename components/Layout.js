@@ -2,28 +2,26 @@
 
 import {
   AppBar,
+  Avatar,
   Badge,
   Box,
   Button,
   Container,
+  CssBaseline,
   Drawer,
   Link,
   List,
   ListItem,
-  Toolbar,
-  Typography,
-} from '@mui/material';
-import {
-  Avatar,
-  CssBaseline,
   Menu,
   ThemeProvider,
+  Toolbar,
+  Typography,
   useMediaQuery,
 } from '@mui/material';
-import React, { useContext, useEffect, useState } from 'react';
+import { Colors, Devices } from '../utils/Theme';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import CancelIcon from '@mui/icons-material/Cancel';
-import { Colors } from '../utils/Theme';
 import Head from 'next/head';
 import Image from 'next/image';
 import { MarketplaceContext } from '../utils/MarketplaceContext';
@@ -33,6 +31,7 @@ import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined
 import PurchaseDialog from './Dialogs/PurchaseDialog';
 import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
 import { Store } from '../utils/Store';
+import TakeoutDiningOutlinedIcon from '@mui/icons-material/TakeoutDiningOutlined';
 import UcdCoin from '../public/images/uu/ucd-coin.png';
 import axios from 'axios';
 import classes from '../utils/classes';
@@ -44,29 +43,13 @@ import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 
-//components
-
-
-
-
-//material ui
-
-
-
-
-
-
-
-
-//styling
-
-
-
-
-
 const ImageBox = styled.div`
+  display: none;
   position: absolute;
   top: 10px;
+  @media ${Devices.MobileM} {
+    display: block;
+  }
 `;
 const CartItem = styled.span`
   display: flex;
@@ -84,6 +67,13 @@ const CartTitle = styled.div`
   font-weight: 600;
   font-size: 20px;
   margin-bottom: 15px;
+`;
+const EmptyCart = styled.div`
+  font-family: Oxanium;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 16px;
+  margin-top: 50px;
 `;
 const CartItemDetail = styled.div`
   display: flex;
@@ -162,7 +152,7 @@ export default function Layout({ title, description, children }) {
         styleOverrides: {
           root: {
             background: '#30358C',
-            padding: '24px',
+            padding: '24px 30px',
           },
         },
       },
@@ -173,34 +163,41 @@ export default function Layout({ title, description, children }) {
           },
         },
       },
-      MuiFormControl: {
-        styleOverrides: {
-          root: {
-            borderRadius: '50px',
-          },
-        },
-      },
-      MuiInputLabel: {
-        styleOverrides: {
-          root: {
-            color: '#ffffff',
-            fontFamily: 'Oxanium',
-            fontSize: '15px',
-          },
-        },
-      },
-      MuiOutlinedInput: {
-        styleOverrides: {
-          root: {
-            color: '#ffffff',
-            fontFamily: 'Oxanium',
-            fontSize: '15px',
-            borderRadius: '50px',
-            background: '#152266',
-          },
-          input: { textAlign: 'center' },
-        },
-      },
+      // MuiFormControl: {
+      //   styleOverrides: {
+      //     root: {
+      //       borderRadius: '50px',
+      //     },
+      //   },
+      // },
+      // MuiList: {
+      //   styleOverrides: {
+      //     root: {
+      //       paddingInline: '20px',
+      //     },
+      //   },
+      // },
+      // MuiInputLabel: {
+      //   styleOverrides: {
+      //     root: {
+      //       color: '#ffffff',
+      //       fontFamily: 'Oxanium',
+      //       fontSize: '15px',
+      //     },
+      //   },
+      // },
+      //   MuiOutlinedInput: {
+      //     styleOverrides: {
+      //       root: {
+      //         color: '#ffffff',
+      //         fontFamily: 'Oxanium',
+      //         fontSize: '15px',
+      //         borderRadius: '50px',
+      //         background: '#152266',
+      //       },
+      //       input: { textAlign: 'center' },
+      //     },
+      //   },
     },
     typography: {
       h1: {
@@ -219,7 +216,7 @@ export default function Layout({ title, description, children }) {
         main: '#0097DA',
       },
       secondary: {
-        main: '#208080',
+        main: '#F333CB',
       },
     },
     breakpoints: {
@@ -237,6 +234,11 @@ export default function Layout({ title, description, children }) {
   const [types, setTypes] = useState([]);
   const [showPurchase, setShowPurchase] = useState(''); //dialog authentication
   const [anchorEl, setAnchorEl] = useState(null); //cart menu
+  const [navBackground, setNavBackground] = useState('appBarTransparent'); //on scroll change background color of header
+
+  //ref
+  const navRef = useRef();
+  navRef.current = navBackground;
 
   //togle sidebar
   const sidebarOpenHandler = () => {
@@ -268,11 +270,29 @@ export default function Layout({ title, description, children }) {
   };
 
   useEffect(() => {
+    const handleScroll = () => {
+      const show = window.scrollY > 0;
+      if (show) {
+        setNavBackground('appBarSolid');
+      } else {
+        setNavBackground('appBarTransparent');
+      }
+    };
+    document.addEventListener('scroll', handleScroll);
+    return () => {
+      document.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  useEffect(() => {
     fetchBrands();
   }, []);
 
   const adminHandler = () => {
     router.push('/admin/products');
+  };
+  const inventoryHandler = () => {
+    router.push('/inventory');
   };
 
   //remove product from cart
@@ -303,7 +323,7 @@ export default function Layout({ title, description, children }) {
       </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <AppBar position="sticky" sx={classes.appbar}>
+        <AppBar position="fixed" elevation={0} sx={classes[navRef.current]}>
           <Toolbar sx={classes.toolbar}>
             <ImageBox>
               <NextLink href="/" passHref>
@@ -323,8 +343,14 @@ export default function Layout({ title, description, children }) {
                 justifyContent: 'flex-end',
                 alignItems: 'center',
                 marginInline: 'auto 0',
+                maxWidth: '150px',
               }}
             >
+              <Button onClick={inventoryHandler} fullWidth>
+                <Avatar sx={classes.avatar}>
+                  <TakeoutDiningOutlinedIcon style={{ fontSize: 22 }} />
+                </Avatar>
+              </Button>
               {/* Desktop Cart */}
               <div>
                 <Button
@@ -423,7 +449,7 @@ export default function Layout({ title, description, children }) {
                     </PurchaseButton>
                   </Menu>
                 ) : (
-                  <div style={{ background: 'transparent' }}></div>
+                  <></>
                 )}
               </div>
               {/* Mobile Cart */}
@@ -453,83 +479,97 @@ export default function Layout({ title, description, children }) {
                     )}
                   </Typography>
                 </Button>
-                <Drawer
-                  anchor="right"
-                  open={sidebarVisible}
-                  onClose={sidebarCloseHandler}
-                  sx={isDesktop ? classes.hidden : classes.visible}
-                >
-                  <List>
-                    <ListItem>
-                      <CartTitle>Your Cart</CartTitle>
-                    </ListItem>
-                    <ListItem
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        padding: '0',
-                      }}
-                    >
-                      {cart.cartItems.map((product) => (
-                        <CartItem key={product._id}>
-                          <Image
-                            src={product.image}
-                            alt={product.name}
-                            height={60}
-                            width={60}
-                            style={{
-                              borderRadius: '10px',
-                              objectFit: 'cover',
-                            }}
-                          />
+                {cart.cartItems.length > 0 ? (
+                  <Drawer
+                    anchor="right"
+                    open={sidebarVisible}
+                    onClose={sidebarCloseHandler}
+                    sx={isDesktop ? classes.hidden : classes.visible}
+                  >
+                    <List>
+                      <ListItem>
+                        <CartTitle>Your Cart</CartTitle>
+                      </ListItem>
+                      <ListItem
+                        sx={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          padding: '0',
+                        }}
+                      >
+                        {cart.cartItems.map((product) => (
+                          <CartItem key={product._id}>
+                            <Image
+                              src={product.image}
+                              alt={product.name}
+                              height={60}
+                              width={60}
+                              style={{
+                                borderRadius: '10px',
+                                objectFit: 'cover',
+                              }}
+                            />
 
-                          <CartItemDetail>
-                            <ProductTitle>
-                              <ProductBrand>{product.brand}</ProductBrand>
-                              <ProductType>{product.type}</ProductType>
-                            </ProductTitle>
+                            <CartItemDetail>
+                              <ProductTitle>
+                                <ProductBrand>{product.brand}</ProductBrand>
+                                <ProductType>{product.type}</ProductType>
+                              </ProductTitle>
 
-                            <ProductPricing>
-                              <Image
-                                src={UcdCoin}
-                                width="15"
-                                height="15"
-                                alt="ucdCoin"
-                              />
-                              <ProductPrice>{product.price}</ProductPrice>
-                              <ProductCurrency>
-                                {product.currency}
-                              </ProductCurrency>
-                            </ProductPricing>
-                          </CartItemDetail>
+                              <ProductPricing>
+                                <Image
+                                  src={UcdCoin}
+                                  width="15"
+                                  height="15"
+                                  alt="ucdCoin"
+                                />
+                                <ProductPrice>{product.price}</ProductPrice>
+                                <ProductCurrency>
+                                  {product.currency}
+                                </ProductCurrency>
+                              </ProductPricing>
+                            </CartItemDetail>
 
-                          <CancelIcon
-                            style={{
-                              fontSize: 22,
-                              cursor: 'pointer',
-                              color: 'white',
-                            }}
-                            onClick={() => removeFromCartHandler(product)}
-                          />
-                        </CartItem>
-                      ))}
-                    </ListItem>
-                    <PurchaseButton onClick={() => startPurchaseMobile()}>
-                      Purchase
-                    </PurchaseButton>
-                  </List>
-                </Drawer>
+                            <CancelIcon
+                              style={{
+                                fontSize: 22,
+                                cursor: 'pointer',
+                                color: 'white',
+                              }}
+                              onClick={() => removeFromCartHandler(product)}
+                            />
+                          </CartItem>
+                        ))}
+                      </ListItem>
+                      <PurchaseButton onClick={() => startPurchaseMobile()}>
+                        Purchase
+                      </PurchaseButton>
+                    </List>
+                  </Drawer>
+                ) : (
+                  <Drawer
+                    anchor="right"
+                    open={sidebarVisible}
+                    onClose={sidebarCloseHandler}
+                    sx={isDesktop ? classes.hidden : classes.visible}
+                  >
+                    <List>
+                      <ListItem>
+                        <EmptyCart>Your Cart Is Empty</EmptyCart>
+                      </ListItem>
+                    </List>
+                  </Drawer>
+                )}
               </div>
 
-              {showPurchase &&
-              <PurchaseDialog
-                showPurchase={showPurchase}
-                setShowPurchase={setShowPurchase}
-              />
-              }
-             
+              {showPurchase && (
+                <PurchaseDialog
+                  showPurchase={showPurchase}
+                  setShowPurchase={setShowPurchase}
+                />
+              )}
               {data.admin.includes(currentAccount) ? (
                 <Button onClick={adminHandler} fullWidth>
                   <Avatar sx={classes.avatar}>
@@ -550,12 +590,16 @@ export default function Layout({ title, description, children }) {
                       sx={classes.metamaskButton}
                       onClick={() => connectWallet()}
                     >
-                      Connect Wallet
+                      Connect<span style={{ color: 'transparent' }}>_</span>
+                      Wallet
                     </Button>
                   )
                 ) : (
                   <Button sx={classes.metamaskButton}>
-                    <Link href="https://metamask.io/">Install Metamask</Link>
+                    <Link href="https://metamask.io/">
+                      Install<span style={{ color: 'transparent' }}>_</span>{' '}
+                      Metamask
+                    </Link>
                   </Button>
                 )}
               </div>
