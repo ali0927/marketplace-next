@@ -28,8 +28,8 @@ EscrowWalletContract.on(
     console.log('Polygon: BurnToken---', user, token, amount_bn)
     try {
       const nonce = nonce_bn.toNumber()
-      const address = ethers.utils.getAddress(user)
-      const tokenAddress = ethers.utils.getAddress(token)
+      const address = ethers.utils.getAddress(user).toLowerCase();
+      const tokenAddress = ethers.utils.getAddress(token).toLowerCase();
       const amount = parseFloat(ethers.utils.formatEther(amount_bn))
 
       const TokenContract = new ethers.Contract(
@@ -40,10 +40,14 @@ EscrowWalletContract.on(
       const tokenSymbol = await TokenContract.symbol()
       const tokenName = await TokenContract.name()
 
-      await mongoose.connect(process.env.MONGODB_URI, {
+      const opts = {
         useNewUrlParser: true,
         useUnifiedTopology: true,
-      })
+      };
+      await mongoose.connect(
+        `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.gury7.mongodb.net/NEX10Marketplace-Dev?retryWrites=true&w=majority`,
+        opts
+      );
 
       let burnEvent
       burnEvent = await BurnEvent.findOne({
