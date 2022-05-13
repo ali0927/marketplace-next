@@ -1,25 +1,28 @@
 //react/next/packages
-import { useContext } from "react";
-import { useRouter } from "next/router";
-import Image from "next/image";
-import UULogo from "../public/images/uu/uu-logo.png";
-import UUMain from "../public/images/uu/uu-main.png";
-import SSLogo from "../public/images/ss/ss-logo.png";
-import SSMain from "../public/images/ss/ss-main.png";
+import { useContext } from 'react';
+import { useRouter } from 'next/router';
+import Image from 'next/image';
+import UULogo from '../public/images/uu/uu-logo.png';
+import UUMain from '../public/images/uu/uu-main.png';
+import SSLogo from '../public/images/ss/ss-logo.png';
+import SSMain from '../public/images/ss/ss-main.png';
 //components
-import Layout from "../components/Layout";
-import { MarketplaceContext } from "../utils/MarketplaceContext";
-import classes from "../utils/classes";
+import Layout from '../components/Layout';
+import { MarketplaceContext } from '../utils/MarketplaceContext';
+import classes from '../utils/classes';
 //styling
-import { Box } from "@mui/system";
-import { Card } from "@mui/material";
-import styled from "styled-components";
-import { Colors, Devices } from "../utils/Theme";
+import { Box } from '@mui/system';
+import { Card } from '@mui/material';
+import styled from 'styled-components';
+import { Colors, Devices } from '../utils/Theme';
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2rem;
+`;
+const ContainerWrapper = styled.div`
+  margin-top: 90px;
 `;
 const Wrapper = styled.div`
   display: flex;
@@ -65,7 +68,7 @@ const EnterButton = styled.button`
   padding: 0.5rem 1.5rem;
   font-size: 16px;
   font-weight: 500;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
   color: #ffffff;
   width: 70%;
   position: absolute;
@@ -90,12 +93,12 @@ export default function Home() {
   //route
   const router = useRouter();
   const accessUuMarketplace = () => {
-    router.push("/uu/marketplace");
+    router.push('/uu/marketplace');
   };
 
   return (
     <Layout>
-      <div>
+      <ContainerWrapper>
         {/* to update */}
         {!isOnMainnet ? (
           <Container>
@@ -126,7 +129,7 @@ export default function Home() {
             bid.
           </Box>
         )}
-      </div>
+      </ContainerWrapper>
     </Layout>
   );
 }

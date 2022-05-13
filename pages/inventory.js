@@ -24,6 +24,9 @@ import classes from '../utils/classes';
 import Layout from '../components/Layout';
 import { MarketplaceContext } from '../utils/MarketplaceContext';
 
+const Wrapper = styled.div`
+  margin-top: 150px;
+`;
 const Container = styled.div`
   position: relative;
   height: 100vh;
@@ -152,6 +155,15 @@ const NoStock = styled.button`
   border: none;
   cursor: default;
 `;
+const NoItems = styled.div`
+  color: white;
+  font-family: 'Oxanium';
+  font-size: 18px;
+  font-weight: 600;
+  width: 100%;
+  text-align: center;
+  margin-top: 200px;
+`;
 
 function reducer(state, action) {
   switch (action.type) {
@@ -204,9 +216,10 @@ function Inventory() {
     window.addEventListener('load', handleLoading);
     return () => window.removeEventListener('load', handleLoading);
   }, [getUCDBalance]);
+
   return (
     <Layout>
-      <div>
+      <Wrapper>
         {!isOnMainnet ? (
           loading ? (
             <Container>
@@ -237,59 +250,65 @@ function Inventory() {
                   </WalletBalance>
                 </WalletGeneralInfo>
               </HeaderContainer>
-              <Grid
-                container
-                spacing={4}
-                alignItems="center"
-                justifyContent="center"
-              >
-                {orders.map((order) => (
-                  <Grid item md={3} key={order._id}>
-                    <Card sx={classes.nftCard}>
-                      <CardActionArea
-                        disableRipple
-                        sx={{ position: 'relative' }}
-                      >
-                        <Trapezium>
-                          <p>{order.brand}</p>
-                        </Trapezium>
-                        <CardMedia
-                          component="img"
-                          image={order.image}
-                          title={order.name}
-                        ></CardMedia>
-                        <CardContent sx={{ zIndex: '1' }}>
-                          <ProductDetails>
-                            <ProductName>{order.name}</ProductName>
-                            <ProductPrice>
-                              <Image
-                                src={UcdCoin}
-                                width="15"
-                                height="15"
-                                alt="ucdCoin"
-                              />
-                              <ProductCost>{order.price}</ProductCost>
-                              <ProductCurrency>UCD</ProductCurrency>
-                            </ProductPrice>
-                          </ProductDetails>
-                        </CardContent>
-                      </CardActionArea>
-                      <CardActions>
-                        <NoStock>
-                          Purchased{' '}
-                          {new Date(order.paidAt)
-                            .toLocaleDateString('en-GB', {
-                              day: 'numeric',
-                              month: 'short',
-                              year: 'numeric',
-                            })
-                            .replace(/ /g, ' ')}
-                        </NoStock>
-                      </CardActions>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
+
+              {orders.length > 0 && (
+                <Grid
+                  container
+                  spacing={4}
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  {orders.map((order) => (
+                    <Grid item md={3} key={order._id}>
+                      <Card sx={classes.nftCard}>
+                        <CardActionArea
+                          disableRipple
+                          sx={{ position: 'relative' }}
+                        >
+                          <Trapezium>
+                            <p>{order.brand}</p>
+                          </Trapezium>
+                          <CardMedia
+                            component="img"
+                            image={order.image}
+                            title={order.name}
+                          ></CardMedia>
+                          <CardContent sx={{ zIndex: '1' }}>
+                            <ProductDetails>
+                              <ProductName>{order.name}</ProductName>
+                              <ProductPrice>
+                                <Image
+                                  src={UcdCoin}
+                                  width="15"
+                                  height="15"
+                                  alt="ucdCoin"
+                                />
+                                <ProductCost>{order.price}</ProductCost>
+                                <ProductCurrency>UCD</ProductCurrency>
+                              </ProductPrice>
+                            </ProductDetails>
+                          </CardContent>
+                        </CardActionArea>
+                        <CardActions>
+                          <NoStock>
+                            Purchased{' '}
+                            {new Date(order.paidAt)
+                              .toLocaleDateString('en-GB', {
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric',
+                              })
+                              .replace(/ /g, ' ')}
+                          </NoStock>
+                        </CardActions>
+                      </Card>
+                    </Grid>
+                  ))}
+                </Grid>
+              )}
+              {orders.length === 0 && (
+                <NoItems>You have no items from the marketplace.</NoItems>
+              )}
             </div>
           )
         ) : (
@@ -298,7 +317,7 @@ function Inventory() {
             view your inventory.
           </Box>
         )}
-      </div>
+      </Wrapper>
     </Layout>
   );
 }

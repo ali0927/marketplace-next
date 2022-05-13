@@ -21,6 +21,9 @@ import Product from '../../models/Product.model';
 import { Store } from '../../utils/Store';
 import ProductItem from '../../components/ProductItem';
 
+const Wrapper = styled.div`
+  margin-top: 150px;
+`;
 const HeaderContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -53,9 +56,11 @@ const WalletGeneralInfo = styled.div`
   }
 `;
 const WalletBalance = styled.div`
+display: flex;
+flex-direction: row;
   background: #152266;
   border-radius: 20px;
-  padding: 8px 15px;
+  padding: 10px 15px;
   margin-bottom: 20px;
   font-weight: 700;
   font-size: 14px;
@@ -77,7 +82,8 @@ const WalletAmount = styled.div`
   margin-left: auto;
   display: flex;
   align-items: center;
-  font-family: 'Oxanium', > img {
+  font-family: 'Oxanium';
+  > img {
     margin-right: 2px;
   }
 `;
@@ -97,9 +103,13 @@ const FilterContainer = styled.div`
   }
 `;
 const FilterText = styled.div`
+  display: none;
   color: #ffffff;
   font-family: Oxanium;
   font-size: 12px;
+  @media ${Devices.MobileL} {
+    display: block;
+  }
 `;
 const FilterButton = styled.button`
   border: 2px solid ${Colors.bg};
@@ -165,7 +175,7 @@ export default function Search(props) {
 
   return (
     <Layout title="Search">
-      <div>
+      <Wrapper>
         {!isOnMainnet ? (
           <div>
             <HeaderContainer>
@@ -235,7 +245,7 @@ export default function Search(props) {
             bid.
           </Box>
         )}
-      </div>
+      </Wrapper>
     </Layout>
   );
 }

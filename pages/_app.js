@@ -1,10 +1,10 @@
-import { createGlobalStyle } from "styled-components";
-import { StoreProvider } from "../utils/Store";
-import { MarketplaceProvider } from "../utils/MarketplaceContext";
-import { SnackbarProvider } from "notistack";
-import { CacheProvider } from "@emotion/react";
-import createEmotionCache from "../utils/createEmotionCache";
-import Head from "next/head";
+import { createGlobalStyle } from 'styled-components';
+import { StoreProvider } from '../utils/Store';
+import { MarketplaceProvider } from '../utils/MarketplaceContext';
+import { SnackbarProvider } from 'notistack';
+import { CacheProvider } from '@emotion/react';
+import createEmotionCache from '../utils/createEmotionCache';
+import Head from 'next/head';
 
 const GlobalStyle = createGlobalStyle`
   html,
@@ -82,7 +82,7 @@ function MyApp(props) {
       </Head>
       <CacheProvider value={emotionCache}>
         <SnackbarProvider
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         >
           <MarketplaceProvider>
             <StoreProvider>

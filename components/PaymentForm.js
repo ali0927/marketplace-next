@@ -13,6 +13,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { useContext, useState } from 'react';
 import * as Yup from 'yup';
 //styles
+import styled from 'styled-components';
 import classes from '../utils/classes';
 import { MarketplaceContext } from '../utils/MarketplaceContext';
 import { Store } from '../utils/Store';
@@ -20,6 +21,13 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useSnackbar } from 'notistack';
 import { getError } from '../utils/error';
+
+const Title = styled.div`
+font-family: 'Oxanium',
+color: "#ffffff",
+font-weight: 600,
+font-size: 20px,
+`;
 
 function PaymentForm() {
   //state
@@ -126,7 +134,9 @@ function PaymentForm() {
       enqueueSnackbar('Purchase successfully made', {
         variant: 'success',
       });
-      window.location.reload(false);
+      setTimeout(function () {
+        window.location.reload();
+      }, 1000);
     } catch (err) {
       setLoading(false);
       enqueueSnackbar(getError(err), { variant: 'error' });
@@ -144,7 +154,23 @@ function PaymentForm() {
           {(props) => (
             <Form noValidate>
               <List>
-                <ListItem>
+                <ListItem
+                  sx={{
+                    color: '#ffffff',
+                    fontFamily: 'Oxanium',
+                    fontWeight: '600',
+                    fontSize: '20px',
+                    marginBottom: '20px',
+                  }}
+                >
+                  Fill in your details
+                </ListItem>
+                <ListItem
+                  sx={{
+                    padding: '0px',
+                    marginBottom: '20px',
+                  }}
+                >
                   <Field
                     as={TextField}
                     name="discordId"
@@ -153,10 +179,10 @@ function PaymentForm() {
                     error={props.errors.discordId && props.touched.discordId}
                     helperText={<ErrorMessage name="discordId" />}
                     required
-                    sx={{ bckground: '#152266', zIndex: '2' }}
+                    sx={{ bckground: '#152266', zIndex: '2', width: '100%' }}
                   />
                 </ListItem>
-                <ListItem>
+                <ListItem sx={{ padding: '0px', marginBottom: '20px' }}>
                   <Field
                     as={TextField}
                     name="email"
@@ -167,7 +193,7 @@ function PaymentForm() {
                     required
                   />
                 </ListItem>
-                <ListItem>
+                <ListItem sx={{ padding: '0px', marginBottom: '20px' }}>
                   <Field
                     as={TextField}
                     name="shippingAddress"

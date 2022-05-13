@@ -20,6 +20,10 @@ import Product from '../../models/Product.model';
 import { Store } from '../../utils/Store';
 import ProductItem from '../../components/ProductItem';
 
+const Wrapper = styled.div`
+  margin-top: 150px;
+`;
+
 const HeaderContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -170,70 +174,74 @@ export default function Home(props) {
     return () => window.removeEventListener('load', handleLoading);
   }, [getUCDBalance]);
   return (
-    <Layout>
-      <div>
-        {!isOnMainnet ? (
-          <div>
-            <HeaderContainer>
-              <HeaderMarketplace>
-                <HeaderText style={{ color: 'white' }}>Marketplace</HeaderText>
-                <Image
-                  src={UcdRoundLogo}
-                  alt="UcdRoundLogo"
-                  width={38}
-                  height={38}
-                />
-              </HeaderMarketplace>
-              <WalletGeneralInfo>
-                <WalletBalance>
-                  <WalletText style={{ color: '#c4c4c4' }}>
-                    In your NEX wallet
-                  </WalletText>
-                  <WalletAmount>
-                    <WalletUULogo>
-                      <Image
-                        src={UcdCoin}
-                        width="20"
-                        height="20"
-                        alt="ucdCoin"
-                      />
-                    </WalletUULogo>
-                    {ucdWalletBalance} UCD
-                  </WalletAmount>
-                </WalletBalance>
-              </WalletGeneralInfo>
-            </HeaderContainer>
-            <FilterContainer>
-              <FilterText>Filter By:</FilterText>
-              <FilterButton color={'#152266'} onClick={allFilter}>
-                All
-              </FilterButton>
-              <FilterButton onClick={whitelistFilter}>Whitelist</FilterButton>
-              <FilterButton onClick={raffleFilter}>NFT Raffle</FilterButton>
-            </FilterContainer>
-            <Grid
-              container
-              spacing={4}
-              alignItems="center"
-              justifyContent="center"
-            >
-              {products.map((product) => (
-                <Grid item md={3} key={product.slug}>
-                  <ProductItem
-                    product={product}
-                    addToCartHandler={addToCartHandler}
+    <Layout title="UU Marketplace">
+      <Wrapper>
+        <div>
+          {!isOnMainnet ? (
+            <div>
+              <HeaderContainer>
+                <HeaderMarketplace>
+                  <HeaderText style={{ color: 'white' }}>
+                    Marketplace
+                  </HeaderText>
+                  <Image
+                    src={UcdRoundLogo}
+                    alt="UcdRoundLogo"
+                    width={38}
+                    height={38}
                   />
-                </Grid>
-              ))}
-            </Grid>
-          </div>
-        ) : (
-          <Box sx={classes.wrongNetwork}>
-            You are not on the correct network. Switch to Ethereum Mainnet to
-            bid.
-          </Box>
-        )}
-      </div>
+                </HeaderMarketplace>
+                <WalletGeneralInfo>
+                  <WalletBalance>
+                    <WalletText style={{ color: '#c4c4c4' }}>
+                      In your NEX wallet
+                    </WalletText>
+                    <WalletAmount>
+                      <WalletUULogo>
+                        <Image
+                          src={UcdCoin}
+                          width="20"
+                          height="20"
+                          alt="ucdCoin"
+                        />
+                      </WalletUULogo>
+                      {ucdWalletBalance} UCD
+                    </WalletAmount>
+                  </WalletBalance>
+                </WalletGeneralInfo>
+              </HeaderContainer>
+              <FilterContainer>
+                <FilterText>Filter By:</FilterText>
+                <FilterButton color={'#152266'} onClick={allFilter}>
+                  All
+                </FilterButton>
+                <FilterButton onClick={whitelistFilter}>Whitelist</FilterButton>
+                <FilterButton onClick={raffleFilter}>NFT Raffle</FilterButton>
+              </FilterContainer>
+              <Grid
+                container
+                spacing={4}
+                alignItems="center"
+                justifyContent="center"
+              >
+                {products.map((product) => (
+                  <Grid item md={3} key={product.slug}>
+                    <ProductItem
+                      product={product}
+                      addToCartHandler={addToCartHandler}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            </div>
+          ) : (
+            <Box sx={classes.wrongNetwork}>
+              You are not on the correct network. Switch to Ethereum Mainnet to
+              bid.
+            </Box>
+          )}
+        </div>
+      </Wrapper>
     </Layout>
   );
 }

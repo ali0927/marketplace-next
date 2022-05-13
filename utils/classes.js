@@ -13,7 +13,6 @@ const classes = {
   sort: {
     marginRight: 1,
   },
-  fullHeight: { height: '100vh' },
   fullWidth: {
     width: '100%',
   },
@@ -47,12 +46,18 @@ const classes = {
   appbar: {
     backgroundColor: 'transparent',
     top: 0,
-    height: '100px',
-    position: 'sticky',
+    height: '70px',
+    zIndex: 100,
     '& a': {
       color: '#ffffff',
       marginLeft: 1,
     },
+  },
+  appBarTransparent: {
+    backgroundColor: 'transparent',
+  },
+  appBarSolid: {
+    backgroundColor: '#000',
   },
   toolbar: {
     justifyContent: 'space-between',
@@ -73,7 +78,7 @@ const classes = {
   metamaskButton: {
     outline: 0,
     color: '#fff',
-    fontSize: '0.9rem',
+    fontSize: '0.7rem',
     fontWeight: '500',
     textDecoration: 'none',
     position: 'relative',
