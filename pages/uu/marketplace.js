@@ -77,13 +77,11 @@ const WalletBalance = styled.div`
 `;
 const WalletText = styled.span`
   font-size: 12px;
-  margin-right: 30px;
   color: '#c4c4c4';
   font-weight: 400;
   font-family: 'Oxanium';
 `;
 const WalletAmount = styled.div`
-  margin-left: auto;
   display: flex;
   align-items: center;
   font-family: 'Oxanium';
@@ -93,6 +91,8 @@ const WalletAmount = styled.div`
 `;
 const WalletUULogo = styled.div`
   margin-right: 10px;
+  margin-bottom: 5px;
+  display: flex;
 `;
 const FilterContainer = styled.div`
   margin-top: 20px;
@@ -229,7 +229,7 @@ export default function Home(props) {
                           alt="ucdCoin"
                         />
                       </WalletUULogo>
-                      {ucdWalletBalance} UCD
+                      <span>{nex10Balance} UCD</span>
                     </WalletAmount>
                   </WalletBalance>
                   <WalletBalance
