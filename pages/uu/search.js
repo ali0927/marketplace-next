@@ -141,7 +141,9 @@ const FilterButton = styled.button`
   font-size: 14px;
   text-align: center;
   color: #ffffff;
-  background-color: ${(props) => (props.color ? props.color : 'transparent')};
+  background-color: ${(props) => {
+    return props.active ? '#152266' : 'transparent';
+  }};
   :hover {
     background-color: ${Colors.bg};
   }

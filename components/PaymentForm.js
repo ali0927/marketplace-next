@@ -15,7 +15,6 @@ import {
 } from '@mui/material';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { useContext, useState } from 'react';
-
 import Cookies from 'js-cookie';
 import { MarketplaceContext } from '../utils/MarketplaceContext';
 import { Store } from '../utils/Store';
@@ -30,8 +29,9 @@ function PaymentForm(props) {
   const isTablet = useMediaQuery('(min-width:550px)');
 
   //close dialog
-  const handleDialogClose = () => {
-    props.setDialogStatus(null);
+  const handleDialogClose = async () => {
+    await props.setDialogStatus('Test');
+    console.log(props.dialogStatus);
   };
 
   //retrieve variables
