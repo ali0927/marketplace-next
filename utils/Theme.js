@@ -22,7 +22,7 @@ const BreakPoints = {
   Tablet: '900px', //fixed
   TabletL: '976px', //fixed
   Laptop: '1000px', //fixed
-  LaptopL: '1130px', //fixed
+  LaptopL: '1300px', //fixed
   Desktop: '2560px',
 };
 

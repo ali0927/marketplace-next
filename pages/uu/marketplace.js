@@ -180,7 +180,7 @@ export default function Home(props) {
   };
 
   const getNex10balance = async () => {
-    const user = currentAccount.toLowerCase();
+    const user = currentAccount?.toLowerCase();
     const nex10balance = await axios.get(
       `/api/wallet/${user}/${ucdContractAddress}`
     );

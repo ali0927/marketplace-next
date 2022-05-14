@@ -31,8 +31,8 @@ const classes = {
     fontSize: '14px',
     fontFamily: 'Oxanium',
     borderTop: '1px solid #30358C',
-    paddingTop: '30px',
-    paddingBottom: '30px',
+    paddingTop: '20px',
+    paddingBottom: '20px',
   },
   section: {
     marginTop: 1,
@@ -110,17 +110,6 @@ const classes = {
     letterSpacing: '1.5px',
     textAlign: 'center',
     fontFamily: 'Oxanium',
-  },
-  marketplaceSSCard: {
-    height: '380px',
-    width: '480px',
-    border: '1px solid #152266',
-    backgroundColor: 'rgba(0,0,0,0.35)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-    cursor: 'default',
   },
   logoImg: {
     background: 'transparent',
