@@ -24,10 +24,6 @@ import classes from '../utils/classes';
 import { getError } from '../utils/error';
 import { useSnackbar } from 'notistack';
 
-//formik
-
-//styles
-
 function PaymentForm(props) {
   //state
   const [loading, setLoading] = useState(false);
@@ -139,9 +135,7 @@ function PaymentForm(props) {
       enqueueSnackbar('Purchase successfully made', {
         variant: 'success',
       });
-      setTimeout(function () {
-        window.location.reload();
-      }, 1000);
+      handleDialogClose();
     } catch (err) {
       setLoading(false);
       enqueueSnackbar(getError(err), { variant: 'error' });
@@ -225,12 +219,12 @@ function PaymentForm(props) {
                     <Button type="submit" sx={classes.submitForm} disableRipple>
                       Submit
                     </Button>
+                    {loading && (
+                      <ListItem>
+                        <CircularProgress />
+                      </ListItem>
+                    )}
                   </ListItem>
-                  {loading && (
-                    <ListItem>
-                      <CircularProgress />
-                    </ListItem>
-                  )}
                 </List>
               </Form>
             )}

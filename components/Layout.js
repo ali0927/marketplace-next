@@ -20,7 +20,6 @@ import {
 } from '@mui/material';
 import { Colors, Devices } from '../utils/Theme';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-
 import CancelIcon from '@mui/icons-material/Cancel';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -214,7 +213,7 @@ export default function Layout({ title, description, children }) {
     setSidebarVisible(false);
   };
   //responsive cart menu
-  const isDesktop = useMediaQuery('(min-width:650px)');
+  const isDesktop = useMediaQuery('(min-width:900px)');
   //toggle cart menu
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -312,7 +311,11 @@ export default function Layout({ title, description, children }) {
                 maxWidth: '150px',
               }}
             >
-              <Button onClick={inventoryHandler} fullWidth>
+              <Button
+                onClick={inventoryHandler}
+                fullWidth
+                sx={isDesktop ? classes.visible : classes.hidden}
+              >
                 <Avatar sx={classes.avatar}>
                   <TakeoutDiningOutlinedIcon style={{ fontSize: 22 }} />
                 </Avatar>

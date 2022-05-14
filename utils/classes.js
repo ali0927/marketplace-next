@@ -133,6 +133,21 @@ const classes = {
     background: 'red',
     color: '#ffffff',
   },
+  //marketplace
+  mobileHeaderIcons: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '0.2rem',
+  },
+  mobileHeaderIconsVisible: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '0.2rem',
+  },
   //nftCard
   nftCard: {
     backgroundColor: '#152266',
