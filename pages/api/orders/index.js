@@ -1,5 +1,6 @@
 import Order from '../../../models/Order.model';
 import Product from '../../../models/Product.model';
+import Wallet from '../../../models/Wallet.model';
 import db from '../../../utils/db';
 import { ethers } from 'ethers';
 import nc from 'next-connect';
@@ -82,10 +83,10 @@ handler.post(async (req, res) => {
   // Add purchase to database
   try {
     // Iterate Cart and update database
-
     for (let item of cartItems) {
       // Get Name & Price from Product Model
       let product = await Product.findOne({ _id: item });
+
       await Order.create({
         name: product.name,
         brand: product.brand,
@@ -98,7 +99,10 @@ handler.post(async (req, res) => {
         email: email,
         paidAt: Date.now(),
       });
-      //decrease quantity by 1
+
+      //Get wallet balance from Wallet Model
+      const wallet = await Wallet.findOne({ address: req.body.ethAddress });
+      //decrease quantity by 1, decrease nex10 balance by price of product
       if (product.countInStock < 0) {
         res.status(500).json({
           success: false,
@@ -106,6 +110,7 @@ handler.post(async (req, res) => {
         });
       } else {
         product.countInStock -= 1;
+        wallet.balances[0].balance -= product.price;
         await product.save();
       }
     }

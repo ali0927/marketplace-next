@@ -55,10 +55,29 @@ const MarketplaceUUCard = styled.div`
   background-color: transparent;
   justify-content: center;
   position: relative;
+  @media ${Devices.LaptopL} {
+    height: 450px;
+    width: 550px;
+  }
   &:hover {
     transform: scale3d(1.05, 1.05, 1);
     border: 2px solid #f333cb;
     cursor: pointer;
+  }
+`;
+const MarketplaceSSCard = styled.div`
+  height: 380px;
+  width: 480px;
+  border: 1px solid #152266;
+  background-color: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: default;
+  @media ${Devices.LaptopL} {
+    height: 450px;
+    width: 550px;
   }
 `;
 const EnterButton = styled.button`
@@ -122,21 +141,21 @@ export default function Home() {
             <Wrapper>
               <MarketplaceUUCard onClick={accessUuMarketplace}>
                 <ParentCard>
-                  <Image src={UUMain} alt="UU Main" width={378} height={378} />
+                  <Image src={UUMain} alt="UU Main" layout="fill" />
                   <Card sx={classes.logoImg}>
                     <Image src={UULogo} alt="UU Logo" width={310} />
                   </Card>
                   <EnterButton>Enter</EnterButton>
                 </ParentCard>
               </MarketplaceUUCard>
-              <Card sx={classes.marketplaceSSCard}>
+              <MarketplaceSSCard>
                 <div>
-                  <Image src={SSMain} alt="SS Main" width={378} height={378} />
+                  <Image src={SSMain} alt="SS Main" layout="fill" />
                   <Card sx={classes.ssLogoImg}>
                     <Image src={SSLogo} alt="SS Logo" width={310} />
                   </Card>
                 </div>
-              </Card>
+              </MarketplaceSSCard>
             </Wrapper>
             {!isOldUser ? (
               <HowToPurchase open={open} setOpen={setOpen} />

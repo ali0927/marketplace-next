@@ -52,20 +52,25 @@ const GlobalStyle = createGlobalStyle`
   /* Overriding MateriaL UI Styles */
   
   /* App Bar */
-  .css-1im6ja8-MuiToolbar-root {
-    padding: 30px 40px 20px;
-  }
+  // .css-1im6ja8-MuiToolbar-root {
+  //   padding: 30px 40px 20px;
+  // }
 
   /* Cart Desktop */
-  .MuiList-root.MuiList-padding.MuiMenu-list.css-1ari148-MuiList-root-MuiMenu-list {
-    padding: 0px
-  }
+  // .MuiList-root.MuiList-padding.MuiMenu-list.css-1ari148-MuiList-root-MuiMenu-list {
+  //   padding: 0px
+  // }
   /* Grid Container */
-  .css-yfyvtz-MuiContainer-root {
-    display: flex;
-    justify-content: center;
-  }
+  // .css-yfyvtz-MuiContainer-root {
+  //   display: flex;
+  //   justify-content: center;
+  // }
   
+  /* Main Container */
+  .MuiContainer-root.MuiContainer-maxWidthLg.css-yfyvtz-MuiContainer-root {
+    min-height: 79vh;
+    margin-top: 0px;
+  }
 
   /* Payment Details Form */  
   .MuiOutlinedInput-root.MuiInputBase-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl {

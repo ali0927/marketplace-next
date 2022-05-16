@@ -15,7 +15,6 @@ import {
 } from '@mui/material';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { useContext, useState } from 'react';
-
 import Cookies from 'js-cookie';
 import { MarketplaceContext } from '../utils/MarketplaceContext';
 import { Store } from '../utils/Store';
@@ -24,18 +23,15 @@ import classes from '../utils/classes';
 import { getError } from '../utils/error';
 import { useSnackbar } from 'notistack';
 
-//formik
-
-//styles
-
 function PaymentForm(props) {
   //state
   const [loading, setLoading] = useState(false);
   const isTablet = useMediaQuery('(min-width:550px)');
 
   //close dialog
-  const handleDialogClose = () => {
-    props.setDialogStatus(null);
+  const handleDialogClose = async () => {
+    await props.setDialogStatus('Test');
+    console.log(props.dialogStatus);
   };
 
   //retrieve variables
@@ -139,9 +135,7 @@ function PaymentForm(props) {
       enqueueSnackbar('Purchase successfully made', {
         variant: 'success',
       });
-      setTimeout(function () {
-        window.location.reload();
-      }, 1000);
+      handleDialogClose();
     } catch (err) {
       setLoading(false);
       enqueueSnackbar(getError(err), { variant: 'error' });
@@ -225,12 +219,12 @@ function PaymentForm(props) {
                     <Button type="submit" sx={classes.submitForm} disableRipple>
                       Submit
                     </Button>
+                    {loading && (
+                      <ListItem>
+                        <CircularProgress />
+                      </ListItem>
+                    )}
                   </ListItem>
-                  {loading && (
-                    <ListItem>
-                      <CircularProgress />
-                    </ListItem>
-                  )}
                 </List>
               </Form>
             )}
