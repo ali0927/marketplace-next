@@ -5,6 +5,15 @@ import db from '../../../utils/db';
 import { ethers } from 'ethers';
 import nc from 'next-connect';
 import { onError } from '../../../utils/error';
+import { environmentTest } from '../../../lib/environments/environment';
+import { environment } from '../../../lib/environments/environment.prod';
+import ucdContract from '../../../lib/contracts/UniCandy.json';
+
+const ucdContractAddress =
+  process.env.NODE_ENV === 'prod'
+    ? ucdContract.address[environment.chainId].toLowerCase()
+    : ucdContract.address[environmentTest.chainId].toLowerCase();
+const ucdContractABI = ucdContract.abi;
 
 const handler = nc({
   onError,
@@ -102,6 +111,10 @@ handler.post(async (req, res) => {
 
       //Get wallet balance from Wallet Model
       const wallet = await Wallet.findOne({ address: req.body.ethAddress });
+      const tokenAddress = ucdContractAddress;
+      const tokenIdx = wallet.balances.findIndex(
+        (item) => item.token_address === tokenAddress
+      );
       //decrease quantity by 1, decrease nex10 balance by price of product
       if (product.countInStock < 0) {
         res.status(500).json({
@@ -110,8 +123,11 @@ handler.post(async (req, res) => {
         });
       } else {
         product.countInStock -= 1;
-        wallet.balances[0].balance -= product.price;
         await product.save();
+        wallet.balances[tokenIdx].balance -= product.price;
+        await Wallet.findOneAndUpdate({ _id: wallet._id }, wallet, {
+          returnDocument: 'after',
+        });
       }
     }
 
