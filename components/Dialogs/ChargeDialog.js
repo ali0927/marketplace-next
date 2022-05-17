@@ -84,6 +84,15 @@ const DialogIconBox = styled.div`
   display: flex;
   align-items: center;
 `;
+const AmountInput = styled.input`
+  background: none;
+  border: none;
+  outline: none;
+  color: #C4C4C4;
+  font-size: 17px;
+  width: 100%;
+  margin-right: 10px;
+`;
 
 const escrowContractAddress = escrowContract.address[4]; //currently on rinkeby
 const escrowContractABI = escrowContract.abi;
@@ -206,7 +215,7 @@ function ChargeDialog(props) {
           </DialogField>
 
           <DialogField>
-            <DialogIconBox>
+            {/* <DialogIconBox>
               {approvedAmount > 0 &&
                 <RemoveIcon
                   style={{
@@ -217,9 +226,12 @@ function ChargeDialog(props) {
                   onClick={() => setApprovedAmount(approvedAmount - 1)}
                 />
               }
-            </DialogIconBox>
-            <span>{approvedAmount} UCD</span>
-            <DialogIconBox>
+            </DialogIconBox> */}
+            
+            <AmountInput type="number" value={approvedAmount} onChange={(e) => setApprovedAmount(parseFloat(e.target.value))}/>
+            <span>UCD</span>
+
+            {/* <DialogIconBox>
               {approvedAmount < parseFloat(ucdWalletBalance.replaceAll(',', '')) &&
                 <AddIcon
                   style={{
@@ -230,7 +242,7 @@ function ChargeDialog(props) {
                   onClick={() => setApprovedAmount(approvedAmount + 1)}
                 />
               }
-            </DialogIconBox>
+            </DialogIconBox> */}
           </DialogField>
 
           <DialogActions sx={classes.approveContract}>
@@ -282,31 +294,10 @@ function ChargeDialog(props) {
 
         <DialogText>Amount to add</DialogText>
         <DialogField>
-          <DialogIconBox>
-            {depositAmount > 0 &&
-              <RemoveIcon
-                style={{
-                  fontSize: 22,
-                  cursor: 'pointer',
-                  color: 'white',
-                }}
-                onClick={() => setDepositAmount(depositAmount - 1)}
-              />
-            }
-          </DialogIconBox>
-          <span>{depositAmount} UCD</span>
-          <DialogIconBox>
-            {depositAmount < approvedAmount &&
-              <AddIcon
-                style={{
-                  fontSize: 22,
-                  cursor: 'pointer',
-                  color: 'white',
-                }}
-                onClick={() => setDepositAmount(depositAmount + 1)}
-              />
-            }
-          </DialogIconBox>
+        
+          <AmountInput type="number" value={depositAmount} onChange={(e) => setDepositAmount(parseFloat(e.target.value))}/>
+          <span>UCD</span>
+         
         </DialogField>
 
         <DialogActions sx={classes.approveContract}>
