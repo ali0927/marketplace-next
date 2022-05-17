@@ -175,7 +175,7 @@ function PurchaseDialog(props) {
     await setNex10Balance(nex10balance.data.balance);
 
     if (nex10balance.data.balance >= amount) {
-      setDialogStatus(DIALOG_STATUS.FUNDADDED);
+      setDialogStatus(DIALOG_STATUS.FILLDETAIL);
       return;
     }
 
