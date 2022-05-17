@@ -284,6 +284,7 @@ export default function Layout({ title, description, children }) {
         <title>
           {title ? `${title} - Next10 Marketplace` : 'Next10 Marketplace'}
         </title>
+        <link rel="icon" href="/images/logo/nex10-logo.png" />
         {description && <meta name="description" content={description}></meta>}
       </Head>
       <ThemeProvider theme={theme}>
