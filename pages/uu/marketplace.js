@@ -160,11 +160,10 @@ export default function Home(props) {
   const { products } = props;
   //state
   const [isLoading, setIsLoading] = useState(true);
-  const [nex10Balance, setNex10Balance] = useState(0);
   const [showCharge, setShowCharge] = useState(false);
 
   //context
-  const { isOnMainnet, ucdWalletBalance, getUCDBalance, currentAccount } =
+  const { isOnMainnet, currentAccount, nex10Balance } =
     useContext(MarketplaceContext);
   const { state, dispatch } = useContext(Store);
 
@@ -192,7 +191,7 @@ export default function Home(props) {
   //add to cart
   const addToCartHandler = async (product) => {
     const existItem = state.cart.cartItems.find((x) => x._id === product._id);
-    const quantity = existItem ? existItem.quantity + 1 : 1;
+    const quantity = 1;
     const { data } = await axios.get(`/api/products/${product._id}`);
     if (data.countInStock < quantity) {
       window.alert('Sorry. Product is out of stock');
@@ -201,23 +200,7 @@ export default function Home(props) {
     dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity } });
   };
 
-  const getNex10balance = async () => {
-    const user = currentAccount?.toLowerCase();
-    const nex10balance = await axios.get(
-      `/api/wallet/${user}/${ucdContractAddress}`
-    );
-    setNex10Balance(nex10balance.data.balance);
-  };
-
-  useEffect(() => {
-    getNex10balance();
-  }, [currentAccount, showCharge]);
-
-  //get UCD balance
-  useEffect(() => {
-    window.addEventListener('load', handleLoading);
-    return () => window.removeEventListener('load', handleLoading);
-  }, [getUCDBalance]);
+  useEffect(() => {}, [currentAccount, showCharge]);
 
   return (
     <Layout title="UU Marketplace">

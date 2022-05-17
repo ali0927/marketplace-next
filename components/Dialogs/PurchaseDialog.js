@@ -41,7 +41,6 @@ const DialogText = styled.div`
   color: #fff;
   text-align: center;
 `;
-
 const DialogLoading = styled.div`
   display: flex;
   align-items: center;
@@ -115,15 +114,13 @@ function PurchaseDialog(props) {
   //state
   const [dialogStatus, setDialogStatus] = useState(DIALOG_STATUS.INIT);
   const [depositAmount, setDepositAmount] = useState(0);
-  const [nex10Balance, setNex10Balance] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const isTablet = useMediaQuery('(min-width:550px)');
 
   //context
   const { state, dispatch } = useContext(Store);
-  // const { cart } = state;
-  const { hasMetamask, currentAccount, connectWallet } =
+  const { currentAccount, nex10Balance, setNex10Balance } =
     useContext(MarketplaceContext);
   const { closeSnackbar, enqueueSnackbar } = useSnackbar();
   const ethAddress = currentAccount;
@@ -173,8 +170,12 @@ function PurchaseDialog(props) {
       `/api/wallet/${user}/${ucdContractAddress}`
     );
     await setNex10Balance(nex10balance.data.balance);
+    if (nex10Balance >= amount) {
+      setDialogStatus(DIALOG_STATUS.FUNDADDED);
+      return;
+    }
 
-    if (nex10balance.data.balance >= amount) {
+    if (nex10Balance >= amount) {
       setDialogStatus(DIALOG_STATUS.FUNDADDED);
       return;
     }
@@ -291,13 +292,7 @@ function PurchaseDialog(props) {
     }
   };
 
-  const onSubmit = async ({
-    email,
-    discordId,
-    shippingAddress,
-    cartItems,
-    // props,
-  }) => {
+  const onSubmit = async ({ email, discordId, shippingAddress, cartItems }) => {
     try {
       setLoading(true);
       closeSnackbar();
@@ -321,6 +316,7 @@ function PurchaseDialog(props) {
         `/api/wallet/${user}/${ucdContractAddress}`
       );
       await setNex10Balance(nex10balance.data.balance);
+
       dispatch({ type: 'CART_CLEAR' });
       Cookies.remove('cartItems');
       setLoading(false);

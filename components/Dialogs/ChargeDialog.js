@@ -1,49 +1,45 @@
 //react/next/packages
-import { useState, useEffect, useContext } from "react";
-import { useSnackbar } from "notistack";
+import { useState, useEffect, useContext } from 'react';
+import { useSnackbar } from 'notistack';
 //blockchain
-import { ethers } from "ethers";
-import MetaMaskOnboarding from "@metamask/onboarding";
+import { ethers } from 'ethers';
+import MetaMaskOnboarding from '@metamask/onboarding';
 //material ui
-import { Dialog, DialogActions } from "@mui/material";
-import Button from "@mui/material/Button";
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
+import { Dialog, DialogActions } from '@mui/material';
+import Button from '@mui/material/Button';
 //styles
-import styled from "styled-components";
-import classes from "../../utils/classes";
-import { Colors } from "../../utils/Theme";
+import styled from 'styled-components';
+import classes from '../../utils/classes';
+import { Colors } from '../../utils/Theme';
 //components/utils/context
-import { getError } from "../../utils/error";
+import { getError } from '../../utils/error';
 //environment
-import { environmentTest } from "../../lib/environments/environment";
-import { environment } from "../../lib/environments/environment.prod";
+import { environmentTest } from '../../lib/environments/environment';
+import { environment } from '../../lib/environments/environment.prod';
 //contracts
-import escrowContract from "../../lib/contracts/EscrowWallet.json";
-import ucdContract from "../../lib/contracts/UniCandy.json";
+import escrowContract from '../../lib/contracts/EscrowWallet.json';
+import ucdContract from '../../lib/contracts/UniCandy.json';
 
-import { MarketplaceContext } from "../../utils/MarketplaceContext";
-import { Store } from "../../utils/Store";
-import axios from "axios";
+import { MarketplaceContext } from '../../utils/MarketplaceContext';
+import axios from 'axios';
 
 const DialogText = styled.div`
   line-height: 150%;
   font-size: 17px;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
   font-weight: 700;
   margin-top: 1em;
   margin-bottom: 1em;
   color: #fff;
   text-align: center;
 `;
-
 const DialogLoading = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
   justify-content: center;
   color: #fff;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
 `;
 const DialogButton = styled.div`
   display: flex;
@@ -54,7 +50,7 @@ const DialogButton = styled.div`
   padding: 0.7rem 1.5rem;
   font-weight: 500;
   font-size: 13px;
-  font-family: "Oxanium";
+  font-family: 'Oxanium';
   color: #ffffff;
   max-width: 200px;
   background: ${Colors.bg};
@@ -75,7 +71,7 @@ const DialogField = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #C4C4C4;
+  color: #c4c4c4;
   border-radius: 50px;
   padding: 8px 20px;
   margin-bottom: 1em;
@@ -88,7 +84,7 @@ const AmountInput = styled.input`
   background: none;
   border: none;
   outline: none;
-  color: #C4C4C4;
+  color: #c4c4c4;
   font-size: 17px;
   width: 100%;
   margin-right: 10px;
@@ -97,21 +93,21 @@ const AmountInput = styled.input`
 const escrowContractAddress = escrowContract.address[4]; //currently on rinkeby
 const escrowContractABI = escrowContract.abi;
 const ucdContractAddress =
-  process.env.NODE_ENV === "prod"
+  process.env.NODE_ENV === 'prod'
     ? ucdContract.address[environment.chainId].toLowerCase()
     : ucdContract.address[environmentTest.chainId].toLowerCase();
 const ucdContractABI = ucdContract.abi;
 const DIALOG_STATUS = {
-  NONE: "None",
-  APPROVE: "Approve",
-  APPROVED: "Approved",
-  CONFIRMPURCHASE: "ConfirmPurchase",
-  DEPOSITFUND: "DeposiFund",
-  FUNDADDED: "FundAdded",
-  FILLDETAIL: "FillDetail",
-  SUBMITTED: "Submitted",
-  LOADING: "Loading"
-}
+  NONE: 'None',
+  APPROVE: 'Approve',
+  APPROVED: 'Approved',
+  CONFIRMPURCHASE: 'ConfirmPurchase',
+  DEPOSITFUND: 'DeposiFund',
+  FUNDADDED: 'FundAdded',
+  FILLDETAIL: 'FillDetail',
+  SUBMITTED: 'Submitted',
+  LOADING: 'Loading',
+};
 
 let signer, provider;
 
@@ -133,50 +129,65 @@ function ChargeDialog(props) {
 
   //approve transfer
   async function setApproval() {
-    const ucdContract = new ethers.Contract(ucdContractAddress, ucdContractABI, signer);
+    const ucdContract = new ethers.Contract(
+      ucdContractAddress,
+      ucdContractABI,
+      signer
+    );
     setDialogStatus(DIALOG_STATUS.LOADING);
-    console.log(ucdContract)
+    console.log(ucdContract);
     await ucdContract
-      .approve(escrowContractAddress, ethers.utils.parseEther(approvedAmount.toString()))
+      .approve(
+        escrowContractAddress,
+        ethers.utils.parseEther(approvedAmount.toString())
+      )
       .then(async (tx) => {
         tx.wait().then(async () => {
           setDialogStatus(DIALOG_STATUS.APPROVED);
-          enqueueSnackbar("Permissions approved successfully", {
-            variant: "success",
+          enqueueSnackbar('Permissions approved successfully', {
+            variant: 'success',
           });
         });
       })
       .catch((err) => {
         handleDialogClose();
-        enqueueSnackbar(getError(err), { variant: "error" });
+        enqueueSnackbar(getError(err), { variant: 'error' });
       });
   }
 
   const depositFund = async () => {
-    const escrowContract = new ethers.Contract(escrowContractAddress, escrowContractABI, signer);
+    const escrowContract = new ethers.Contract(
+      escrowContractAddress,
+      escrowContractABI,
+      signer
+    );
     setDialogStatus(DIALOG_STATUS.LOADING);
     await escrowContract
-      .burnToken(ucdContractAddress, ethers.utils.parseEther(depositAmount.toString()))
+      .burnToken(
+        ucdContractAddress,
+        ethers.utils.parseEther(depositAmount.toString())
+      )
       .then(async (tx) => {
         tx.wait().then(async () => {
           setDialogStatus(DIALOG_STATUS.FUNDADDED);
-          enqueueSnackbar("Burned successfully", {
-            variant: "success",
+          enqueueSnackbar('Burned successfully', {
+            variant: 'success',
           });
         });
       })
       .catch((err) => {
         setDialogStatus(DIALOG_STATUS.NONE);
-        enqueueSnackbar(getError(err), { variant: "error" });
+        enqueueSnackbar(getError(err), { variant: 'error' });
       });
-
-  }
+  };
 
   const getNex10Balance = async () => {
     const user = currentAccount.toLowerCase();
-    const nex10balance = await axios.get(`/api/wallet/${user}/${ucdContractAddress}`);
+    const nex10balance = await axios.get(
+      `/api/wallet/${user}/${ucdContractAddress}`
+    );
     await setNex10Balance(nex10balance.data.balance);
-  }
+  };
 
   useEffect(() => {
     if (MetaMaskOnboarding.isMetaMaskInstalled()) {
@@ -193,11 +204,11 @@ function ChargeDialog(props) {
       aria-labelledby="dialog-title"
       aria-describedby="dialog-description"
     >
-      {dialogStatus === DIALOG_STATUS.LOADING &&
+      {dialogStatus === DIALOG_STATUS.LOADING && (
         <DialogLoading>Loading Permissions...</DialogLoading>
-      }
+      )}
 
-      {dialogStatus === DIALOG_STATUS.APPROVE &&
+      {dialogStatus === DIALOG_STATUS.APPROVE && (
         <>
           <DialogText>
             Please allow our marketplace contract to access the $UCD in your
@@ -227,8 +238,12 @@ function ChargeDialog(props) {
                 />
               }
             </DialogIconBox> */}
-            
-            <AmountInput type="number" value={approvedAmount} onChange={(e) => setApprovedAmount(parseFloat(e.target.value))}/>
+
+            <AmountInput
+              type="number"
+              value={approvedAmount}
+              onChange={(e) => setApprovedAmount(parseFloat(e.target.value))}
+            />
             <span>UCD</span>
 
             {/* <DialogIconBox>
@@ -254,83 +269,81 @@ function ChargeDialog(props) {
             >
               Approve
             </Button>
-            <DialogButton onClick={handleDialogClose}>
-              Cancel
-            </DialogButton>
+            <DialogButton onClick={handleDialogClose}>Cancel</DialogButton>
           </DialogActions>
         </>
-      }
+      )}
 
-      {dialogStatus === DIALOG_STATUS.APPROVED && 
-      <>
-        <DialogText>Approved successfully!</DialogText>
+      {dialogStatus === DIALOG_STATUS.APPROVED && (
+        <>
+          <DialogText>Approved successfully!</DialogText>
 
-        <DialogActions sx={classes.approveContract}>
-          <Button
-            autoFocus
-            disableRipple
-            onClick={() => setDialogStatus(DIALOG_STATUS.DEPOSITFUND)}
-            sx={classes.dialogApprovalButton}
-          >
-            Continue
-          </Button>
-        </DialogActions>
-      </>
-      }
+          <DialogActions sx={classes.approveContract}>
+            <Button
+              autoFocus
+              disableRipple
+              onClick={() => setDialogStatus(DIALOG_STATUS.DEPOSITFUND)}
+              sx={classes.dialogApprovalButton}
+            >
+              Continue
+            </Button>
+          </DialogActions>
+        </>
+      )}
 
-      {dialogStatus === DIALOG_STATUS.DEPOSITFUND &&
-      <>
-        <DialogText>Deposit fund to your NEX wallet.</DialogText>
+      {dialogStatus === DIALOG_STATUS.DEPOSITFUND && (
+        <>
+          <DialogText>Deposit fund to your NEX wallet.</DialogText>
 
-        <DialogField>
-          <span>Approved amount</span>
-          <span>{approvedAmount} UCD</span>
-        </DialogField>
+          <DialogField>
+            <span>Approved amount</span>
+            <span>{approvedAmount} UCD</span>
+          </DialogField>
 
-        <DialogField>
-          <span>Your NEX wallet</span>
-          <span>{`${nex10Balance} UCD`}</span>
-        </DialogField>
+          <DialogField>
+            <span>Your NEX wallet</span>
+            <span>{`${nex10Balance} UCD`}</span>
+          </DialogField>
 
-        <DialogText>Amount to add</DialogText>
-        <DialogField>
-        
-          <AmountInput type="number" value={depositAmount} onChange={(e) => setDepositAmount(parseFloat(e.target.value))}/>
-          <span>UCD</span>
-         
-        </DialogField>
+          <DialogText>Amount to add</DialogText>
+          <DialogField>
+            <AmountInput
+              type="number"
+              value={depositAmount}
+              onChange={(e) => setDepositAmount(parseFloat(e.target.value))}
+            />
+            <span>UCD</span>
+          </DialogField>
 
-        <DialogActions sx={classes.approveContract}>
-          <Button
-            autoFocus
-            onClick={depositFund}
-            sx={classes.dialogApprovalButton}
-          >
-            Confirm
-          </Button>
-          <DialogButton onClick={handleDialogClose}>
-            Cancel
-          </DialogButton>
-        </DialogActions>
-      </>
-      }
+          <DialogActions sx={classes.approveContract}>
+            <Button
+              autoFocus
+              onClick={depositFund}
+              sx={classes.dialogApprovalButton}
+            >
+              Confirm
+            </Button>
+            <DialogButton onClick={handleDialogClose}>Cancel</DialogButton>
+          </DialogActions>
+        </>
+      )}
 
-      {dialogStatus === DIALOG_STATUS.FUNDADDED && 
-      <>
-        <DialogText>Fund added successfully!</DialogText>
+      {dialogStatus === DIALOG_STATUS.FUNDADDED && (
+        <>
+          <DialogText>Fund added successfully!</DialogText>
 
-        <DialogActions sx={classes.approveContract}>
-          <Button
-            autoFocus
-            disableRipple
-            onClick={handleDialogClose}
-            sx={classes.dialogApprovalButton}
-          >
-            OK
-          </Button>
-        </DialogActions>
-      </>
-      }
+          <DialogActions sx={classes.approveContract}>
+            <Button
+              autoFocus
+              disableRipple
+              onClick={handleDialogClose}
+              sx={classes.dialogApprovalButton}
+            >
+              OK
+            </Button>
+          </DialogActions>
+        </>
+      )}
     </Dialog>
   );
 }

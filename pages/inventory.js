@@ -186,11 +186,10 @@ function reducer(state, action) {
 function Inventory() {
   //state
   const [isLoading, setIsLoading] = useState(true);
-  const [nex10Balance, setNex10Balance] = useState(0);
 
   //context
-  const { isOnMainnet } = useContext(MarketplaceContext);
-  const { currentAccount } = useContext(MarketplaceContext);
+  const { isOnMainnet, currentAccount, nex10Balance } =
+    useContext(MarketplaceContext);
 
   //reducer
   const [{ loading, orders }, dispatch] = useReducer(reducer, {
@@ -202,14 +201,6 @@ function Inventory() {
   //loading
   const handleLoading = () => {
     setIsLoading(false);
-  };
-
-  const getNex10balance = async () => {
-    const user = currentAccount?.toLowerCase();
-    const nex10balance = await axios.get(
-      `/api/wallet/${user}/${ucdContractAddress}`
-    );
-    setNex10Balance(nex10balance.data.balance);
   };
 
   useEffect(() => {
@@ -225,7 +216,6 @@ function Inventory() {
       }
     };
     fetchOrders();
-    getNex10balance();
   }, []);
 
   return (

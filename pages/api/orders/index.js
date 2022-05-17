@@ -96,7 +96,7 @@ handler.post(async (req, res) => {
     // Iterate Cart and update database
     for (let item of cartItems) {
       // Get Name & Price from Product Model
-      let product = await Product.findOne({ _id: item });
+      product = await Product.findOne({ _id: item });
 
       await Order.create({
         name: product.name,
@@ -138,7 +138,6 @@ handler.post(async (req, res) => {
       data: {
         message: 'Your purchase has been made',
         result: true,
-        walletBalance,
         product,
       },
     });
