@@ -7,7 +7,7 @@ const handler = nc({
   onError,
 });
 
-//users to access individual products
+//users to access products
 handler.get(async (req, res) => {
   await db.connect();
   const products = await Product.find({});

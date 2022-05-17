@@ -7,6 +7,10 @@ import createEmotionCache from '../utils/createEmotionCache';
 import Head from 'next/head';
 
 const GlobalStyle = createGlobalStyle`
+  #__next {
+    height: 88vh;
+  }
+
   html,
   body {
     font-family: 'Oxanium', cursive;
@@ -68,7 +72,7 @@ const GlobalStyle = createGlobalStyle`
   
   /* Main Container */
   .MuiContainer-root.MuiContainer-maxWidthLg.css-yfyvtz-MuiContainer-root {
-    min-height: 79vh;
+    // min-height: 79vh;
     margin-top: 0px;
   }
 

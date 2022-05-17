@@ -111,6 +111,7 @@ handler.post(async (req, res) => {
 
       //Get wallet balance from Wallet Model
       const wallet = await Wallet.findOne({ address: req.body.ethAddress });
+      let updatedWallet;
       const tokenAddress = ucdContractAddress;
       const tokenIdx = wallet.balances.findIndex(
         (item) => item.token_address === tokenAddress
@@ -125,9 +126,14 @@ handler.post(async (req, res) => {
         product.countInStock -= 1;
         await product.save();
         wallet.balances[tokenIdx].balance -= product.price;
-        await Wallet.findOneAndUpdate({ _id: wallet._id }, wallet, {
-          returnDocument: 'after',
-        });
+        updatedWallet = await Wallet.findOneAndUpdate(
+          { _id: wallet._id },
+          wallet,
+          {
+            returnDocument: 'after',
+          }
+        );
+        console.log(updatedWallet);
       }
     }
 
@@ -136,6 +142,7 @@ handler.post(async (req, res) => {
       data: {
         message: 'Your purchase has been made',
         result: true,
+        wallet: updatedWallet,
       },
     });
   } catch (error) {
