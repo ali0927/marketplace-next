@@ -7,8 +7,9 @@ const handler = nc();
 handler.get(async (req, res) => {
   await db.connect();
   try {
-    const wallet = await Wallet.findOne({
+    const wallet = await Wallet.findOneAndUpdate({
       address: req.query.user,
+      returnDocument: 'after',
     });
     await db.disconnect();
     res.send(wallet);
