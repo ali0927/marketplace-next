@@ -171,10 +171,9 @@ function PurchaseDialog(props) {
     );
     await setNex10Balance(nex10balance.data.balance);
     if (nex10Balance >= amount) {
-      setDialogStatus(DIALOG_STATUS.FUNDADDED);
+      setDialogStatus(DIALOG_STATUS.FILLDETAIL);
       return;
     }
-
     const ucdContract = new ethers.Contract(
       ucdContractAddress,
       ucdContractABI,
