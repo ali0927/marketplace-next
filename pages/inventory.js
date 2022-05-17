@@ -3,10 +3,8 @@ import React, { useEffect, useReducer, useContext, useState } from 'react';
 import dynamic from 'next/dynamic';
 import axios from 'axios';
 import { getError } from '../utils/error';
-//image
 import Image from 'next/image';
 import UcdCoin from '../public/images/uu/ucd-coin.png';
-//style
 import styled from 'styled-components';
 import { Colors, Devices } from '../utils/Theme';
 import {
@@ -20,9 +18,11 @@ import {
 } from '@mui/material';
 import { Box } from '@mui/system';
 import classes from '../utils/classes';
-//components
 import Layout from '../components/Layout';
 import { MarketplaceContext } from '../utils/MarketplaceContext';
+import ucdContract from '../lib/contracts/UniCandy.json';
+import { environment } from '../lib/environments/environment.prod';
+import { environmentTest } from '../lib/environments/environment';
 
 const Wrapper = styled.div`
   margin-top: 150px;
@@ -165,6 +165,11 @@ const NoItems = styled.div`
   margin-top: 200px;
 `;
 
+const ucdContractAddress =
+  process.env.NODE_ENV === 'prod'
+    ? ucdContract.address[environment.chainId].toLowerCase()
+    : ucdContract.address[environmentTest.chainId].toLowerCase();
+
 function reducer(state, action) {
   switch (action.type) {
     case 'FETCH_REQUEST':
@@ -181,10 +186,10 @@ function reducer(state, action) {
 function Inventory() {
   //state
   const [isLoading, setIsLoading] = useState(true);
+  const [nex10Balance, setNex10Balance] = useState(0);
 
   //context
-  const { isOnMainnet, ucdWalletBalance, getUCDBalance } =
-    useContext(MarketplaceContext);
+  const { isOnMainnet } = useContext(MarketplaceContext);
   const { currentAccount } = useContext(MarketplaceContext);
 
   //reducer
@@ -197,6 +202,14 @@ function Inventory() {
   //loading
   const handleLoading = () => {
     setIsLoading(false);
+  };
+
+  const getNex10balance = async () => {
+    const user = currentAccount?.toLowerCase();
+    const nex10balance = await axios.get(
+      `/api/wallet/${user}/${ucdContractAddress}`
+    );
+    setNex10Balance(nex10balance.data.balance);
   };
 
   useEffect(() => {
@@ -212,10 +225,8 @@ function Inventory() {
       }
     };
     fetchOrders();
-
-    window.addEventListener('load', handleLoading);
-    return () => window.removeEventListener('load', handleLoading);
-  }, [getUCDBalance]);
+    getNex10balance();
+  }, []);
 
   return (
     <Layout>
@@ -245,7 +256,7 @@ function Inventory() {
                           alt="ucdCoin"
                         />
                       </WalletUULogo>
-                      {ucdWalletBalance} UCD
+                      <span>{nex10Balance} UCD</span>
                     </WalletAmount>
                   </WalletBalance>
                 </WalletGeneralInfo>

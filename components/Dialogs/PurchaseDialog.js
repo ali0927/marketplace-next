@@ -316,6 +316,11 @@ function PurchaseDialog(props) {
         cartItems,
         signature,
       });
+      const user = currentAccount.toLowerCase();
+      const nex10balance = await axios.get(
+        `/api/wallet/${user}/${ucdContractAddress}`
+      );
+      await setNex10Balance(nex10balance.data.balance);
       dispatch({ type: 'CART_CLEAR' });
       Cookies.remove('cartItems');
       setLoading(false);
@@ -323,6 +328,9 @@ function PurchaseDialog(props) {
         variant: 'success',
       });
       handleDialogClose();
+      setTimeout(function () {
+        window.location.reload();
+      }, 1000);
     } catch (err) {
       setLoading(false);
       enqueueSnackbar(getError(err), { variant: 'error' });

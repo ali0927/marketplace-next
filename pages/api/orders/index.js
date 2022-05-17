@@ -33,6 +33,8 @@ handler.post(async (req, res) => {
   // Verify if address has correct format
   let wallet;
   let signingAddress;
+  let walletBalance;
+  let product;
   try {
     wallet = ethers.utils.getAddress(ethAddress);
   } catch (error) {
@@ -110,14 +112,15 @@ handler.post(async (req, res) => {
       });
 
       //Get wallet balance from Wallet Model
-      const wallet = await Wallet.findOne({ address: req.body.ethAddress });
-      let updatedWallet;
+      walletBalance = await Wallet.findOne({
+        address: req.body.ethAddress,
+      });
       const tokenAddress = ucdContractAddress;
-      const tokenIdx = wallet.balances.findIndex(
+      const tokenIdx = walletBalance.balances.findIndex(
         (item) => item.token_address === tokenAddress
       );
       //decrease quantity by 1, decrease nex10 balance by price of product
-      if (product.countInStock < 0) {
+      if (product.countInStock <= 0) {
         res.status(500).json({
           success: false,
           error: `Ordered ${product} is out of stock`,
@@ -125,15 +128,8 @@ handler.post(async (req, res) => {
       } else {
         product.countInStock -= 1;
         await product.save();
-        wallet.balances[tokenIdx].balance -= product.price;
-        updatedWallet = await Wallet.findOneAndUpdate(
-          { _id: wallet._id },
-          wallet,
-          {
-            returnDocument: 'after',
-          }
-        );
-        console.log(updatedWallet);
+        walletBalance.balances[tokenIdx].balance -= product.price;
+        await walletBalance.save();
       }
     }
 
@@ -142,7 +138,8 @@ handler.post(async (req, res) => {
       data: {
         message: 'Your purchase has been made',
         result: true,
-        wallet: updatedWallet,
+        walletBalance,
+        product,
       },
     });
   } catch (error) {
