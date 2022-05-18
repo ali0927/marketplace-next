@@ -170,7 +170,8 @@ function PurchaseDialog(props) {
       `/api/wallet/${user}/${ucdContractAddress}`
     );
     await setNex10Balance(nex10balance.data.balance);
-    if (nex10Balance >= amount) {
+
+    if (nex10balance.data.balance >= amount) {
       setDialogStatus(DIALOG_STATUS.FILLDETAIL);
       return;
     }
