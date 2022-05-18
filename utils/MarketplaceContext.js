@@ -1,19 +1,17 @@
-import { createContext, useState, useEffect } from "react";
-//blockchain
-import { ethers } from "ethers";
-import MetaMaskOnboarding from "@metamask/onboarding";
-//environment
-import { environmentTest } from "../lib/environments/environment";
-import { environment } from "../lib/environments/environment.prod";
-//contract
-import ucdContract from "../lib/contracts/UniCandy.json";
+import { createContext, useState, useEffect, useContext } from 'react';
+import axios from 'axios';
+import { ethers } from 'ethers';
+import MetaMaskOnboarding from '@metamask/onboarding';
+import { environmentTest } from '../lib/environments/environment';
+import { environment } from '../lib/environments/environment.prod';
+import ucdContract from '../lib/contracts/UniCandy.json';
+import { Store } from './Store';
 // import shoContract from "../lib/contracts/MockSho.json";
 
 let signer, provider;
 
-//variables
 const ucdContractAddress =
-  process.env.NODE_ENV === "prod"
+  process.env.NODE_ENV === 'prod'
     ? ucdContract.address[environment.chainId]
     : ucdContract.address[environmentTest.chainId];
 const ucdContractABI = ucdContract.abi;
@@ -28,13 +26,14 @@ export const MarketplaceContext = createContext();
 export const MarketplaceProvider = ({ children }) => {
   const [isOnMainnet, setIsOnMainnet] = useState(false);
   const [hasMetamask, setHasMetamask] = useState(false);
-  const [currentAccount, setCurrentAccount] = useState("");
-  const [ucdWalletBalance, setUcdWalletBalance] = useState("");
+  const [currentAccount, setCurrentAccount] = useState('');
+  const [nex10Balance, setNex10Balance] = useState(0);
+  const [ucdWalletBalance, setUcdWalletBalance] = useState('');
   // const [shoWalletBalance, setShoWalletBalance] = useState("");
 
   //check if metamask wallet is connected
   useEffect(() => {
-    if (typeof window.ethereum !== "undefined") {
+    if (typeof window.ethereum !== 'undefined') {
       setHasMetamask(true);
     }
     if (MetaMaskOnboarding.isMetaMaskInstalled()) {
@@ -43,25 +42,30 @@ export const MarketplaceProvider = ({ children }) => {
     }
     checkChain();
     getAccount();
+    getNex10Balance();
     getUCDBalance();
+    getNex10Balance();
     // getSHOBalance();
     if (window.ethereum) {
-      window.ethereum.on("chainChanged", () => {
+      window.ethereum.on('chainChanged', () => {
         window.location.reload();
         checkChain();
         getAccount();
         getUCDBalance();
+        getNex10Balance();
       });
-      window.ethereum.on("accountsChanged", () => {
+      window.ethereum.on('accountsChanged', () => {
         // window.location.reload();
         checkChain();
         getAccount();
         getUCDBalance();
+        getNex10Balance();
       });
     }
   }, [
     currentAccount,
     ucdWalletBalance,
+    nex10Balance,
     // shoWalletBalance
   ]);
 
@@ -69,7 +73,7 @@ export const MarketplaceProvider = ({ children }) => {
     if (!window.ethereum) return;
     try {
       const addressArray = await window.ethereum.request({
-        method: "eth_requestAccounts",
+        method: 'eth_requestAccounts',
       });
 
       if (addressArray.length > 0) {
@@ -83,7 +87,7 @@ export const MarketplaceProvider = ({ children }) => {
   async function getAccount() {
     if (!window.ethereum) return;
     const accounts = await window.ethereum.request({
-      method: "eth_accounts",
+      method: 'eth_accounts',
     });
     setCurrentAccount(accounts[0]);
   }
@@ -132,7 +136,7 @@ export const MarketplaceProvider = ({ children }) => {
         parseFloat(ethers.utils.formatEther(balance))
           .toFixed(0)
           .toString()
-          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
       );
     }
   }
@@ -151,19 +155,35 @@ export const MarketplaceProvider = ({ children }) => {
   //     );
   //   }
   // }
+  /**
+   * Get Nex10 balance for wallet address
+   */
+  const getNex10Balance = async () => {
+    await getAccount();
+    if (currentAccount) {
+      const user = currentAccount.toLowerCase();
+      const nex10balance = await axios.get(
+        `/api/wallet/${user}/${ucdContractAddress.toLowerCase()}`
+      );
+      await setNex10Balance(nex10balance.data.balance);
+    }
+  };
 
   return (
     <MarketplaceContext.Provider
       value={{
         hasMetamask,
         currentAccount,
+        nex10Balance,
+        isOnMainnet,
+        ucdWalletBalance,
+        // shoWalletBalance,
         connectWallet,
         checkChain,
         getUCDBalance,
         // getSHOBalance,
-        isOnMainnet,
-        ucdWalletBalance,
-        // shoWalletBalance,
+        getNex10Balance,
+        setNex10Balance,
       }}
     >
       {children}

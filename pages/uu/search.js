@@ -161,11 +161,10 @@ export default function Search(props) {
   const isTablet = useMediaQuery('(min-width:900px)');
   //state
   const [isLoading, setIsLoading] = useState(true);
-  const [nex10Balance, setNex10Balance] = useState(0);
   const [showCharge, setShowCharge] = useState(false);
 
   const { products } = props;
-  const { isOnMainnet, ucdWalletBalance, getUCDBalance, currentAccount } =
+  const { isOnMainnet, currentAccount, nex10Balance } =
     useContext(MarketplaceContext);
   const { state, dispatch } = useContext(Store);
 
@@ -190,14 +189,6 @@ export default function Search(props) {
     router.push('/inventory');
   };
 
-  const getNex10balance = async () => {
-    const user = currentAccount?.toLowerCase();
-    const nex10balance = await axios.get(
-      `/api/wallet/${user}/${ucdContractAddress}`
-    );
-    setNex10Balance(nex10balance.data.balance);
-  };
-
   const addToCartHandler = async (product) => {
     const existItem = state.cart.cartItems.find((x) => x._id === product._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
@@ -209,9 +200,9 @@ export default function Search(props) {
     dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity } });
   };
 
-  useEffect(() => {
-    getNex10balance();
-  }, [currentAccount, showCharge]);
+  // useEffect(() => {
+  //   getNex10balance();
+  // }, [currentAccount, showCharge]);
 
   return (
     <Layout title="Search">

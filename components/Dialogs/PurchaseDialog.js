@@ -41,7 +41,6 @@ const DialogText = styled.div`
   color: #fff;
   text-align: center;
 `;
-
 const DialogLoading = styled.div`
   display: flex;
   align-items: center;
@@ -115,15 +114,13 @@ function PurchaseDialog(props) {
   //state
   const [dialogStatus, setDialogStatus] = useState(DIALOG_STATUS.INIT);
   const [depositAmount, setDepositAmount] = useState(0);
-  const [nex10Balance, setNex10Balance] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const isTablet = useMediaQuery('(min-width:550px)');
 
   //context
   const { state, dispatch } = useContext(Store);
-  // const { cart } = state;
-  const { hasMetamask, currentAccount, connectWallet } =
+  const { currentAccount, nex10Balance, setNex10Balance } =
     useContext(MarketplaceContext);
   const { closeSnackbar, enqueueSnackbar } = useSnackbar();
   const ethAddress = currentAccount;
@@ -178,7 +175,6 @@ function PurchaseDialog(props) {
       setDialogStatus(DIALOG_STATUS.FILLDETAIL);
       return;
     }
-
     const ucdContract = new ethers.Contract(
       ucdContractAddress,
       ucdContractABI,
@@ -291,13 +287,7 @@ function PurchaseDialog(props) {
     }
   };
 
-  const onSubmit = async ({
-    email,
-    discordId,
-    shippingAddress,
-    cartItems,
-    // props,
-  }) => {
+  const onSubmit = async ({ email, discordId, shippingAddress, cartItems }) => {
     try {
       setLoading(true);
       closeSnackbar();
@@ -316,6 +306,12 @@ function PurchaseDialog(props) {
         cartItems,
         signature,
       });
+      const user = currentAccount.toLowerCase();
+      const nex10balance = await axios.get(
+        `/api/wallet/${user}/${ucdContractAddress}`
+      );
+      await setNex10Balance(nex10balance.data.balance);
+
       dispatch({ type: 'CART_CLEAR' });
       Cookies.remove('cartItems');
       setLoading(false);
@@ -323,6 +319,9 @@ function PurchaseDialog(props) {
         variant: 'success',
       });
       handleDialogClose();
+      setTimeout(function () {
+        window.location.reload();
+      }, 1000);
     } catch (err) {
       setLoading(false);
       enqueueSnackbar(getError(err), { variant: 'error' });

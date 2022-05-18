@@ -9,7 +9,7 @@ handler.get(async (req, res) => {
   try {
     const wallet = await Wallet.findOneAndUpdate({
       address: req.query.user,
-      returnDocument: 'after',
+      new: true,
     });
     await db.disconnect();
     res.send(wallet);

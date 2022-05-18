@@ -38,7 +38,7 @@ const Trapezium = styled.div`
     top: -15%;
   }
   @media ${Devices.TabletL} {
-    top: -1%;
+    top: -2%;
   }
   & p {
     margin-top: 55px;
