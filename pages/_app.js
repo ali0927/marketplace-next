@@ -74,6 +74,7 @@ const GlobalStyle = createGlobalStyle`
   .MuiContainer-root.MuiContainer-maxWidthLg.css-yfyvtz-MuiContainer-root {
     // min-height: 79vh;
     margin-top: 0px;
+    padding-bottom: 100px;
   }
 
   /* Payment Details Form */  
