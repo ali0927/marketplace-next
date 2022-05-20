@@ -9,6 +9,7 @@ import {
   Container,
   CssBaseline,
   Drawer,
+  DialogTitle,
   Link,
   List,
   ListItem,
@@ -65,7 +66,6 @@ const CartTitle = styled.div`
   color: #ffffff;
   font-weight: 600;
   font-size: 20px;
-  margin-bottom: 15px;
 `;
 const EmptyCart = styled.div`
   font-family: Oxanium;
@@ -89,10 +89,10 @@ const ProductTitle = styled.div`
 `;
 const ProductBrand = styled.div`
   font-family: Oxanium;
-  font-size: 14px;
+  font-size: 13px;
 `;
 const ProductType = styled.div`
-  font-size: 14px;
+  font-size: 13px;
   font-family: Oxanium;
   color: #f333cb;
 `;
@@ -151,7 +151,7 @@ export default function Layout({ title, description, children }) {
         styleOverrides: {
           root: {
             background: '#30358C',
-            padding: '24px 30px',
+            padding: '10px 30px',
           },
         },
       },
@@ -457,8 +457,16 @@ export default function Layout({ title, description, children }) {
                     sx={isDesktop ? classes.hidden : classes.visible}
                   >
                     <List>
-                      <ListItem>
+                      <ListItem sx={classes.listItemHeader}>
                         <CartTitle>Your Cart</CartTitle>
+                        <CancelIcon
+                          style={{
+                            fontSize: 22,
+                            cursor: 'pointer',
+                            color: 'white',
+                          }}
+                          onClick={sidebarCloseHandler}
+                        />
                       </ListItem>
                       <ListItem
                         sx={{
@@ -565,11 +573,15 @@ export default function Layout({ title, description, children }) {
                     </Button>
                   )
                 ) : (
-                  <Button sx={classes.metamaskButton}>
-                    <Link href="https://metamask.io/">
-                      Install<span style={{ color: 'transparent' }}>_</span>{' '}
-                      Metamask
-                    </Link>
+                  <Button
+                    sx={classes.metamaskButton}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.location.href = 'https://metamask.io';
+                    }}
+                  >
+                    Install<span style={{ color: 'transparent' }}>_</span>
+                    Metamask
                   </Button>
                 )}
               </div>
