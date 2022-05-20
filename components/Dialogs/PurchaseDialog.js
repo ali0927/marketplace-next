@@ -222,6 +222,9 @@ function PurchaseDialog(props) {
       .catch((err) => {
         setDialogStatus(DIALOG_STATUS.NONE);
         enqueueSnackbar(getError(err), { variant: 'error' });
+        {
+          /* To add custom error message if there is insufficient funds */
+        }
       });
   };
 
