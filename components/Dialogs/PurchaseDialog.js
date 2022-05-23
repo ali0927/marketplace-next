@@ -165,37 +165,41 @@ function PurchaseDialog(props) {
   }
 
   const checkAllowance = async () => {
-    const user = currentAccount.toLowerCase();
-    const nex10balance = await axios.get(
-      `/api/wallet/${user}/${ucdContractAddress}`
-    );
-    await setNex10Balance(nex10balance.data.balance);
+    if (currentAccount) {
+      const user = currentAccount.toLowerCase();
+      const nex10balance = await axios.get(
+        `/api/wallet/${user}/${ucdContractAddress}`
+      );
+      await setNex10Balance(nex10balance.data.balance);
 
-    if (nex10balance.data.balance >= amount) {
-      setDialogStatus(DIALOG_STATUS.FILLDETAIL);
-      return;
+      if (nex10balance.data.balance >= amount) {
+        setDialogStatus(DIALOG_STATUS.FILLDETAIL);
+        return;
+      }
+      const ucdContract = new ethers.Contract(
+        ucdContractAddress,
+        ucdContractABI,
+        signer
+      );
+      setDialogStatus(DIALOG_STATUS.LOADING);
+      setDepositAmount(amount);
+      await ucdContract
+        .allowance(currentAccount, escrowContractAddress)
+        .then(async (val) => {
+          const allowance = parseFloat(ethers.utils.formatEther(val));
+          if (allowance >= amount) {
+            setDialogStatus(DIALOG_STATUS.CONFIRMPURCHASE);
+          } else {
+            setDialogStatus(DIALOG_STATUS.APPROVE);
+          }
+        })
+        .catch((err) => {
+          setDialogStatus(DIALOG_STATUS.NONE);
+          enqueueSnackbar(getError(err), { variant: 'error' });
+        });
+    } else {
+      enqueueSnackbar('Please connect your wallet', { variant: 'error' });
     }
-    const ucdContract = new ethers.Contract(
-      ucdContractAddress,
-      ucdContractABI,
-      signer
-    );
-    setDialogStatus(DIALOG_STATUS.LOADING);
-    setDepositAmount(amount);
-    await ucdContract
-      .allowance(currentAccount, escrowContractAddress)
-      .then(async (val) => {
-        const allowance = parseFloat(ethers.utils.formatEther(val));
-        if (allowance >= amount) {
-          setDialogStatus(DIALOG_STATUS.CONFIRMPURCHASE);
-        } else {
-          setDialogStatus(DIALOG_STATUS.APPROVE);
-        }
-      })
-      .catch((err) => {
-        setDialogStatus(DIALOG_STATUS.NONE);
-        enqueueSnackbar(getError(err), { variant: 'error' });
-      });
   };
 
   const depositFund = async () => {
@@ -218,6 +222,9 @@ function PurchaseDialog(props) {
       .catch((err) => {
         setDialogStatus(DIALOG_STATUS.NONE);
         enqueueSnackbar(getError(err), { variant: 'error' });
+        {
+          /* To add custom error message if there is insufficient funds */
+        }
       });
   };
 

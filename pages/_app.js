@@ -7,10 +7,6 @@ import createEmotionCache from '../utils/createEmotionCache';
 import Head from 'next/head';
 
 const GlobalStyle = createGlobalStyle`
-  #__next {
-    height: 88vh;
-  }
-
   html,
   body {
     font-family: 'Oxanium', cursive;
