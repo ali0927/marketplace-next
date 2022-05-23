@@ -98,6 +98,7 @@ const ucdContractAddress =
 const ucdContractABI = ucdContract.abi;
 const DIALOG_STATUS = {
   NONE: 'None',
+  INSUFFICIENT: 'Insufficient Fund',
   APPROVE: 'Approve',
   APPROVED: 'Approved',
   CONFIRMPURCHASE: 'ConfirmPurchase',
@@ -112,7 +113,7 @@ let signer, provider;
 
 function PurchaseDialog(props) {
   //state
-  const [dialogStatus, setDialogStatus] = useState(DIALOG_STATUS.INIT);
+  const [dialogStatus, setDialogStatus] = useState(DIALOG_STATUS.LOADING);
   const [depositAmount, setDepositAmount] = useState(0);
   const [loading, setLoading] = useState(false);
 
@@ -164,7 +165,7 @@ function PurchaseDialog(props) {
       });
   }
 
-  const checkAllowance = async () => {
+  const checkBalance = async () => {
     if (currentAccount) {
       const user = currentAccount.toLowerCase();
       const nex10balance = await axios.get(
@@ -174,15 +175,22 @@ function PurchaseDialog(props) {
 
       if (nex10balance.data.balance >= amount) {
         setDialogStatus(DIALOG_STATUS.FILLDETAIL);
-        return;
       }
+      else {
+        setDialogStatus(DIALOG_STATUS.INSUFFICIENT);
+      }
+    }
+  }
+
+  const checkAllowance = async () => {
+    if (currentAccount) {
+      setDialogStatus(DIALOG_STATUS.LOADING);
+      setDepositAmount(amount);
       const ucdContract = new ethers.Contract(
         ucdContractAddress,
         ucdContractABI,
         signer
       );
-      setDialogStatus(DIALOG_STATUS.LOADING);
-      setDepositAmount(amount);
       await ucdContract
         .allowance(currentAccount, escrowContractAddress)
         .then(async (val) => {
@@ -222,9 +230,6 @@ function PurchaseDialog(props) {
       .catch((err) => {
         setDialogStatus(DIALOG_STATUS.NONE);
         enqueueSnackbar(getError(err), { variant: 'error' });
-        {
-          /* To add custom error message if there is insufficient funds */
-        }
       });
   };
 
@@ -339,7 +344,7 @@ function PurchaseDialog(props) {
     if (MetaMaskOnboarding.isMetaMaskInstalled()) {
       provider = new ethers.providers.Web3Provider(window.ethereum);
       signer = provider.getSigner();
-      checkAllowance();
+      checkBalance();
     }
   }, []);
 
@@ -352,6 +357,26 @@ function PurchaseDialog(props) {
     >
       {dialogStatus === DIALOG_STATUS.LOADING && (
         <DialogLoading>Loading Permissions...</DialogLoading>
+      )}
+
+      {dialogStatus === DIALOG_STATUS.INSUFFICIENT && (
+        <>
+          <DialogText>Your Nex10 balance is too small to purchase items. You need to charge your balance.</DialogText>
+
+          <DialogActions sx={classes.approveContract}>
+            <Button
+              autoFocus
+              onClick={checkAllowance}
+              sx={classes.dialogApprovalButton}
+            >
+              Charge
+            </Button>
+
+            <DialogButton onClick={handleDialogClose}>
+              Cancel
+            </DialogButton>
+          </DialogActions>
+        </>
       )}
 
       {dialogStatus === DIALOG_STATUS.APPROVE && (
